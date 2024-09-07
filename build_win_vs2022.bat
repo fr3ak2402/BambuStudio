@@ -1,6 +1,7 @@
 @echo off
 
 :: Checks if a parameter was passed
+if "%~1"=="" goto :HELP
 if "%~1"=="-h" goto :HELP
 
 :: Evaluates the parameter
@@ -21,9 +22,12 @@ if "%~1"=="-A" (
 goto :end
 
 :HELP
+echo ------------------------------
 echo Help:
-echo   -A  Compile Deps & Slicer
+echo ------------------------------
+echo   -A  Compile Deps and Slicer
 echo   -D  Compile Deps
 echo   -S  Compile Slicer
+echo ------------------------------
 
 :end
