@@ -32,8 +32,18 @@ goto :end
 :: Define sections
 :CompileDeps
 echo Compiling Dependencies
-:: Replace this with your actual compilation command for Deps
+:: Create folders for the compiling process
+cd deps
+mkdir build
+cd build
 
+:: compile dependencies -> VS2022 and architecture x64
+cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="D:/work/Projects/BambuStudio_dep" -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release --target deps -- -m
+
+:: delete all unnecessary data
+
+:: create folders for the compiling process
 if "%~1"=="-A" goto :TriggerCompileSlicer
 
 goto :end
