@@ -2,12 +2,13 @@
 #Content
 {
 	overflow-y:auto;
+	max-height: 447px;
 }
 
 .BlockBanner
 {
 	padding: 0px;
-	border-bottom:#00AE42 1px solid;
+	border-bottom:#693A71 1px solid;
 	width: 100%;
 }
 
@@ -27,7 +28,7 @@
 .BlockBanner  a
 {
 	display: inline-block;
-	background-color:#00AE42;
+	background-color:#693A71;
 	line-height: 40px;
 	height: 40px;
 	padding: 0px 24px;
@@ -105,7 +106,7 @@
 
 #NoticeBar
 {
-	background-color:#00B35C;
+	background-color:#9966A6;
 	height: 40px;
 	line-height: 40px;
 	color: #fff;
@@ -123,4 +124,11 @@
 	margin-top: 4mm;
 	display: flex;
 	justify-content:space-around;
+}
+
+#SearchArea
+{
+	position: absolute;
+	top: -30px;
+	right: -5mm;
 }

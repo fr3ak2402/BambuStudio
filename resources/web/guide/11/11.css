@@ -12,7 +12,7 @@
 #EarthIcon img
 {
 	width: 40%;
-	min-width: 100px;
+	min-width: 160px;
 }
 
 #EarthIcon
@@ -23,7 +23,8 @@
 
 #RegionList
 {
-	border: 3px solid #C7C7C7;
+	border: 3px solid #383E42;
+	border-radius: 8px;
 	width: 400px;
 	cursor: pointer;
 }
@@ -34,23 +35,25 @@
 	height: 40px;
 	padding-left: 10px;
 	text-align: center;
+	color: #383E42;
 }
 
 .RegionItem:hover
 {
-	background-color: #ECECEC;
+	background-color: #9966A6;
+	color: #fff;
 }
 
 
 .RegionSelected
 {
-	background-color:#00AE42;
+	background-color:#693A71;
 	color: #fff;
 }
 
 .RegionSelected:hover
 {
-	background-color:#00AE42;
+	background-color:#693A71;
 	color: #fff;	
 }
 

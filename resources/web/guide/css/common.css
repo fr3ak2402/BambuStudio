@@ -22,9 +22,22 @@ body
 	border: 0;
 	margin: 0;	
 	overflow: hidden;
-	background-color: #fff;
+	/*background-color: #fff;*/
+	background: url(../../image/galaxy-bg.svg) 0% 0% no-repeat;
 	font-size: 14px;
 	line-height: 22px;
+}
+
+.ContentFrame
+{
+	background: rgba(255, 255, 255, 0.8); 
+	margin: 5% 5% 5% 5%; 
+	height: 100%; 
+	border: solid;
+	border-width: 2px;
+	border-color: #693A71;
+	border-radius: 1%;
+	position: relative;
 }
 
 .TextPoint
@@ -73,7 +86,7 @@ body
 {
 	font-size:28px;
 	line-height: 28px;
-	color: #00AE42;
+	color: #693A71;
 	padding: 0px 10mm;
 }
 
@@ -101,7 +114,7 @@ body
 
 #AcceptArea
 {
-	height:12%;
+	height:10%;
 	padding: 0mm 10mm;
 	text-align: left;
 	display: flex;
@@ -116,7 +129,10 @@ body
 	padding: 3mm 9mm;
 	font-size: 14px;
 	text-align: center;
-	background-color: #00AE42;
+	background-color: #693A71;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #693A71;
 	border-radius: 16px;
 	color: #fff;
 	cursor: pointer;
@@ -125,7 +141,7 @@ body
 
 .NormalBtn:hover
 {
-	background-color:#009638;
+	background-color:#9966A6;
 }
 
 .GrayBtn
@@ -133,16 +149,19 @@ body
 	padding: 3mm 9mm;
 	font-size: 14px;
 	text-align: center;
-	border: 1px solid #575757;
+	background-color: #383E42;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #383E42;
 	border-radius: 18px;
-	color: #575757;
+	color: #fff;
 	cursor: pointer;
 	margin-left: 10px;	
 }
 
 .GrayBtn:hover
 {
-	background-color:#E8E8E8;
+	background-color:#282E32;
 }
 
 .SmallBtn
@@ -150,16 +169,19 @@ body
 	padding: 2px 4mm;
 	font-size: 14px;
 	text-align: center;
-	background-color: #D9D9D9;
+	background-color: #383E42;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #383E42;
 	border-radius: 6px;
-	color: #000;
+	color: #fff;
 	cursor: pointer;
 	display: inline-block;
 }
 
 .SmallBtn:hover
 {
-	background-color: #CCCCCC;
+	background-color: #282E32;
 }
 
 
@@ -168,7 +190,10 @@ body
 	padding: 2px 4mm;
 	font-size: 14px;
 	text-align: center;
-	background-color: #00AE42;
+	background-color: #693A71;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #693A71;
 	border-radius: 6px;
 	color: #fff;
 	cursor: pointer;
@@ -177,23 +202,34 @@ body
 
 .SmallBtn_Green:hover
 {
-	background-color: #009638;
+	background-color: #9966A6;
 }
 
 /*---HyperLink---*/
 .HyperLink
 {
-	color: #00AE42;
+	color: #693A71;
 	text-decoration: underline;
     font-weight: 700;
 	cursor: pointer;
 }
 
+/*--SearchField--*/
+input[type=search] {
+	padding: 8px 20px;
+	margin: 8px 0;
+	box-sizing: border-box;
+	border:#693A71 1px solid;
+	background-color: #F0F0F0;
+	border-radius: 16px;
+	caret-color : #693A71;
+	font-size: 14px;
+}
 
+input:focus{
+	border:none;
+	outline:none;
+	border:#693A71 1px solid;
+}
 
 /*----------------Light Mode-------------------*/
-
-
-
-
-
