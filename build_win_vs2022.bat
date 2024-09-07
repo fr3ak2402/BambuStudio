@@ -37,11 +37,16 @@ cd deps
 mkdir build
 cd build
 
+set BUILD=%CD%
+set DEPS=%BUILD%/GalaxySlicerNeo_deps
+
 :: compile dependencies -> VS2022 and architecture x64
-cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="D:/work/Projects/BambuStudio_dep" -DCMAKE_BUILD_TYPE=Release
+cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR=%DEPS% -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release --target deps -- -m
 
 :: delete all unnecessary data
+$AuszuschliessenderOrdner = "GalaxySlicerNeo_deps"
+Get-ChildItem %BUILD% -Recurse -Exclude $AuszuschliessenderOrdner | Remove-Item -Recurse -Force
 
 :: create folders for the compiling process
 if "%~1"=="-A" goto :TriggerCompileSlicer
