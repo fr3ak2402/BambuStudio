@@ -32,7 +32,8 @@ goto :end
 :: Define sections
 :CompileDeps
 echo Compiling Dependencies
-:: Create folders for the compiling process
+
+:: create folders for the compiling process
 cd deps
 mkdir build
 cd build
@@ -45,10 +46,26 @@ cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR=%DEPS% -DCMAKE_BUILD_TYPE=
 cmake --build . --config Release --target deps -- -m
 
 :: delete all unnecessary data
-$AuszuschliessenderOrdner = "GalaxySlicerNeo_deps"
-Get-ChildItem %BUILD% -Recurse -Exclude $AuszuschliessenderOrdner | Remove-Item -Recurse -Force
+powershell -command "Get-ChildItem '%BUILD%' -Recurse -Exclude 'GalaxySlicerNeo_deps' | Remove-Item -Recurse -Force"
+
+echo Downloading Python
+
+set PY_URL=https://www.python.org/ftp/python/3.12.6/python-3.12.6-embed-amd64.zip
+set PY=%BUILD%/GalaxySlicer_dep
 
 :: create folders for the compiling process
+cd %PY%
+mkdir python
+cd python
+
+set PY_DIR=%CD%
+
+curl -o %PY_DIR%\python_embed.zip %PY_URL%
+
+powershell -command "Expand-Archive -Path '%PY_DIR%\python_embed.zip -DestinationPath %PY_DIR%'"
+
+del %PY_DIR%\python_embed.zip
+
 if "%~1"=="-A" goto :TriggerCompileSlicer
 
 goto :end
