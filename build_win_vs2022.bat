@@ -1,20 +1,25 @@
 @echo off
 
-:: Checks if a parameter was passed
+:: Define sections
+:CompileDeps
+echo Compiling Dependencies
+:: Replace this with your actual compilation command for Deps
+
+:CompileSlicer
+echo Compiling Slicer
+:: Replace this with your actual compilation command for Slicer
+
+:: Main execution
 if "%~1"=="" goto :HELP
 if "%~1"=="-h" goto :HELP
 
-:: Evaluates the parameter
 if "%~1"=="-A" (
-    echo Compiling Deps & Slicer
-    :: Replace this with your actual compilation command for Deps & Slicer
-) else if "%~1"=="-D" (
-    echo Compiling Deps
-    :: Replace this with your actual compilation command for Deps
-) else if "%~1"=="-S" (
-    echo Compiling Slicer
-    :: Replace this with your actual compilation command for Slicer
-) else (
+    goto :CompileDeps
+    goto :CompileSlicer
+)
+if "%~1"=="-D" goto :CompileDeps
+if "%~1"=="-S" goto :CompileSlicer
+else (
     echo Invalid parameter: %~1
     goto :help
 )
@@ -25,8 +30,8 @@ goto :end
 echo ------------------------------
 echo Help:
 echo ------------------------------
-echo   -A  Compile Deps and Slicer
-echo   -D  Compile Deps
+echo   -A  Compile Dependencies and Slicer
+echo   -D  Compile Dependencies
 echo   -S  Compile Slicer
 echo ------------------------------
 
