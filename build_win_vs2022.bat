@@ -19,13 +19,17 @@ else (
 goto :end
 
 :HELP
-echo ------------------------------
+echo --------------------------------------------
 echo Help:
-echo ------------------------------
+echo --------------------------------------------
 echo   -A  Compile Dependencies and Slicer
-echo   -D  Compile Dependencies
-echo   -S  Compile Slicer
-echo ------------------------------
+echo   -D  [-Z] Compile Dependencies
+echo   -S  [-Z] Compile Slicer
+echo --------------------------------------------
+echo Extended functions:
+echo --------------------------------------------
+echo   [-Z]  Zip folder
+echo --------------------------------------------
 
 goto :end
 
@@ -62,13 +66,28 @@ set PY_DIR=%CD%
 
 curl -o %PY_DIR%\python_embed.zip %PY_URL%
 
+:: expand python zip
 powershell -command "Expand-Archive -Path '%PY_DIR%\python_embed.zip -DestinationPath %PY_DIR%'"
 
 del %PY_DIR%\python_embed.zip
 
+if "%~1"=="-Z" goto :CompressDeps
+
+:ContinueCompilation
+
 if "%~1"=="-A" goto :TriggerCompileSlicer
 
 goto :end
+
+:CompressDeps
+echo Compress Dependencies
+
+set DEPS_ZIP=%BUILD%/GalaxySlicerNeo_deps.zip
+
+:: compress dependencies folder
+powershell -command "Compress-Archive -Path '%DEPS%' -DestinationPath '%DEPS_ZIP%'"
+
+goto :ContinueCompilation
 
 :CompileSlicer
 echo Compiling Slicer
