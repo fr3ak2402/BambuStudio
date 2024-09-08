@@ -3,10 +3,14 @@
 :: set console parameters
 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 
+echo create folders for the compiling process
+
 :: create folders for the compiling process
 cd deps
 mkdir build
 cd build
+
+echo start compiling...
 
 :: compile dependencies -> VS2019 and architecture x64
 cmake ../ -G "Visual Studio 16 2019" -A x64 -DDESTDIR="D:/work/Projects/GalaxySlicerNeo_deps" -DCMAKE_BUILD_TYPE=Release
