@@ -45,9 +45,9 @@ cd build
 set BUILD=%CD%
 set DEPS=%BUILD%/GalaxySlicerNeo_deps
 
-:: compile dependencies -> VS2022 and architecture x64
-cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR=%DEPS% -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release --target deps -- -m
+:: compile dependencies -> VS2019 and architecture x64
+cmake ../ -G "Visual Studio 16 2019" -A x64 -DDESTDIR=%DEPS% -DCMAKE_BUILD_TYPE=Release
+msbuild /m ALL_BUILD.vcxproj
 
 :: delete all unnecessary data
 powershell -command "Get-ChildItem '%BUILD%' -Recurse -Exclude 'GalaxySlicerNeo_deps' | Remove-Item -Recurse -Force"
