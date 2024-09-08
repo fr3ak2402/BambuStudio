@@ -12,8 +12,6 @@ cd build
 cmake ../ -G "Visual Studio 16 2019" -A x64 -DDESTDIR="D:/work/Projects/GalaxySlicerNeo_deps" -DCMAKE_BUILD_TYPE=Release
 msbuild /m ALL_BUILD.vcxproj
 
-PAUSE
-
 cd D:/work/Projects/GalaxySlicerNeo_deps
 
 echo Start deleting unnecessary files...
@@ -37,3 +35,5 @@ powershell -command "Expand-Archive -Path 'D:/work/Projects/GalaxySlicerNeo_deps
 
 :: remove python zip
 powershell -command "Remove-Item 'D:/work/Projects/GalaxySlicerNeo_deps/python/python_embed.zip'"
+
+PAUSE
