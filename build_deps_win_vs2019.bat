@@ -16,16 +16,18 @@ PAUSE
 
 cd D:/work/Projects/GalaxySlicerNeo_deps
 
+echo Start deleting unnecessary files...
+
 :: delete all unnecessary data
 powershell -command "Remove-Item 'D:/BambuStudio/deps/build' -Recurse -Force"
 
-PAUSE
-
-echo Downloading Python
+echo Deletion of unnecessary files completed...
 
 :: create folder for python
 mkdir python
 cd python
+
+echo Downloading Python...
 
 :: download python zip
 curl -o D:/work/Projects/GalaxySlicerNeo_deps/python/python_embed.zip https://www.python.org/ftp/python/3.12.6/python-3.12.6-embed-amd64.zip
