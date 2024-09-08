@@ -1,9 +1,11 @@
 @echo off
-"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
-echo beliebige Taste zum Beginnen ... [Strg]+[C] zum Abbrechen
-pause >nul
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 
-rem ... hier irgendwas machen ...
+cd deps
+mkdir build
+cd build
 
-echo Fertig. Taste zum Beenden.
-pause >nul
+cmake ../ -G "Visual Studio 16 2019" -A x64 -DDESTDIR="D:/work/Projects/BambuStudio_dep" -DCMAKE_BUILD_TYPE=Release
+msbuild /m ALL_BUILD.vcxproj
+
+PAUSE
