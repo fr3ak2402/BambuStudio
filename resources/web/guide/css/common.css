@@ -24,6 +24,8 @@ body
 	overflow: hidden;
 	/*background-color: #fff;*/
 	background: url(../../image/galaxy-bg.svg) 0% 0% no-repeat;
+	background-position: center;
+	background-size: cover;
 	font-size: 14px;
 	line-height: 22px;
 }
