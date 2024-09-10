@@ -18,10 +18,28 @@
 			<img src="../../image/galaxyslicer-neo-icon.svg"/>
 		</div>
 		<div id="Title" class="trans" tid="t1">Welcome to GalaxySlicer neo</div>
+		<div id="fenstergroesse"></div>
 		<div id="STip" class="trans" tid="t2">GalaxySlicer neo will be setup in several steps. Let's start!</div>
 		<div id="BtnArea">
 		    <a id="StartBtn" class="NormalBtn swiper-button-next trans" tid="t24" href="../11/index.html">Get Started</a>
 		</div>
 	</div>
 </body>
+
+<script>
+// Funktion zum Abrufen und Anzeigen der Fenstergröße
+function showWindowSize() {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    // Element mit der ID "fenstergroesse" finden
+    const div = document.getElementById("fenstergroesse");
+
+    // Text im DIV aktualisieren
+    div.textContent = `Die Fenstergröße beträgt: ${windowWidth}px x ${windowHeight}px`;
+}
+
+// Funktion beim Laden der Seite aufrufen
+window.onload = showWindowSize;
+</script>
 </html>
