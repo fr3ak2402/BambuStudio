@@ -14,7 +14,7 @@ html,body
 
 .LinkBtn
 {
-	color: #1200FF;	
+	color: #693A71;	
 	cursor: pointer;
 }
 
@@ -28,17 +28,17 @@ html,body
 	padding: 1.5mm 6mm;
 	font-size: 14px;
 	text-align: center;
-	background-color: #00AE42;
+	background-color: #693A71;
 	border-radius: 6px;
 	color: #fff;
 	cursor: pointer;
 	display: inline-block;	
-	border: 1px solid #009A3A;
+	border: 1px solid #693A71;
 }
 
 .Btn_Green:hover
 {
-	background-color: #009A3A;
+	background-color: #9966A6;
 }
 
 
@@ -93,7 +93,7 @@ html,body
 	float: left;
 	height:20px;
 	width: 0%;
-	background-color:#00AE42;
+	background-color:#693A71;
 	border-radius: 20px;		
 }
 

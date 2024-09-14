@@ -1,7 +1,8 @@
 
 #Content
 {
-	padding:0%  15%;
+	padding-left: 15%;
+	padding-right: 15%;
 }
 
 #FeatureText
@@ -20,6 +21,7 @@
 #InstallCheck
 {
 	width: 30px;
+	accent-color: #693A71;
 }
 
 #RestartText
