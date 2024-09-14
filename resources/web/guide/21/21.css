@@ -18,6 +18,7 @@
 	height: 40px;
 	text-align: center;
 	margin-right: 10px;
+	padding-top: 1%;
 }
 
 .BannerBtns .SmallBtn,.SmallBtn_Green
@@ -40,11 +41,12 @@
 	padding: 0px;
 	display: flex;
 	flex-wrap: wrap;
+	width: 100%;
 }
 
 .PrinterBlock
 {
-	width: 160px;
+	width: 198px;
 	text-align: center;
 	padding: 8px;
 }
@@ -58,7 +60,7 @@
 .PName
 {
 	font-weight: 700;
-	text-align: left;
+	text-align: center;
 }
 
 .pNozzel
@@ -67,13 +69,14 @@
 	align-items: center;
 	justify-content:flex-start;
 	color: #5A5A5A;	
-	padding-left: 10px;
+	padding-left: 18px;
 }
 
 .pNozzel input
 {
 	vertical-align: middle;
 	margin-right: 5px;
+	accent-color: #693A71;
 }
 
 
