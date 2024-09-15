@@ -704,7 +704,7 @@ elseif (SLIC3R_FHS)
     install(FILES src/platform/unix/BambuStudio.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
     foreach(SIZE 32 128 192)
         install(FILES ${SLIC3R_RESOURCES_DIR}/images/BambuStudio_${SIZE}px.png
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME BambuStudio.png
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME GalaxySlicerNeo.png
         )
     endforeach()
 elseif (CMAKE_MACOSX_BUNDLE)

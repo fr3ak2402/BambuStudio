@@ -150,7 +150,7 @@ static wxIcon main_frame_icon(GUI_App::EAppMode app_mode)
     }
     return wxIcon(path, wxBITMAP_TYPE_ICO);
 #else // _WIN32
-    return wxIcon(Slic3r::var("BambuStudio_128px.png"), wxBITMAP_TYPE_PNG);
+    return wxIcon(Slic3r::var("GalaxySlicerNeo_128px.png"), wxBITMAP_TYPE_PNG);
 #endif // _WIN32
 }
 
@@ -248,7 +248,7 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
     default:
     case GUI_App::EAppMode::Editor:
         m_taskbar_icon = std::make_unique<BambuStudioTaskBarIcon>(wxTBI_DOCK);
-        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("BambuStudio-mac_256px.ico"), wxBITMAP_TYPE_ICO), "BambuStudio");
+        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("GalaxySlicerNeo-mac_256px.ico"), wxBITMAP_TYPE_ICO), "BambuStudio");
         break;
     case GUI_App::EAppMode::GCodeViewer:
         break;
@@ -3899,7 +3899,7 @@ SettingsDialog::SettingsDialog(MainFrame* mainframe)
         SetIcon(wxIcon(szExeFileName, wxBITMAP_TYPE_ICO));
     }
 #else
-    SetIcon(wxIcon(var("BambuStudio_128px.png"), wxBITMAP_TYPE_PNG));
+    SetIcon(wxIcon(var("GalaxySlicerNeo_128px.png"), wxBITMAP_TYPE_PNG));
 #endif // _WIN32
 
     //just hide the Frame on closing
