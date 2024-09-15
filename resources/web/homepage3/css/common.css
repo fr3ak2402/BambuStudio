@@ -36,24 +36,24 @@ html, body {
 /*-------按钮------*/
 .Btn_White
 {
-	background-color:#E5E5E5;
-	border: 1px solid #BABABA;
+	background-color:#383E42;
+	border: 1px solid #383E42;
 	border-radius: 8px;
 	padding: 4px 20px;
-	color: black;
+	color: #fff;
 	cursor: pointer;
 }
 
 .Btn_White:hover
 {
-	background-color:#EBEBEB;
-	border: 1px solid #C2C2C2;
+	background-color:#282E32;
+	border: 1px solid #383E42;
 }
 
 .Btn_Green
 {
-	background-color:#00AE42;
-	border: 1px solid #009438;
+	background-color:#693A71;
+	border: 1px solid #693A71;
 	border-radius: 8px;
 	color: white;
 	padding: 4px 20px;
@@ -62,8 +62,8 @@ html, body {
 
 .Btn_Green:hover
 {
-	background-color:#00A03D;
-	border: 1px solid #009438;
+	background-color:#9966A6;
+	border: 1px solid #693A71;
 }
 
 /*---滚动条---*/
