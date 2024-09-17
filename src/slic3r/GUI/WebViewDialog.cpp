@@ -1388,8 +1388,8 @@ void WebViewPanel::SwitchWebContent(std::string modelname, int refresh)
         return;
     } 
     //GalaxySlicer neo -> Cults
-    else if (modelname.compare("cults") == 0) {
-        auto        host   = wxGetApp().get_cults_http_url(wxGetApp().app_config->get_country_code());
+    else if (modelname.compare("cults3d") == 0) {
+        auto        host   = wxGetApp().get_cults3d_http_url(wxGetApp().app_config->get_country_code());
         std::string LabUrl = (boost::format(host)).str();
 
         wxString      FinalUrl = LabUrl;
@@ -1397,7 +1397,7 @@ void WebViewPanel::SwitchWebContent(std::string modelname, int refresh)
         wxLaunchDefaultBrowser(FinalUrl);
 
         // conf save
-        wxGetApp().app_config->set_str("homepage", "cults_clicked", "1");
+        wxGetApp().app_config->set_str("homepage", "cults3d_clicked", "1");
         wxGetApp().app_config->save();
 
         return;

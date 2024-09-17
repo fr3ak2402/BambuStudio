@@ -1534,7 +1534,7 @@ std::string GUI_App::get_thingiverse_http_url(std::string country_code)
 }
 
 //GalaxySlicer neo -> cults3d
-std::string GUI_App::get_cults_http_url(std::string country_code)
+std::string GUI_App::get_cults3d_http_url(std::string country_code)
 {
     std::string url;
     if (country_code == "US") {

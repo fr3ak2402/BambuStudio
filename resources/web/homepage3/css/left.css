@@ -240,7 +240,7 @@ body
 	display: inline;
 }
 
-.BtnItem[menu="cults"]:hover .JumpIcon
+.BtnItem[menu="cults3d"]:hover .JumpIcon
 {
 	display: inline;
 }

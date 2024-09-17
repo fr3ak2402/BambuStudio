@@ -66,7 +66,7 @@ function GotoMenu( strMenu )
 {
 	ShowMenuNewTag(strMenu,0);
 	
-	if(NowMenu==strMenu && strMenu!='makerlab' && strMenu!='printables' && strMenu!='thingiverse' && strMenu!='cults')
+	if(NowMenu==strMenu && strMenu!='makerlab' && strMenu!='printables' && strMenu!='thingiverse' && strMenu!='cults3d')
 		return;
 	
 	NowMenu=strMenu;
@@ -80,7 +80,7 @@ function GotoMenu( strMenu )
 		
 		if( $(OneBtn).attr("menu")==strMenu )
 		{
-			if(strMenu!=='makerlab' && strMenu!='printables' && strMenu!='thingiverse' && strMenu!='cults')
+			if(strMenu!=='makerlab' && strMenu!='printables' && strMenu!='thingiverse' && strMenu!='cults3d')
 			{
 				$(".BtnItem").removeClass("BtnItemSelected");						
 				$(OneBtn).addClass("BtnItemSelected");

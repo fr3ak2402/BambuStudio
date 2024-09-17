@@ -647,7 +647,7 @@ public:
     //GalaxySlicer neo
     std::string     get_printables_http_url(std::string country_code);
     std::string     get_thingiverse_http_url(std::string country_code);
-    std::string     get_cults_http_url(std::string country_code);
+    std::string     get_cults3d_http_url(std::string country_code);
 
     bool            is_compatibility_version();
     bool            check_networking_version();
