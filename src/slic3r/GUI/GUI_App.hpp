@@ -643,6 +643,12 @@ public:
     int             install_plugin(std::string name, std::string package_name, InstallProgressFn pro_fn = nullptr, WasCancelledFn cancel_fn = nullptr);
     std::string     get_http_url(std::string country_code, std::string path = {});
     std::string     get_model_http_url(std::string country_code);
+
+    //GalaxySlicer neo
+    std::string     get_printables_http_url(std::string country_code);
+    std::string     get_thingiverse_http_url(std::string country_code);
+    std::string     get_cults_http_url(std::string country_code);
+
     bool            is_compatibility_version();
     bool            check_networking_version();
     void            cancel_networking_install();

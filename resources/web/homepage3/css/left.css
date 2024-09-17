@@ -229,6 +229,22 @@ body
 	display: inline;
 }
 
+/*--- GalaxySlicer neo ---*/
+.BtnItem[menu="printables"]:hover .JumpIcon
+{
+	display: inline;
+}
+
+.BtnItem[menu="thingiverse"]:hover .JumpIcon
+{
+	display: inline;
+}
+
+.BtnItem[menu="cults"]:hover .JumpIcon
+{
+	display: inline;
+}
+
 .BtnItem:hover
 {
 	background-color: #9966A6;

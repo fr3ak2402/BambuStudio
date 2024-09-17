@@ -1505,6 +1505,47 @@ std::string GUI_App::get_model_http_url(std::string country_code)
     return url;
 }
 
+//GalaxySlicer neo -> Printables
+std::string GUI_App::get_printables_http_url(std::string country_code)
+{
+    std::string url;
+    if (country_code == "US") {
+        url = "https://www.printables.com/";
+    }
+    else {
+        url = "https://www.printables.com/";
+    }
+
+    return url;
+}
+
+//GalaxySlicer neo -> Thingiverse
+std::string GUI_App::get_thingiverse_http_url(std::string country_code)
+{
+    std::string url;
+    if (country_code == "US") {
+        url = "https://www.thingiverse.com/";
+    }
+    else {
+        url = "https://www.thingiverse.com/";
+    }
+
+    return url;
+}
+
+//GalaxySlicer neo -> cults3d
+std::string GUI_App::get_cults_http_url(std::string country_code)
+{
+    std::string url;
+    if (country_code == "US") {
+        url = "https://cults3d.com/";
+    }
+    else {
+        url = "https://cults3d.com/";
+    }
+
+    return url;
+}
 
 std::string GUI_App::get_plugin_url(std::string name, std::string country_code)
 {

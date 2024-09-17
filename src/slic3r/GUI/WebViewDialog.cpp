@@ -645,7 +645,7 @@ void WebViewPanel::SendMakerlabList(  )
                         body2.insert(1, "\"command\": \"homepage_makerlab_get\", ");
                         RunScript(wxString::Format("window.postMessage(%s)", body2));
 
-                        SetLeftMenuShow("makerlab", 1);                    
+                        SetLeftMenuShow("makerlab", 1);       
                     }
                 }
             });
@@ -1356,7 +1356,53 @@ void WebViewPanel::SwitchWebContent(std::string modelname, int refresh)
         wxGetApp().CallAfter([this] { ShowMenuNewTag("makerlab", "0"); });
 
         return;
-    } else if (modelname.compare("online") == 0) {
+    }
+    //GalaxySlicer neo -> Printables
+    else if (modelname.compare("printables") == 0) {
+        auto        host   = wxGetApp().get_printables_http_url(wxGetApp().app_config->get_country_code());
+        std::string LabUrl = (boost::format(host)).str();
+
+        wxString      FinalUrl = LabUrl;
+
+        wxLaunchDefaultBrowser(FinalUrl);
+
+        // conf save
+        wxGetApp().app_config->set_str("homepage", "printables_clicked", "1");
+        wxGetApp().app_config->save();
+
+        return;
+    }
+    //GalaxySlicer neo -> Thingiverse
+    else if (modelname.compare("thingiverse") == 0) {
+        auto        host   = wxGetApp().get_thingiverse_http_url(wxGetApp().app_config->get_country_code());
+        std::string LabUrl = (boost::format(host)).str();
+
+        wxString      FinalUrl = LabUrl;
+
+        wxLaunchDefaultBrowser(FinalUrl);
+
+        // conf save
+        wxGetApp().app_config->set_str("homepage", "thingiverse_clicked", "1");
+        wxGetApp().app_config->save();
+
+        return;
+    } 
+    //GalaxySlicer neo -> Cults
+    else if (modelname.compare("cults") == 0) {
+        auto        host   = wxGetApp().get_cults_http_url(wxGetApp().app_config->get_country_code());
+        std::string LabUrl = (boost::format(host)).str();
+
+        wxString      FinalUrl = LabUrl;
+
+        wxLaunchDefaultBrowser(FinalUrl);
+
+        // conf save
+        wxGetApp().app_config->set_str("homepage", "cults_clicked", "1");
+        wxGetApp().app_config->save();
+
+        return;
+    } 
+    else if (modelname.compare("online") == 0) {
 
         if (!m_onlinefirst) {
             if (m_loginstatus == 1) {
