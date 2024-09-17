@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="uuid-23d42558-03cf-4b80-94ad-63db6a409cf6" data-name="Ebene_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-  <polygon points="3.0654 20 10 16 3.0654 12 3.0654 20" fill="#6d6d6c"/>
-  <polygon points="10 0 3.0654 4 10 8 10 16 16.9346 12 16.9346 4 10 0" fill="#6d6d6c"/>
+<svg id="uuid-2e965a7d-04f9-49c6-a34a-d45ad9e220b6" data-name="Ebene_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <rect width="24" height="24" fill="none"/>
+  <g>
+    <polygon points="5.4121 21.5 12 17.7 5.4121 13.9 5.4121 21.5" fill="#6e6e6d"/>
+    <polygon points="12 2.5 5.4121 6.3 12 10.1 12 17.7 18.5879 13.9 18.5879 6.3 12 2.5" fill="#6e6e6d"/>
+  </g>
 </svg>
