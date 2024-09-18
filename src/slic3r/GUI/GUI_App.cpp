@@ -320,7 +320,7 @@ public:
         int width = bmp.GetWidth();
 
         // draw title and version
-        int text_padding = FromDIP(3 * m_scale);
+        /*int text_padding = FromDIP(3 * m_scale);
         memDc.SetFont(m_constant_text.title_font);
         int title_height = memDc.GetTextExtent(m_constant_text.title).GetHeight();
         int title_width = memDc.GetTextExtent(m_constant_text.title).GetWidth();
@@ -336,7 +336,7 @@ public:
         wxRect version_rect(wxPoint(split_width + text_padding, top_margin), wxPoint(width, top_margin + title_height - text_padding));
         memDc.SetFont(m_constant_text.version_font);
         memDc.SetTextForeground(StateColor::darkModeColorFor(wxColor(134, 134, 134)));
-        memDc.DrawLabel(m_constant_text.version, version_rect, wxALIGN_LEFT | wxALIGN_BOTTOM);
+        memDc.DrawLabel(m_constant_text.version, version_rect, wxALIGN_LEFT | wxALIGN_BOTTOM);*/
 
 #if BBL_INTERNAL_TESTING
         wxString versionText = BBL_INTERNAL_TESTING == 1 ? _L("Internal Version") : _L("Beta Version");
@@ -349,13 +349,26 @@ public:
 #endif
 
         // load bitmap for logo
-        BitmapCache bmp_cache;
+        /*BitmapCache bmp_cache;
         int logo_margin = FromDIP(72 * m_scale);
         int logo_size = FromDIP(122 * m_scale);
         int logo_width = FromDIP(94 * m_scale);
         wxBitmap logo_bmp = *bmp_cache.load_svg("splash_logo", logo_size, logo_size);
         int logo_y = top_margin + title_rect.GetHeight() + logo_margin;
         memDc.DrawBitmap(logo_bmp, (width - logo_width) / 2, logo_y, true);
+
+        int top_margin = FromDIP(75 * m_scale);
+        int width = bmp.GetWidth();
+        int height = bmp.GetHeight();*/
+
+        //draw background
+        BitmapCache bmp_cache;
+        int background_width = FromDIP(562 * m_scale);
+        int background_height = FromDIP(238 * m_scale);
+        wxBitmap background_bmp = *bmp_cache.load_svg("splash_logo", background_width, background_height);
+
+        //set XY Position to draw background
+        memDc.DrawBitmap(background_bmp, (width - background_width) / 2, (width - background_width) / 2, true);
 
         // calculate position for the dynamic text
         int text_margin = FromDIP(80 * m_scale);
