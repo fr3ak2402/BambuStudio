@@ -371,8 +371,11 @@ public:
         memDc.DrawBitmap(background_bmp, (width - background_width) / 2, (width - background_width) / 2, true);
 
         // calculate position for the dynamic text
-        int text_margin = FromDIP(80 * m_scale);
-        m_action_line_y_position = logo_y + logo_size + text_margin;
+        /*int text_margin = FromDIP(80 * m_scale);
+        m_action_line_y_position = logo_y + logo_size + text_margin;*/
+
+        int dynamic_y = (((width - background_width) / 2) * 2) + background_height;
+        m_action_line_y_position = dynamic_y;
     }
 
     static wxBitmap MakeBitmap()
