@@ -238,7 +238,7 @@ AboutDialog::AboutDialog()
     panel_versizer->Add(m_logo, 1, wxALL | wxEXPAND, 0);
 
     // version
-    {
+    /*{
         vesizer->Add(0, FromDIP(165), 1, wxEXPAND, FromDIP(5));
         auto version_text = GUI_App::format_display_version();
 #if BBL_INTERNAL_TESTING
@@ -273,7 +273,7 @@ AboutDialog::AboutDialog()
         vesizer->Add(build_time_text, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, FromDIP(5));
 #endif
         vesizer->Add(0, 0, 1, wxEXPAND, FromDIP(5));
-    }
+    }*/
 
     wxBoxSizer *text_sizer_horiz = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer *text_sizer = new wxBoxSizer(wxVERTICAL);
