@@ -380,8 +380,8 @@ public:
 
     static wxBitmap MakeBitmap()
     {
-        int width = FromDIP(480, nullptr);
-        int height = FromDIP(480, nullptr);
+        int width = FromDIP(580, nullptr);
+        int height = FromDIP(310, nullptr);
 
         wxImage image(width, height);
         wxBitmap new_bmp(image);
