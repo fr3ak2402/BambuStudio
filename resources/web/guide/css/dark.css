@@ -83,3 +83,9 @@ body
 {
 	color: #9966A6;
 }
+
+/*--SearchField--*/
+input[type=search] {
+	background-color: #383E42;
+	color: #fff;
+}
