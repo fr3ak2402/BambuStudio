@@ -54,6 +54,11 @@ body
 }
 
 /*---Policy---*/
+.PolicyTxt
+{
+	border: 3px solid #fff;
+}
+
 .TextArea1
 {
 	background-color: #4A4A51;
