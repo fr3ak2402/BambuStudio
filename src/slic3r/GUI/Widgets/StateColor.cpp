@@ -5,7 +5,42 @@ static bool gDarkMode = false;
 static bool operator<(wxColour const &l, wxColour const &r) { return l.GetRGBA() < r.GetRGBA(); }
 
 static std::map<wxColour, wxColour> gDarkColors{
-    {"#00AE42", "#21A452"},
+    {"#693A71", "#693A71"},
+    {"#1F8EEA", "#2778D2"},
+    {"#FF6F00", "#D15B00"},
+    {"#D01B1B", "#BB2A3A"},
+    {"#262E30", "#EFEFF0"},
+    {"#2C2C2E", "#B3B3B4"},
+    {"#6B6B6B", "#818183"},
+    {"#ACACAC", "#54545A"},
+    {"#EEEEEE", "#4C4C55"},
+    {"#E8E8E8", "#3E3E45"},
+    {"#323A3D", "#E5E5E4"},
+    {"#FFFFFF", "#2D2D31"},
+    {"#F8F8F8", "#36363C"},
+    {"#F1F1F1", "#36363B"},
+    {"#3B4446", "#2D2D30"},
+    {"#CECECE", "#54545B"},
+    {"#DBFDD5", "#3B3B40"},
+    {"#000000", "#FFFFFE"},
+    {"#F4F4F4", "#36363D"},
+    {"#DBDBDB", "#4A4A51"},
+    {"#9966A6", "#9966A6"}, //-> maker
+    {"#323A3C", "#E5E5E6"},
+    {"#6B6B6A", "#B3B3B5"},
+    {"#303A3C", "#E5E5E5"},
+    {"#FEFFFF", "#242428"},
+    {"#A6A9AA", "#2D2D29"},
+    {"#363636", "#B2B3B5"},
+    {"#F0F0F1", "#404040"},
+    {"#9E9E9E", "#53545A"},
+    {"#D7E8DE", "#1F2B27"}, //-> maker
+    {"#2B3436", "#808080"},
+    {"#ABABAB", "#ABABAB"},
+    {"#D9D9D9", "#2D2D32"},
+    //{"#F0F0F0", "#4C4C54"},
+
+    /*{"#693A71", "#21A452"},
     {"#1F8EEA", "#2778D2"},
     {"#FF6F00", "#D15B00"},
     {"#D01B1B", "#BB2A3A"},
@@ -38,7 +73,7 @@ static std::map<wxColour, wxColour> gDarkColors{
     {"#2B3436", "#808080"},
     {"#ABABAB", "#ABABAB"},
     {"#D9D9D9", "#2D2D32"},
-    //{"#F0F0F0", "#4C4C54"},
+    //{"#F0F0F0", "#4C4C54"},*/
 };
 
 std::map<wxColour, wxColour> const & StateColor::GetDarkMap() 
