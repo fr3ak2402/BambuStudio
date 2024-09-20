@@ -38,9 +38,7 @@ DropDown::DropDown(std::vector<wxString> &texts,
     , icons(icons)
     , state_handler(this)
     , border_color(0xDBDBDB)
-    //, text_color(0x363636)
-    ,text_color(std::make_pair(0xFFFFFF, (int) StateColor::Hovered),
-        std::make_pair(0x363636, (int) StateColor::Normal))
+    , text_color(0x363636)
     , selector_border_color(std::make_pair(0x693A71, (int) StateColor::Hovered),
         std::make_pair(*wxWHITE, (int) StateColor::Normal))
     , selector_background_color(std::make_pair(0x9966A6, (int) StateColor::Checked),
