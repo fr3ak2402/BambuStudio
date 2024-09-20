@@ -31,14 +31,14 @@ body
 /*-----Button-----*/
 .GrayBtn
 {
-	border: 1px solid #B9B9BC;
-	color: #B9B9BC;	
+	border: 1px solid #383E42;
+	color: #fff;	
 }
 
 .GrayBtn:hover
 {
-	background-color:#E8E8E8;
-	color: #565656;
+	background-color:#282E32;
+	color: #fff;
 }
 
 /*-------Text------*/
