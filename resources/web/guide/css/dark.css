@@ -90,3 +90,7 @@ input[type=search] {
 	caret-color : #9966A6;
 	color: #fff;
 }
+
+input[type=search]::placeholder {
+	color: #fff;
+}
