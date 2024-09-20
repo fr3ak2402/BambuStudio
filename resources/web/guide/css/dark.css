@@ -61,6 +61,16 @@ body
 }
 
 /*----Region---*/
+.RegionList
+{
+	border: 3px solid #fff;
+}
+
+.RegionItem
+{
+	color: #fff;
+}
+
 .RegionItem:hover
 {
 	background-color:#4C4C55;
