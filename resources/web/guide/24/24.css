@@ -40,11 +40,12 @@
 	padding: 0px;
 	display: flex;
 	flex-wrap: wrap;
+	width: 100%;
 }
 
 .PrinterBlock
 {
-	width: 160px;
+	width: 192px;
 	text-align: center;
 	padding: 8px;
 }
@@ -58,7 +59,7 @@
 .PName
 {
 	font-weight: 700;
-	text-align:left;
+	text-align:center;
 }
 
 .pNozzel
@@ -74,6 +75,7 @@
 {
 	vertical-align: middle;
 	margin-right: 5px;
+	accent-color: #693A71;
 }
 
 
