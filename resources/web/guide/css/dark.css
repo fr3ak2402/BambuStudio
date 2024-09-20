@@ -87,5 +87,6 @@ body
 /*--SearchField--*/
 input[type=search] {
 	background-color: #383E42;
+	caret-color : #9966A6;
 	color: #fff;
 }
