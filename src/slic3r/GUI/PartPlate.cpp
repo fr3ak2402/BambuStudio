@@ -65,7 +65,7 @@ const float WIPE_TOWER_DEFAULT_Y_POS = 250.;  // Max y
 const float I3_WIPE_TOWER_DEFAULT_X_POS = 0.;
 const float I3_WIPE_TOWER_DEFAULT_Y_POS = 250.; // Max y
 
-std::array<unsigned char, 4>  PlateTextureForeground = {0xED, 0x6B, 0x21, 0xFF};
+std::array<unsigned char, 4>  PlateTextureForeground = {0xFF, 0x99, 0x66, 0xFF};
 
 namespace Slic3r {
 namespace GUI {
