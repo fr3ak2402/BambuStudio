@@ -29,8 +29,8 @@ SideButton::SideButton(wxWindow* parent, wxString text, wxString icon, long stly
 
 
     border_color.append(0x6B6B6B, StateColor::Disabled);
-    border_color.append(wxColour(23, 129, 63), StateColor::Pressed);
-    border_color.append(wxColour(48,221,112), StateColor::Hovered);
+    border_color.append(wxColour(69, 43, 74), StateColor::Pressed);
+    border_color.append(wxColour(153, 102, 166), StateColor::Hovered);
     border_color.append(0x693A71, StateColor::Normal);
     border_color.setTakeFocusedAsHovered(false);
 
@@ -40,8 +40,8 @@ SideButton::SideButton(wxWindow* parent, wxString text, wxString icon, long stly
     text_color.append(0xFEFEFE, StateColor::Normal);
 
     background_color.append(0x6B6B6B, StateColor::Disabled);
-    background_color.append(wxColour(23, 129, 63), StateColor::Pressed);
-    background_color.append(wxColour(48, 221, 112), StateColor::Hovered);
+    background_color.append(wxColour(69, 43, 74), StateColor::Pressed);
+    background_color.append(wxColour(153, 102, 166), StateColor::Hovered);
     background_color.append(0x693A71, StateColor::Normal);
     background_color.setTakeFocusedAsHovered(false);
 
