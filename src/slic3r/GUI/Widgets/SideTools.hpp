@@ -15,7 +15,7 @@
 #define SIDE_TOOLS_GREY600 wxColour(144, 144, 144)
 #define SIDE_TOOLS_GREY400 wxColour(206, 206, 206)
 #define SIDE_TOOLS_BRAND wxColour(105, 58, 113)
-#define SIDE_TOOLS_LIGHT_GREEN wxColour(237, 219, 253)
+#define SIDE_TOOLS_LIGHT_GREEN wxColour(153, 133, 171)
 
 enum WifiSignal {
     NONE,
