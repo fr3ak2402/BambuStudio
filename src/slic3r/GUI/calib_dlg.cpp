@@ -107,8 +107,8 @@ PA_Calibration_Dlg::PA_Calibration_Dlg(wxWindow* parent, wxWindowID id, Plater* 
 	v_sizer->Add(0, FromDIP(10), 0, wxEXPAND, 5);
     m_btnStart = new Button(this, _L("OK"));
 
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(23, 129, 63), StateColor::Pressed),
-		std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(69, 43, 74), StateColor::Pressed),
+		std::pair<wxColour, int>(wxColour(153, 102, 166), StateColor::Hovered),
 		std::pair<wxColour, int>(0x693A71, StateColor::Normal));
 
 	m_btnStart->SetBackgroundColor(btn_bg_green);
@@ -316,8 +316,8 @@ Temp_Calibration_Dlg::Temp_Calibration_Dlg(wxWindow* parent, wxWindowID id, Plat
     v_sizer->Add(settings_sizer);
     v_sizer->Add(0, FromDIP(10), 0, wxEXPAND, 5);
     m_btnStart = new Button(this, _L("OK"));
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(23, 129, 63), StateColor::Pressed),
-		std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(69, 43, 74), StateColor::Pressed),
+		std::pair<wxColour, int>(wxColour(153, 102, 166), StateColor::Hovered),
 		std::pair<wxColour, int>(0x693A71, StateColor::Normal));
 
     m_btnStart->SetBackgroundColor(btn_bg_green);
@@ -488,8 +488,8 @@ MaxVolumetricSpeed_Test_Dlg::MaxVolumetricSpeed_Test_Dlg(wxWindow* parent, wxWin
     v_sizer->Add(settings_sizer);
     v_sizer->Add(0, FromDIP(10), 0, wxEXPAND, 5);
     m_btnStart = new Button(this, _L("OK"));
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(23, 129, 63), StateColor::Pressed),
-		std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(69, 43, 74), StateColor::Pressed),
+		std::pair<wxColour, int>(wxColour(153, 102, 166), StateColor::Hovered),
 		std::pair<wxColour, int>(0x693A71, StateColor::Normal));
 
     m_btnStart->SetBackgroundColor(btn_bg_green);
@@ -593,8 +593,8 @@ VFA_Test_Dlg::VFA_Test_Dlg(wxWindow* parent, wxWindowID id, Plater* plater)
     v_sizer->Add(settings_sizer);
     v_sizer->Add(0, FromDIP(10), 0, wxEXPAND, 5);
     m_btnStart = new Button(this, _L("OK"));
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(23, 129, 63), StateColor::Pressed),
-		std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(69, 43, 74), StateColor::Pressed),
+		std::pair<wxColour, int>(wxColour(153, 102, 166), StateColor::Hovered),
 		std::pair<wxColour, int>(0x693A71, StateColor::Normal));
 
     m_btnStart->SetBackgroundColor(btn_bg_green);
@@ -699,8 +699,8 @@ Retraction_Test_Dlg::Retraction_Test_Dlg(wxWindow* parent, wxWindowID id, Plater
     v_sizer->Add(settings_sizer);
     v_sizer->Add(0, FromDIP(10), 0, wxEXPAND, 5);
     m_btnStart = new Button(this, _L("OK"));
-    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(23, 129, 63), StateColor::Pressed),
-		std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
+    StateColor btn_bg_green(std::pair<wxColour, int>(wxColour(69, 43, 74), StateColor::Pressed),
+		std::pair<wxColour, int>(wxColour(153, 102, 166), StateColor::Hovered),
 		std::pair<wxColour, int>(0x693A71, StateColor::Normal));
 
     m_btnStart->SetBackgroundColor(btn_bg_green);

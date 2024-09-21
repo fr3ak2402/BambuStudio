@@ -1982,7 +1982,7 @@ void MainFrame::update_side_button_style()
     m_slice_btn->SetBottomColour(wxColour(0x3B4446));*/
     StateColor m_btn_bg_enable = StateColor(
         std::pair<wxColour, int>(wxColour(69, 43, 74), StateColor::Pressed), 
-        std::pair<wxColour, int>(wxColour(48, 221, 112), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(153, 102, 166), StateColor::Hovered),
         std::pair<wxColour, int>(wxColour(105, 58, 113), StateColor::Normal)
     );
 
