@@ -22,7 +22,7 @@ endif ()
 #     set(_patch_cmd test -f WXWIDGETS_PATCHED || ${PATCH_CMD} ${CMAKE_CURRENT_LIST_DIR}/0001-wxWidget-fix.patch && touch WXWIDGETS_PATCHED)
 # endif ()
 
-bambustudio_add_cmake_project(wxWidgets
+galaxyslicerneo_add_cmake_project(wxWidgets
     GIT_REPOSITORY "https://github.com/bambulab/wxWidgets"
     GIT_TAG master
     DEPENDS ${PNG_PKG} ${ZLIB_PKG} ${EXPAT_PKG} ${TIFF_PKG} ${JPEG_PKG}
