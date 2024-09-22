@@ -1415,7 +1415,7 @@ GUI_App::GUI_App()
 	, m_removable_drive_manager(std::make_unique<RemovableDriveManager>())
 	, m_other_instance_message_handler(std::make_unique<OtherInstanceMessageHandler>())
 {
-	//app config initializes early becasuse it is used in instance checking in BambuStudio.cpp
+	//app config initializes early becasuse it is used in instance checking in GalaxySlicerNeo.cpp
     this->init_app_config();
     if (app_config) {
         ::Label::initSysFont(app_config->get_language_code(), false);

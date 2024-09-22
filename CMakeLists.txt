@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(BambuStudio)
+project(GalaxySlicerNeo)
 
 include("version.inc")
 include(GNUInstallDirs)
@@ -23,11 +23,11 @@ else()
         endif()
 endif()
 
-option(SLIC3R_STATIC 			"Compile BambuStudio with static libraries (Boost, TBB, glew)" ${SLIC3R_STATIC_INITIAL})
-option(SLIC3R_GUI    			"Compile BambuStudio with GUI components (OpenGL, wxWidgets)" 1)
-option(SLIC3R_FHS               "Assume BambuStudio is to be installed in a FHS directory structure" 0)
+option(SLIC3R_STATIC 			"Compile GalaxySlicerNeo with static libraries (Boost, TBB, glew)" ${SLIC3R_STATIC_INITIAL})
+option(SLIC3R_GUI    			"Compile GalaxySlicerNeo with GUI components (OpenGL, wxWidgets)" 1)
+option(SLIC3R_FHS               "Assume GalaxySlicerNeo is to be installed in a FHS directory structure" 0)
 option(SLIC3R_WX_STABLE         "Build against wxWidgets stable (3.0) as oppsed to dev (3.1) on Linux" 0)
-option(SLIC3R_PROFILE 			"Compile BambuStudio with an invasive Shiny profiler" 0)
+option(SLIC3R_PROFILE 			"Compile GalaxySlicerNeo with an invasive Shiny profiler" 0)
 option(SLIC3R_PCH               "Use precompiled headers" 1)
 option(SLIC3R_MSVC_COMPILE_PARALLEL "Compile on Visual Studio in parallel" 1)
 option(SLIC3R_MSVC_PDB          "Generate PDB files on MSVC in Release mode" 1)
@@ -122,7 +122,7 @@ if (MINGW)
 endif ()
 
 if (NOT MSVC)
-    # ARMs (Raspberry PI) use an unsigned char by default. Let's make it consistent for BambuStudio on all platforms.
+    # ARMs (Raspberry PI) use an unsigned char by default. Let's make it consistent for GalaxySlicerNeo on all platforms.
     add_compile_options(-fsigned-char)
 endif ()
 
@@ -302,7 +302,7 @@ if(WIN32)
     if(MSVC)
         # BOOST_ALL_NO_LIB: Avoid the automatic linking of Boost libraries on Windows. Rather rely on explicit linking.
         add_definitions(-DBOOST_ALL_NO_LIB -DBOOST_USE_WINAPI_VERSION=0x601 -DBOOST_SYSTEM_USE_UTF8 )
-        # Force the source code encoding to UTF-8. See BambuStudio GH pull request #5583
+        # Force the source code encoding to UTF-8. See GalaxySlicerNeo GH pull request #5583
         add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
         add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
     endif(MSVC)
@@ -314,13 +314,13 @@ add_definitions(-DwxUSE_UNICODE -D_UNICODE -DUNICODE -DWXINTL_NO_GETTEXT_MACRO)
 add_definitions(-DwxNO_UNSAFE_WXSTRING_CONV)
 
 if (SLIC3R_PROFILE)
-    message("BambuStudio will be built with a Shiny invasive profiler")
+    message("GalaxySlicerNeo will be built with a Shiny invasive profiler")
     add_definitions(-DSLIC3R_PROFILE)
 endif ()
 
 # Disable optimization even with debugging on.
 if (0)
-    message(STATUS "Perl compiled without optimization. Disabling optimization for the BambuStudio build.")
+    message(STATUS "Perl compiled without optimization. Disabling optimization for the GalaxySlicerNeo build.")
     message("Old CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
     message("Old CMAKE_CXX_FLAGS_RELWITHDEBINFO: ${CMAKE_CXX_FLAGS_RELEASE}")
     message("Old CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS_RELEASE}")
@@ -660,9 +660,9 @@ function(bambustudio_copy_dlls target config postfix output_dlls)
 endfunction()
 
 
-# libslic3r, BambuStudio GUI and the BambuStudio executable.
+# libslic3r, GalaxySlicerNeo GUI and the GalaxySlicerNeo executable.
 add_subdirectory(src)
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT BambuStudio_app_gui)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT GalaxySlicerNeo_app_gui)
 
 add_dependencies(gettext_make_pot hintsToPot)
 
@@ -697,20 +697,20 @@ if (WIN32)
     install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/resources")
 elseif (SLIC3R_FHS)
     # CMAKE_INSTALL_FULL_DATAROOTDIR: read-only architecture-independent data root (share)
-    set(SLIC3R_FHS_RESOURCES "${CMAKE_INSTALL_FULL_DATAROOTDIR}/BambuStudio")
+    set(SLIC3R_FHS_RESOURCES "${CMAKE_INSTALL_FULL_DATAROOTDIR}/GalaxySlicerNeo")
     install(DIRECTORY ${SLIC3R_RESOURCES_DIR}/ DESTINATION ${SLIC3R_FHS_RESOURCES}
         PATTERN "*/udev" EXCLUDE
     )
-    install(FILES src/platform/unix/BambuStudio.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES src/platform/unix/GalaxySlicerNeo.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
     foreach(SIZE 32 128 192)
-        install(FILES ${SLIC3R_RESOURCES_DIR}/images/BambuStudio_${SIZE}px.png
+        install(FILES ${SLIC3R_RESOURCES_DIR}/images/GalaxySlicerNeo_${SIZE}px.png
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME GalaxySlicerNeo.png
         )
     endforeach()
 elseif (CMAKE_MACOSX_BUNDLE)
-    install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/BambuStudio.app/Contents/resources")
+    install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/GalaxySlicerNeo.app/Contents/resources")
 else ()
-    install(FILES src/platform/unix/BambuStudio.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/resources/applications)
+    install(FILES src/platform/unix/GalaxySlicerNeo.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/resources/applications)
     install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/resources")
 endif ()
 

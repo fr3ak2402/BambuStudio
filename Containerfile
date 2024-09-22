@@ -9,14 +9,14 @@
 # Debugging the resulting AppImage:
 #   1) Install `gdb`
 #   2) In a terminal in the same directory as the AppImage, start it with following:
-#      echo -e "run\nbt\nquit" | gdb ./BambuStudio_ubu64.AppImage
+#      echo -e "run\nbt\nquit" | gdb ./GalaxySlicerNeo_ubu64.AppImage
 #   3) Find related issue using backtrace output for clues and add backtrace to it on github
 #
 # Docker alternative AppImage build syntax (use this if you can't install podman):
 # rm -rf build; docker build . --file Containerfile -t bambu-studio-builder; docker run --rm bambu-studio-builder /bin/bash -c 'tar -c $(find build | grep ubu64.AppImage | head -1)' | tar -xv
 #
 #
-# TODO: bind mount BambuStudio to inside the container instead of COPY to enable faster rebuilds during dev work.
+# TODO: bind mount GalaxySlicerNeo to inside the container instead of COPY to enable faster rebuilds during dev work.
 
 FROM docker.io/ubuntu:22.04
 LABEL maintainer "DeftDawg <DeftDawg@gmail.com>"
@@ -52,9 +52,9 @@ RUN apt-get update && apt-get install  -y \
     file \
     sudo
 
-COPY ./ BambuStudio
+COPY ./ GalaxySlicerNeo
 
-WORKDIR BambuStudio
+WORKDIR GalaxySlicerNeo
 
 # These can run together, but we run them seperate for podman caching
 # Update System dependencies

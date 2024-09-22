@@ -99,7 +99,7 @@ function RunInverse()
 	
 	if(nCount==-1)
 	{
-		RestartBambuStudio();
+		RestartGalaxySlicerNeo();
 	}
 	
 }
@@ -133,7 +133,7 @@ function SendInstallPluginCmd()
 
 
 
-function RestartBambuStudio()
+function RestartGalaxySlicerNeo()
 {
 	if( pTimer!=null )
 	{

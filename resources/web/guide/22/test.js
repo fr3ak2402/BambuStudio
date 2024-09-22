@@ -299,7 +299,7 @@ var cData={
 	},
 	"model": [
 		{
-			"cover": "C:\\Users\\zorro\\AppData\\Roaming\\BambuStudio\\system\\BBL\\Bambu Lab X1 Carbon_cover.png",
+			"cover": "C:\\Users\\zorro\\AppData\\Roaming\\GalaxySlicerNeo\\system\\BBL\\Bambu Lab X1 Carbon_cover.png",
 			"materials": "Generic PLA;Bambu PLA Matte @BBL X1C;Bambu PLA Basic @BBL X1C;Bambu ABS @BBL X1C;Bambu PC @BBL X1C;Bambu Support W @BBL X1C;Bambu TPU 95A @BBL X1C;PolyTerra PLA @BBL X1C;PolyLite PLA @BBL X1C;",
 			"model": "Bambu Lab X1 Carbon",
 			"nozzle_diameter": "0.4;0.2;0.6;0.8",
@@ -308,7 +308,7 @@ var cData={
 			"vendor": "BBL"
 		},
 		{
-			"cover": "C:\\Users\\zorro\\AppData\\Roaming\\BambuStudio\\system\\BBL\\Bambu Lab X1_cover.png",
+			"cover": "C:\\Users\\zorro\\AppData\\Roaming\\GalaxySlicerNeo\\system\\BBL\\Bambu Lab X1_cover.png",
 			"materials": "Generic PLA;Bambu PLA Matte @BBL X1;Bambu PLA Basic @BBL X1;Bambu ABS @BBL X1C;Bambu PC @BBL X1C;Bambu Support W @BBL X1;Bambu TPU 95A @BBL X1;PolyTerra PLA @BBL X1;PolyLite PLA @BBL X1;",
 			"model": "Bambu Lab X1",
 			"nozzle_diameter": "0.4",
