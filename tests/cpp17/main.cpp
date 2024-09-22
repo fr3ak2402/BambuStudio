@@ -10,7 +10,7 @@
 #include <string_view>
 
 // Test for nested namespace definition
-namespace BambuStudio::Cpp17 {
+namespace GalaxySlicerNeo::Cpp17 {
 
 template<class T> class Foo
 {
@@ -20,7 +20,7 @@ public:
     explicit Foo(T &&arg): m_arg{arg} {}
 };
 
-} // namespace BambuStudio::Cpp17
+} // namespace GalaxySlicerNeo::Cpp17
 
 template<class T> std::string get_type(const T &v);
 

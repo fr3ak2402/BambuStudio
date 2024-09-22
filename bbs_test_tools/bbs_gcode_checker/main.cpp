@@ -1,7 +1,7 @@
 ﻿#include "GCodeChecker.h"
 
 using namespace std;
-using namespace BambuStudio;
+using namespace GalaxySlicerNeo;
 
 int main(int argc, char *argv[])
 {
