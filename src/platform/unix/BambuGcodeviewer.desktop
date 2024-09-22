@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Bambu GCode viewer
-Exec=bambu-studio --gcodeviewer %F
+Exec=galaxyslicer-neo --gcodeviewer %F
 Icon=GalaxySlicerNeo-gcodeviewer
 Terminal=false
 Type=Application

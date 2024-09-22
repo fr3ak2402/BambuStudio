@@ -2911,7 +2911,7 @@ void MainFrame::init_menubar_as_editor()
                     NetworkAgent *agent   = GUI::wxGetApp().getAgent();
                     if (agent) agent->track_event("third_cali", js.dump());
                 } catch (...) {}
-                wxLaunchDefaultBrowser("https://wiki.bambulab.com/en/bambu-studio/Calibration", wxBROWSER_NEW_WINDOW);
+                wxLaunchDefaultBrowser("https://wiki.bambulab.com/en/galaxyslicer-neo/Calibration", wxBROWSER_NEW_WINDOW);
             }, "", nullptr,
             [this]() {return m_plater->is_view3D_shown();; }, this);
 
@@ -3041,7 +3041,7 @@ void MainFrame::init_menubar_as_editor()
                 NetworkAgent *agent = GUI::wxGetApp().getAgent();
                 if (agent) agent->track_event("third_cali", js.dump());
             } catch (...) {}
-            wxLaunchDefaultBrowser("https://wiki.bambulab.com/en/bambu-studio/Calibration", wxBROWSER_NEW_WINDOW);
+            wxLaunchDefaultBrowser("https://wiki.bambulab.com/en/galaxyslicer-neo/Calibration", wxBROWSER_NEW_WINDOW);
         }, "", nullptr,
         [this]() {
             return m_plater->is_view3D_shown();

@@ -1210,7 +1210,7 @@ int CLI::run(int argc, char **argv)
         BOOST_LOG_TRIVIAL(info) << "index="<< index <<", arg is "<< argv[index] <<std::endl;
     int debug_argc = 11;
     char *debug_argv[] = {
-        "F:\work\projects\bambu_debug\bamboo_slicer\build_debug\src\Debug\bambu-studio.exe",
+        "F:\work\projects\bambu_debug\bamboo_slicer\build_debug\src\Debug\galaxyslicer-neo.exe",
         "--debug=2",
         "--load-settings",
         "machine.json;process.json",
@@ -6462,7 +6462,7 @@ void CLI::print_help(bool include_print_options, PrinterTechnology printer_techn
     boost::nowide::cout
         << SLIC3R_APP_KEY <<"-"<< SLIC3R_VERSION << ":"
         << std::endl
-        << "Usage: bambu-studio [ OPTIONS ] [ file.3mf/file.stl ... ]" << std::endl
+        << "Usage: galaxyslicer-neo [ OPTIONS ] [ file.3mf/file.stl ... ]" << std::endl
         << std::endl
         << "OPTIONS:" << std::endl;
     cli_misc_config_def.print_cli_help(boost::nowide::cout, false);

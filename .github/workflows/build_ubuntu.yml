@@ -106,11 +106,11 @@ jobs:
         shell: bash
         run: |
           rm -rf build
-          podman buildx build --build-arg BUILD_LINUX_EXTRA_ARGS=-r -t bambu-studio-builder:latest .
-          podman run -d -it --name bambu-studio-builder bambu-studio-builder:latest /bin/bash -c 'tail -f /dev/null'
-          podman cp bambu-studio-builder:/GalaxySlicerNeo/build/GalaxySlicerNeo_ubu64.AppImage ./
-          podman stop bambu-studio-builder
-          podman rm bambu-studio-builder
+          podman buildx build --build-arg BUILD_LINUX_EXTRA_ARGS=-r -t galaxyslicer-neo-builder:latest .
+          podman run -d -it --name galaxyslicer-neo-builder galaxyslicer-neo-builder:latest /bin/bash -c 'tail -f /dev/null'
+          podman cp galaxyslicer-neo-builder:/GalaxySlicerNeo/build/GalaxySlicerNeo_ubu64.AppImage ./
+          podman stop galaxyslicer-neo-builder
+          podman rm galaxyslicer-neo-builder
       - uses: actions/upload-artifact@v4
         with:
           name: GalaxySlicerNeo_Linux_ubu64_using_container

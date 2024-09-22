@@ -1274,7 +1274,7 @@ wxString OptionsGroup::get_url(const std::string& path_end)
     wxString    region    = L"en";
     if (language.find("zh") == 0)
         region = L"zh";
-    return wxString::Format(L"https://wiki.bambulab.com/%s/software/bambu-studio/%s", region, str);
+    return wxString::Format(L"https://wiki.bambulab.com/%s/software/galaxyslicer-neo/%s", region, str);
 }
 
 bool OptionsGroup::launch_browser(const std::string& path_end)

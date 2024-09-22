@@ -3791,13 +3791,13 @@ void StatusPanel::on_ams_guide(wxCommandEvent& event)
 {
     wxString ams_wiki_url;
     if (m_ams_control && m_ams_control->m_is_none_ams_mode == AMSModel::GENERIC_AMS) {
-        ams_wiki_url = "https://wiki.bambulab.com/en/software/bambu-studio/use-ams-on-bambu-studio";
+        ams_wiki_url = "https://wiki.bambulab.com/en/software/galaxyslicer-neo/use-ams-on-galaxyslicer-neo";
     }
     else if (m_ams_control && m_ams_control->m_is_none_ams_mode == AMSModel::EXTRA_AMS) {
         ams_wiki_url = "https://wiki.bambulab.com/en/ams-lite";
     }
     else {
-        ams_wiki_url = "https://wiki.bambulab.com/en/software/bambu-studio/use-ams-on-bambu-studio";
+        ams_wiki_url = "https://wiki.bambulab.com/en/software/galaxyslicer-neo/use-ams-on-galaxyslicer-neo";
     }
     
     wxLaunchDefaultBrowser(ams_wiki_url);

@@ -91,4 +91,4 @@ RUN [[ "$UID" != "0" ]] \
 
 # Using an entrypoint instead of CMD because the binary
 # accepts several command line arguments.
-ENTRYPOINT ["/GalaxySlicerNeo/build/package/bin/bambu-studio"]
+ENTRYPOINT ["/GalaxySlicerNeo/build/package/bin/galaxyslicer-neo"]

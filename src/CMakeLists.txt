@@ -119,8 +119,8 @@ endif (MINGW)
 
 if (NOT WIN32 AND NOT APPLE)
     # Binary name on unix like systems (Linux, Unix)
-    set_target_properties(GalaxySlicerNeo PROPERTIES OUTPUT_NAME "bambu-studio")
-    set(SLIC3R_APP_CMD "bambu-studio")
+    set_target_properties(GalaxySlicerNeo PROPERTIES OUTPUT_NAME "galaxyslicer-neo")
+    set(SLIC3R_APP_CMD "galaxyslicer-neo")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/platform/unix/BuildLinuxImage.sh.in ${CMAKE_CURRENT_BINARY_DIR}/BuildLinuxImage.sh @ONLY)
 endif ()
 
@@ -173,7 +173,7 @@ if (WIN32)
     endif()
     target_compile_definitions(GalaxySlicerNeo_app_gui PRIVATE -DSLIC3R_WRAPPER_NOCONSOLE)
     add_dependencies(GalaxySlicerNeo_app_gui GalaxySlicerNeo)
-    set_target_properties(GalaxySlicerNeo_app_gui PROPERTIES OUTPUT_NAME "bambu-studio")
+    set_target_properties(GalaxySlicerNeo_app_gui PROPERTIES OUTPUT_NAME "galaxyslicer-neo")
     target_link_libraries(GalaxySlicerNeo_app_gui PRIVATE boost_headeronly)
 endif ()
 
@@ -221,7 +221,7 @@ else ()
     if (APPLE AND NOT CMAKE_MACOSX_BUNDLE)
         # On OSX, the name of the binary matches the name of the Application.
         add_custom_command(TARGET GalaxySlicerNeo POST_BUILD
-            COMMAND ln -sf GalaxySlicerNeo bambu-studio
+            COMMAND ln -sf GalaxySlicerNeo galaxyslicer-neo
             WORKING_DIRECTORY "$<TARGET_FILE_DIR:GalaxySlicerNeo>"
             VERBATIM)
     else ()
