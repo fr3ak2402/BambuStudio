@@ -6,17 +6,17 @@
 		"files": [
 			{
 				"type": "po",
-				"pattern": "bbl/i18n/en/BambuStudio_en.po",
+				"pattern": "bbl/i18n/en/GalaxySlicerNeo_en.po",
 				"lang": "en"
 			},
 			{
 				"type": "po",
-				"pattern": "bbl/i18n/de/BambuStudio_de.po",
+				"pattern": "bbl/i18n/de/GalaxySlicerNeo_de.po",
 				"lang": "de"
 			},
 			{
 				"type": "po",
-				"pattern": "bbl/i18n/nl/BambuStudio_nl.po",
+				"pattern": "bbl/i18n/nl/GalaxySlicerNeo_nl.po",
 				"lang": "nl"
 			}
 		]
@@ -25,7 +25,7 @@
 		"folder": "bbl/i18n",
 		"includeSourceLang" : "true",
 		"files": {
-			"output": "${lang}/BambuStudio_${lang}.po"
+			"output": "${lang}/GalaxySlicerNeo_${lang}.po"
 		}
 	}
 }
