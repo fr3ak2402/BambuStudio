@@ -157,7 +157,7 @@ fi
 
 if [[ -n "${BUILD_BAMBU_STUDIO}" ]]
 then
-    echo "Configuring BambuStudio..."
+    echo "Configuring GalaxySlicerNeo..."
     if [[ -n "${CLEAN_BUILD}" ]]
     then
         rm -fr build
@@ -179,8 +179,8 @@ then
         -DSLIC3R_STATIC=1 \
         ${BUILD_ARGS}
     echo "done"
-    echo "Building BambuStudio ..."
-    cmake --build build --target BambuStudio
+    echo "Building GalaxySlicerNeo ..."
+    cmake --build build --target GalaxySlicerNeo
     echo "done"
 fi
 
