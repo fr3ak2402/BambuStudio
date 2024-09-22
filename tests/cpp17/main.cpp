@@ -34,7 +34,7 @@ int main()
     // Template argument deduction for class templates
     // /////////////////////////////////////////////////////////////////////////
     
-    auto foo = BambuStudio::Cpp17::Foo{1.f};
+    auto foo = GalaxySlicerNeo::Cpp17::Foo{1.f};
     
     // /////////////////////////////////////////////////////////////////////////
     // Structured bindings:
