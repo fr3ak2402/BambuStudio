@@ -15,4 +15,4 @@
 7. Added Magyar translations
 8. Fixed some known bugs
 
-For details, please check https://github.com/bambulab/BambuStudio/releases
+For details, please check https://github.com/fr3ak2402/GalaxySlicerNeo/releases

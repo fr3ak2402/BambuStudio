@@ -15,4 +15,4 @@
 7. 支持匈牙利语
 8. 一些关键问题修复
 
-详细信息请查看：https://github.com/bambulab/BambuStudio/releases
+详细信息请查看：https://github.com/fr3ak2402/GalaxySlicerNeo/releases
