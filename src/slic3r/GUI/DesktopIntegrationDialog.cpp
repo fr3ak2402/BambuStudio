@@ -387,8 +387,8 @@ void DesktopIntegrationDialog::perform_desktop_integration()
         // Icon
         if (!target_dir_icons.empty())
         {
-            std::string icon_path = GUI::format("%1%/images/BambuStudio-gcodeviewer_192px.png",resources_dir());
-            std::string dest_path = GUI::format("%1%/images/%2%BambuStudio-gcodeviewer%3%.png", target_dir_icons, icon_theme_path, version_suffix);
+            std::string icon_path = GUI::format("%1%/images/GalaxySlicerNeo-gcodeviewer_192px.png",resources_dir());
+            std::string dest_path = GUI::format("%1%/images/%2%GalaxySlicerNeo-gcodeviewer%3%.png", target_dir_icons, icon_theme_path, version_suffix);
             if (copy_icon(icon_path, dest_path))
                 // save path to icon
                 app_config->set("desktop_integration_icon_viewer_path", dest_path);
@@ -401,7 +401,7 @@ void DesktopIntegrationDialog::perform_desktop_integration()
             "[Desktop Entry]\n"
             "Name=Bambu Gcode Viewer%1%\n"
             "GenericName=3D Printing Software\n"
-            "Icon=BambuStudio-gcodeviewer%2%\n"
+            "Icon=GalaxySlicerNeo-gcodeviewer%2%\n"
             "Exec=\"%3%\" --gcodeviewer %%F\n"
             "Terminal=false\n"
             "Type=Application\n"
