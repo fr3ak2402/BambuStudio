@@ -1055,14 +1055,14 @@ wxWindow* PreferencesDialog::create_general_page()
     });
 
 #ifdef _WIN32
-    auto title_associate_file = create_item_title(_L("Associate Files To Bambu Studio"), page, _L("Associate Files To Bambu Studio"));
+    auto title_associate_file = create_item_title(_L("Associate Files To GalaxySlicerNeo"), page, _L("Associate Files To GalaxySlicerNeo"));
 
     // associate file
-    auto item_associate_3mf  = create_item_checkbox(_L("Associate .3mf files to Bambu Studio"), page,
+    auto item_associate_3mf  = create_item_checkbox(_L("Associate .3mf files to GalaxySlicerNeo"), page,
                                                         _L("If enabled, sets Bambu Studio as default application to open .3mf files"), 50, "associate_3mf");
-    auto item_associate_stl  = create_item_checkbox(_L("Associate .stl files to Bambu Studio"), page,
+    auto item_associate_stl  = create_item_checkbox(_L("Associate .stl files to GalaxySlicerNeo"), page,
                                                         _L("If enabled, sets Bambu Studio as default application to open .stl files"), 50, "associate_stl");
-    auto item_associate_step = create_item_checkbox(_L("Associate .step/.stp files to Bambu Studio"), page,
+    auto item_associate_step = create_item_checkbox(_L("Associate .step/.stp files to GalaxySlicerNeo"), page,
                                                          _L("If enabled, sets Bambu Studio as default application to open .step files"), 50, "associate_step");
 #endif // _WIN32
 

@@ -209,7 +209,7 @@ bool DesktopIntegrationDialog::is_integrated()
     if (path.empty())
         return false;
 
-    // confirmation that BambuStudio.desktop exists
+    // confirmation that GalaxySlicerNeo.desktop exists
     struct stat buffer;   
     return (stat (path.c_str(), &buffer) == 0);
 }
@@ -316,7 +316,7 @@ void DesktopIntegrationDialog::perform_desktop_integration()
         }
     }
     if(target_dir_icons.empty()) {
-        BOOST_LOG_TRIVIAL(error) << "Copying BambuStudio icon to icons directory failed.";
+        BOOST_LOG_TRIVIAL(error) << "Copying GalaxySlicerNeo icon to icons directory failed.";
     } else 
     	// save path to icon
         app_config->set("desktop_integration_icon_slicer_path", GUI::format("%1%/images/%2%BambuStudio%3%.png", target_dir_icons, icon_theme_path, version_suffix));
@@ -348,7 +348,7 @@ void DesktopIntegrationDialog::perform_desktop_integration()
                 break;
             } else {
             	// write failed - try another path
-                BOOST_LOG_TRIVIAL(debug) << "Attempt to BambuStudio.desktop file installation failed. failed path: " << target_candidates[i];
+                BOOST_LOG_TRIVIAL(debug) << "Attempt to GalaxySlicerNeo.desktop file installation failed. failed path: " << target_candidates[i];
                 target_dir_desktop.clear(); 
             }
             // if all failed - try creating default home folder
@@ -416,7 +416,7 @@ void DesktopIntegrationDialog::perform_desktop_integration()
             app_config->set("desktop_integration_app_viewer_path", desktop_path);
         else {
             BOOST_LOG_TRIVIAL(error) << "Performing desktop integration failed - could not create Gcodeviewer desktop file";
-            show_error(nullptr, _L("Performing desktop integration failed - could not create Gcodeviewer desktop file. BambuStudio desktop file was probably created successfully."));
+            show_error(nullptr, _L("Performing desktop integration failed - could not create Gcodeviewer desktop file. GalaxySlicerNeo desktop file was probably created successfully."));
         }
     }
     

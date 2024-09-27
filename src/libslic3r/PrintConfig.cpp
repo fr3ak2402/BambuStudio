@@ -5656,8 +5656,8 @@ CLIMiscConfigDef::CLIMiscConfigDef()
 
     def = this->add("config_compatibility", coEnum);
     def->label = L("Forward-compatibility rule when loading configurations from config files and project files (3MF, AMF).");
-    def->tooltip = L("This version of BambuStudio may not understand configurations produced by the newest BambuStudio versions. "
-                     "For example, newer BambuStudio may extend the list of supported firmware flavors. One may decide to "
+    def->tooltip = L("This version of GalaxySlicerNeo may not understand configurations produced by the newest GalaxySlicerNeo versions. "
+                     "For example, newer GalaxySlicerNeo may extend the list of supported firmware flavors. One may decide to "
                      "bail out or to substitute an unknown value with a default silently or verbosely.");
     def->enum_keys_map = &ConfigOptionEnum<ForwardCompatibilitySubstitutionRule>::get_enum_values();
     def->enum_values.push_back("disable");
@@ -5733,7 +5733,7 @@ CLIMiscConfigDef::CLIMiscConfigDef()
     def = this->add("single_instance", coBool);
     def->label = L("Single instance mode");
     def->tooltip = L("If enabled, the command line arguments are sent to an existing instance of GUI BambuStudio, "
-                     "or an existing BambuStudio window is activated. "
+                     "or an existing GalaxySlicerNeo window is activated. "
                      "Overrides the \"single_instance\" configuration value from application preferences.");*/
 
 /*

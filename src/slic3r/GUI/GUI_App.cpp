@@ -1026,7 +1026,7 @@ static void generic_exception_handle()
         // and terminate the app so it is at least certain to happen now.
         BOOST_LOG_TRIVIAL(error) << boost::format("std::bad_alloc exception: %1%") % ex.what();
         flush_logs();
-        wxString errmsg = wxString::Format(_L("BambuStudio will terminate because of running out of memory."
+        wxString errmsg = wxString::Format(_L("GalaxySlicerNeo will terminate because of running out of memory."
                                               "It may be a bug. It will be appreciated if you report the issue to our team."));
         wxMessageBox(errmsg + "\n\n" + wxString(ex.what()), _L("Fatal error"), wxOK | wxICON_ERROR);
 
@@ -1035,13 +1035,13 @@ static void generic_exception_handle()
      } catch (const boost::io::bad_format_string& ex) {
         BOOST_LOG_TRIVIAL(error) << boost::format("Uncaught exception: %1%") % ex.what();
         flush_logs();
-        wxString errmsg = _L("BambuStudio will terminate because of a localization error. "
+        wxString errmsg = _L("GalaxySlicerNeo will terminate because of a localization error. "
                              "It will be appreciated if you report the specific scenario this issue happened.");
         wxMessageBox(errmsg + "\n\n" + wxString(ex.what()), _L("Critical error"), wxOK | wxICON_ERROR);
         std::terminate();
         //throw;
     } catch (const std::exception& ex) {
-        wxLogError(format_wxstr(_L("BambuStudio got an unhandled exception: %1%"), ex.what()));
+        wxLogError(format_wxstr(_L("GalaxySlicerNeo got an unhandled exception: %1%"), ex.what()));
         BOOST_LOG_TRIVIAL(error) << boost::format("Uncaught exception: %1%") % ex.what();
         flush_logs();
         throw;
@@ -2277,7 +2277,7 @@ static boost::optional<Semver> parse_semver_from_ini(std::string path)
     std::stringstream buffer;
     buffer << stream.rdbuf();
     std::string body = buffer.str();
-    size_t start = body.find("BambuStudio ");
+    size_t start = body.find("GalaxySlicerNeo ");
     if (start == std::string::npos)
         return boost::none;
     body = body.substr(start + 12);
@@ -2368,7 +2368,7 @@ void GUI_App::init_app_config()
         if (!error.empty()) {
             // Error while parsing config file. We'll customize the error message and rethrow to be displayed.
             throw Slic3r::RuntimeError(
-                _u8L("BambuStudio configuration file may be corrupted and is not able to be parsed."
+                _u8L("GalaxySlicerNeo configuration file may be corrupted and is not able to be parsed."
                      "Please delete the file and try again.") +
                 "\n\n" + app_config->config_path() + "\n\n" + error);
         }
@@ -2597,7 +2597,7 @@ bool GUI_App::on_init_inner()
     }
 #endif
 
-    BOOST_LOG_TRIVIAL(info) << boost::format("gui mode, Current BambuStudio Version %1%")%SLIC3R_VERSION;
+    BOOST_LOG_TRIVIAL(info) << boost::format("gui mode, Current GalaxySlicerNeo Version %1%")%SLIC3R_VERSION;
     // Enable this to get the default Win32 COMCTRL32 behavior of static boxes.
 //    wxSystemOptions::SetOption("msw.staticbox.optimized-paint", 0);
     // Enable this to disable Windows Vista themes for all wxNotebooks. The themes seem to lead to terrible
@@ -2748,7 +2748,7 @@ bool GUI_App::on_init_inner()
                /* wxString tips = wxString::Format(_L("Click to download new version in default browser: %s"), version_info.version_str);
                 DownloadDialog dialog(this->mainframe,
                     tips,
-                    _L("New version of Bambu Studio"),
+                    _L("New version of GalaxySlicerNeo"),
                     false,
                     wxCENTER | wxICON_INFORMATION);
 
@@ -5357,7 +5357,7 @@ bool GUI_App::load_language(wxString language, bool initial)
     	// Get the active language from PrusaSlicer.ini, or empty string if the key does not exist.
         language = app_config->get("language");
         if (! language.empty())
-        	BOOST_LOG_TRIVIAL(info) << boost::format("language provided by BambuStudio.conf: %1%") % language;
+        	BOOST_LOG_TRIVIAL(info) << boost::format("language provided by GalaxySlicerNeo.conf: %1%") % language;
         else {
             // Get the system language.
             const wxLanguage lang_system = wxLanguage(wxLocale::GetSystemLanguage());
@@ -6165,7 +6165,7 @@ void GUI_App::OSXStoreOpenFiles(const wxArrayString &fileNames)
         if (is_gcode_file(into_u8(filename)))
             ++ num_gcodes;
     if (fileNames.size() == num_gcodes) {
-        // Opening PrusaSlicer by drag & dropping a G-Code onto BambuStudio icon in Finder,
+        // Opening PrusaSlicer by drag & dropping a G-Code onto GalaxySlicerNeo icon in Finder,
         // just G-codes were passed. Switch to G-code viewer mode.
         m_app_mode = EAppMode::GCodeViewer;
         unlock_lockfile(get_instance_hash_string() + ".lock", data_dir() + "/cache/");

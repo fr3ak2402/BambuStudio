@@ -210,7 +210,7 @@ static bool should_dialog_be_shown()
 
 
 
-// Following function saves current BambuStudio version into app config.
+// Following function saves current GalaxySlicerNeo version into app config.
 // It will be later used to decide whether to open the dialog or not.
 static void save_version()
 {
@@ -402,7 +402,7 @@ static std::string generate_system_info_json()
     namespace pt = boost::property_tree;
 
     pt::ptree data_node;
-    data_node.put("BambuStudioVersion", SLIC3R_VERSION);
+    data_node.put("GalaxySlicerNeoVersion", SLIC3R_VERSION);
     data_node.put("BuildID", SLIC3R_BUILD_ID);
     data_node.put("UniqueID", unique_id);
     data_node.put("Platform", platform_to_string(platform()));

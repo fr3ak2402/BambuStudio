@@ -248,7 +248,7 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
     default:
     case GUI_App::EAppMode::Editor:
         m_taskbar_icon = std::make_unique<BambuStudioTaskBarIcon>(wxTBI_DOCK);
-        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("GalaxySlicerNeo-mac_256px.ico"), wxBITMAP_TYPE_ICO), "BambuStudio");
+        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("GalaxySlicerNeo-mac_256px.ico"), wxBITMAP_TYPE_ICO), "GalaxySlicerNeo");
         break;
     case GUI_App::EAppMode::GCodeViewer:
         break;
@@ -2190,12 +2190,12 @@ static wxMenu* generate_help_menu()
         });
 
     append_menu_item(helpMenu, wxID_ANY, _L("Report issue"), _L("Report issue"), [](wxCommandEvent &) {
-        std::string url = "https://github.com/bambulab/BambuStudio/issues/new/choose";
+        std::string url = "https://github.com/fr3ak2402/GalaxySlicerNeo/issues/new/choose";
         wxLaunchDefaultBrowser(url);
     });
 
     // Report a bug
-    //append_menu_item(helpMenu, wxID_ANY, _L("Report Bug(TODO)"), _L("Report a bug of BambuStudio"),
+    //append_menu_item(helpMenu, wxID_ANY, _L("Report Bug(TODO)"), _L("Report a bug of GalaxySlicerNeo"),
     //    [](wxCommandEvent&) {
     //        //TODO
     //    });
@@ -2687,10 +2687,10 @@ void MainFrame::init_menubar_as_editor()
         
         std::string app_items[] = {
             L("Services"),
-            L("Hide BambuStudio"),
+            L("Hide GalaxySlicerNeo"),
             L("Hide Others"),
             L("Show All"),
-            L("Quit BambuStudio")
+            L("Quit GalaxySlicerNeo")
         };
 #else
     wxMenu* parent_menu = m_topbar->GetTopMenu();

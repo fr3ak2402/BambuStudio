@@ -1319,7 +1319,7 @@ int CLI::run(int argc, char **argv)
         //BBS: remove GCodeViewer as seperate APP logic
         //params.start_as_gcodeviewer = start_as_gcodeviewer;
 
-        BOOST_LOG_TRIVIAL(info) << "begin to launch BambuStudio GUI soon";
+        BOOST_LOG_TRIVIAL(info) << "begin to launch GalaxySlicerNeo GUI soon";
         return Slic3r::GUI::GUI_Run(params);
 #else // SLIC3R_GUI
         // No GUI support. Just print out a help.
@@ -1339,7 +1339,7 @@ int CLI::run(int argc, char **argv)
     }
 
     global_begin_time = (long long)Slic3r::Utils::get_current_milliseconds_time_utc();
-    BOOST_LOG_TRIVIAL(warning) << boost::format("cli mode, Current BambuStudio Version %1%")%SLIC3R_VERSION;
+    BOOST_LOG_TRIVIAL(warning) << boost::format("cli mode, Current GalaxySlicerNeo Version %1%")%SLIC3R_VERSION;
 
     //BBS: add plate data related logic
     PlateDataPtrs plate_data_src;
@@ -6373,17 +6373,17 @@ bool CLI::setup(int argc, char **argv)
     detect_platform();
 
 #ifdef WIN32
-    // Notify user that a blacklisted DLL was injected into BambuStudio process (for example Nahimic, see GH #5573).
-    // We hope that if a DLL is being injected into a BambuStudio process, it happens at the very start of the application,
+    // Notify user that a blacklisted DLL was injected into GalaxySlicerNeo process (for example Nahimic, see GH #5573).
+    // We hope that if a DLL is being injected into a GalaxySlicerNeo process, it happens at the very start of the application,
     // thus we shall detect them now.
     if (BlacklistedLibraryCheck::get_instance().perform_check()) {
-        std::wstring text = L"Following DLLs have been injected into the BambuStudio process:\n\n";
+        std::wstring text = L"Following DLLs have been injected into the GalaxySlicerNeo process:\n\n";
         text += BlacklistedLibraryCheck::get_instance().get_blacklisted_string();
         text += L"\n\n"
-                L"BambuStudio is known to not run correctly with these DLLs injected. "
+                L"GalaxySlicerNeo is known to not run correctly with these DLLs injected. "
                 L"We suggest stopping or uninstalling these services if you experience "
-                L"crashes or unexpected behaviour while using BambuStudio.\n"
-                L"For example, ASUS Sonic Studio injects a Nahimic driver, which makes BambuStudio "
+                L"crashes or unexpected behaviour while using GalaxySlicerNeo.\n"
+                L"For example, ASUS Sonic Studio injects a Nahimic driver, which makes GalaxySlicerNeo "
                 L"to crash on a secondary monitor";
         MessageBoxW(NULL, text.c_str(), L"Warning"/*L"Incopatible library found"*/, MB_OK);
     }

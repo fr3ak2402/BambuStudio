@@ -1800,7 +1800,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         lock.close();
 
         if (!m_is_bbl_3mf) {
-            // if the 3mf was not produced by BambuStudio and there is more than one instance,
+            // if the 3mf was not produced by GalaxySlicerNeo and there is more than one instance,
             // split the object in as many objects as instances
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ":" << __LINE__ << boost::format(", found 3mf from other vendor, split as instance");
             for (const IdToModelObjectMap::value_type& object : m_objects) {
@@ -3155,7 +3155,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         }
 
         if (!m_is_bbl_3mf) {
-            // if the 3mf was not produced by BambuStudio and there is only one object,
+            // if the 3mf was not produced by GalaxySlicerNeo and there is only one object,
             // set the object name to match the filename
             if (m_model->objects.size() == 1)
                 m_model->objects.front()->name = m_name;
@@ -3563,15 +3563,15 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         /*} else if (m_curr_metadata_name == BBS_FDM_SUPPORTS_PAINTING_VERSION) {
             m_fdm_supports_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_fdm_supports_painting_version, FDM_SUPPORTS_PAINTING_VERSION,
-                _(L("The selected 3MF contains FDM supports painted object using a newer version of BambuStudio and is not compatible.")));
+                _(L("The selected 3MF contains FDM supports painted object using a newer version of GalaxySlicerNeo and is not compatible.")));
         } else if (m_curr_metadata_name == BBS_SEAM_PAINTING_VERSION) {
             m_seam_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_seam_painting_version, SEAM_PAINTING_VERSION,
-                _(L("The selected 3MF contains seam painted object using a newer version of BambuStudio and is not compatible.")));
+                _(L("The selected 3MF contains seam painted object using a newer version of GalaxySlicerNeo and is not compatible.")));
         } else if (m_curr_metadata_name == BBS_MM_PAINTING_VERSION) {
             m_mm_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_mm_painting_version, MM_PAINTING_VERSION,
-                _(L("The selected 3MF contains multi-material painted object using a newer version of BambuStudio and is not compatible.")));*/
+                _(L("The selected 3MF contains multi-material painted object using a newer version of GalaxySlicerNeo and is not compatible.")));*/
         } else if (m_curr_metadata_name == BBL_MODEL_ID_TAG) {
             m_model_id = xml_unescape(m_curr_characters);
         } else if (m_curr_metadata_name == BBL_MODEL_NAME_TAG) {
@@ -4443,7 +4443,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
 
                 // BBS: no need to multiply the instance matrix into the volume
                 //if (!m_is_bbl_3mf) {
-                //    // if the 3mf was not produced by BambuStudio and there is only one instance,
+                //    // if the 3mf was not produced by GalaxySlicerNeo and there is only one instance,
                 //    // bake the transformation into the geometry to allow the reload from disk command
                 //    // to work properly
                 //    if (object.instances.size() == 1) {
@@ -4622,7 +4622,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             TriangleMesh triangle_mesh(std::move(its), volume_data.mesh_stats);
 
             if (!m_is_bbl_3mf) {
-                // if the 3mf was not produced by BambuStudio and there is only one instance,
+                // if the 3mf was not produced by GalaxySlicerNeo and there is only one instance,
                 // bake the transformation into the geometry to allow the reload from disk command
                 // to work properly
                 if (object.instances.size() == 1) {
@@ -5502,7 +5502,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         }
 
         // Adds content types file ("[Content_Types].xml";).
-        // The content of this file is the same for each BambuStudio 3mf.
+        // The content of this file is the same for each GalaxySlicerNeo 3mf.
         if (!_add_content_types_file_to_archive(archive)) {
             return false;
         }
@@ -5880,7 +5880,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         }
 
         // Adds relationships file ("_rels/.rels").
-        // The content of this file is the same for each BambuStudio 3mf.
+        // The content of this file is the same for each GalaxySlicerNeo 3mf.
         // The relationshis file contains a reference to the geometry file "3D/3dmodel.model", the name was chosen to be compatible with CURA.
         if (!_add_relationships_file_to_archive(archive, {}, {}, {}, temp_data, export_plate_idx)) {
             BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ":" <<__LINE__ << boost::format(", _add_relationships_file_to_archive failed\n");
