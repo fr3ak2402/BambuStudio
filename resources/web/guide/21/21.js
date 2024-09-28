@@ -69,11 +69,16 @@ function HandleModelList( pVal )
 			if( sVV=="BBL" )
 				sVV="Bambu Lab";
 			
+			let VendorIconImage="../../../profiles/"+strVendor+"/"+strVendor+"_icon.png";
+			
 			let HtmlNewVendor='<div class="OneVendorBlock" Vendor="'+strVendor+'" VendorName="'+sVV+'">'+
 '<div class="BlockBanner">'+
 '	<div class="BannerBtns">'+
 '		<div class="SmallBtn_Green trans" tid="t11" onClick="SelectPrinterAll('+"\'"+strVendor+"\'"+')">all</div>'+
 '		<div class="SmallBtn trans" tid="t12" onClick="SelectPrinterNone('+"\'"+strVendor+"\'"+')">none</div>'+
+'	</div>'+
+'	<div class="VendorIcon">'+
+'	<img src="'+VendorIconImage+'"/>'+
 '	</div>'+
 '	<a>'+sVV+'</a>'+
 '</div>'+
