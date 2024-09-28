@@ -96,10 +96,10 @@ enum class ERescaleTarget
 };
 
 #ifdef __APPLE__
-class BambuStudioTaskBarIcon : public wxTaskBarIcon
+class GalaxySlicerNeoTaskBarIcon : public wxTaskBarIcon
 {
 public:
-    BambuStudioTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
+    GalaxySlicerNeoTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
     wxMenu *CreatePopupMenu() override {
         wxMenu *menu = new wxMenu;
         if (wxGetApp().app_config->get("single_instance") == "false") {
@@ -247,7 +247,7 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
     switch (wxGetApp().get_app_mode()) {
     default:
     case GUI_App::EAppMode::Editor:
-        m_taskbar_icon = std::make_unique<BambuStudioTaskBarIcon>(wxTBI_DOCK);
+        m_taskbar_icon = std::make_unique<GalaxySlicerNeoTaskBarIcon>(wxTBI_DOCK);
         m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("GalaxySlicerNeo-mac_256px.ico"), wxBITMAP_TYPE_ICO), "GalaxySlicerNeo");
         break;
     case GUI_App::EAppMode::GCodeViewer:
