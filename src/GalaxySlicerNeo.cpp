@@ -6403,6 +6403,9 @@ bool CLI::setup(int argc, char **argv)
     // The resources are packed to 'resources'
     // Path from Slic3r binary to resources:
     boost::filesystem::path path_resources = path_to_binary.parent_path() / "resources";
+
+    //GalaxySlicerNeo: path to python
+    boost::filesystem::path path_python = path_to_binary.parent_path() / "python";
 #elif defined SLIC3R_FHS
     // The application is packaged according to the Linux Filesystem Hierarchy Standard
     // Resources are set to the 'Architecture-independent (shared) data', typically /usr/share or /usr/local/share
@@ -6418,6 +6421,11 @@ bool CLI::setup(int argc, char **argv)
     set_var_dir((path_resources / "images").string());
     set_local_dir((path_resources / "i18n").string());
     set_sys_shapes_dir((path_resources / "shapes").string());
+
+#ifdef WIN32
+    //GalaxySlicerNeo: set python dir
+    set_python_dir(path_python.string());
+#endif
 
     // Parse all command line options into a DynamicConfig.
     // If any option is unsupported, print usage and abort immediately.
