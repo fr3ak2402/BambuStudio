@@ -147,9 +147,9 @@ wxString CopyrightsDialog::get_html_text()
                 "<font size=\"3\">",
          bgr_clr_str, text_clr_str, text_clr_str,
         _L("License"),
-        _L("Bambu Studio is licensed under "),
+        _L("GalaxySlicerNeo is licensed under "),
         "https://www.gnu.org/licenses/agpl-3.0.html",_L("GNU Affero General Public License, version 3"),
-        _L("Bambu Studio is based on PrusaSlicer by Prusa Research, which is from Slic3r by Alessandro Ranellucci and the RepRap community"),
+        _L("GalaxySlicerNeo is based on PrusaSlicer by Prusa Research, which is from Slic3r by Alessandro Ranellucci and the RepRap community"),
         _L("Libraries"),
         _L("This software uses open source components whose copyright and other proprietary rights belong to their respective owners"));
 
@@ -280,10 +280,10 @@ AboutDialog::AboutDialog()
     text_sizer_horiz->Add( 0, 0, 0, wxLEFT, FromDIP(20));
 
     std::vector<wxString> text_list;
-    text_list.push_back(_L("Bambu Studio is based on PrusaSlicer by PrusaResearch and SuperSlicer by Merill(supermerill)."));
+    text_list.push_back(_L("GalaxySlicerNeo is based on PrusaSlicer by PrusaResearch and SuperSlicer by Merill(supermerill)."));
     text_list.push_back(_L("PrusaSlicer is originally based on Slic3r by Alessandro Ranellucci."));
     text_list.push_back(_L("Slic3r was created by Alessandro Ranellucci with the help of many other contributors."));
-    text_list.push_back(_L("Bambu Studio also referenced some ideas from Cura by Ultimaker."));
+    text_list.push_back(_L("GalaxySlicerNeo also referenced some ideas from Cura by Ultimaker."));
     text_list.push_back(_L("There many parts of the software that come from community contributions, so we're unable to list them one-by-one, and instead, they'll be attributed in the corresponding code comments."));
 
     text_sizer->Add( 0, 0, 0, wxTOP, FromDIP(33));

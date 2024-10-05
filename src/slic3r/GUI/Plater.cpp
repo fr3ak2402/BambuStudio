@@ -1779,7 +1779,7 @@ void Sidebar::sync_ams_list()
     wxGetApp().app_config ->set("ams_filament_ids", p->ams_list_device, ams_filament_ids);
     if (unknowns > 0) {
         MessageDialog dlg(this,
-            _L("There are some unknown or uncompatible filaments mapped to generic preset. Please update Bambu Studio or restart Bambu Studio to check if there is an update to system presets."),
+            _L("There are some unknown or uncompatible filaments mapped to generic preset. Please update GalaxySlicerNeo or restart GalaxySlicerNeo to check if there is an update to system presets."),
             _L("Sync filaments with AMS"), wxOK);
         dlg.ShowModal();
     }
@@ -3658,7 +3658,7 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                         q->select_plate(0);
                         if (load_type != LoadType::LoadGeometry) {
                             if (en_3mf_file_type == En3mfType::From_BBS)
-                                show_info(q, _L("Due to the lower version of Bambu Studio, this 3mf file cannot be fully loaded. Please update Bambu Studio to the latest version"), _L("Load 3mf"));
+                                show_info(q, _L("Due to the lower version of GalaxySlicerNeo, this 3mf file cannot be fully loaded. Please update GalaxySlicerNeo to the latest version"), _L("Load 3mf"));
                             else
                                 show_info(q, _L("The 3mf is not from Bambu Lab, load geometry data only."), _L("Load 3mf"));
                         }
@@ -8446,7 +8446,7 @@ void Plater::priv::bring_instance_forward() const
         BOOST_LOG_TRIVIAL(debug) << "Couldnt bring instance forward - mainframe is null";
         return;
     }
-    BOOST_LOG_TRIVIAL(debug) << "Bambu Studio window going forward";
+    BOOST_LOG_TRIVIAL(debug) << "GalaxySlicerNeo window going forward";
     //this code maximize app window on Fedora
     {
         main_frame->Iconize(false);
@@ -9082,7 +9082,7 @@ void Plater::import_model_id(wxString download_info)
                         error);
 
                     if (retry_count == max_retries) {
-                        msg = _L("Importing to Bambu Studio failed. Please download the file and manually import it.");
+                        msg = _L("Importing to GalaxySlicerNeo failed. Please download the file and manually import it.");
                         cont = false;
                     }
                 })
@@ -13645,7 +13645,7 @@ void Plater::show_object_info()
 
     #ifndef __WINDOWS__
     if (non_manifold_edges > 0) {
-        info_manifold += into_u8("\n" + _L("Tips:") + "\n" +_L("\"Fix Model\" feature is currently only on Windows. Please use a third-party tool to repair the model before importing it into Bambu Studio, such as "));
+        info_manifold += into_u8("\n" + _L("Tips:") + "\n" +_L("\"Fix Model\" feature is currently only on Windows. Please use a third-party tool to repair the model before importing it into GalaxySlicerNeo, such as "));
     }
     if (warning) {
         std::string repair_url = "https://www.formware.co/onlinestlrepair";

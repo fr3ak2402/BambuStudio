@@ -2795,7 +2795,7 @@ bool GUI_App::on_init_inner()
                 wxString tips = wxString::Format(_L("Click to download new version in default browser: %s"), version_str);
                 DownloadDialog dialog(this->mainframe,
                     tips,
-                    _L("The Bambu Studio needs an upgrade"),
+                    _L("The GalaxySlicerNeo needs an upgrade"),
                     false,
                     wxCENTER | wxICON_INFORMATION);
                 dialog.SetExtendedMessage(description_text);
@@ -4410,7 +4410,7 @@ void GUI_App::on_http_error(wxCommandEvent &evt)
     // Version limit
     if (code == HttpErrorVersionLimited) {
         if (!m_show_http_errpr_msgdlg) {
-            MessageDialog msg_dlg(nullptr, _L("The Bambu Studio version is too old to enable cloud service. Please download the latest version from Bambu Lab website."), "", wxAPPLY | wxOK);
+            MessageDialog msg_dlg(nullptr, _L("The GalaxySlicerNeo version is too old to enable cloud service. Please download the latest version from Bambu Lab website."), "", wxAPPLY | wxOK);
             m_show_http_errpr_msgdlg = true;
             auto modal_result = msg_dlg.ShowModal();
             if (modal_result == wxOK || modal_result == wxCLOSE) {
@@ -5506,7 +5506,7 @@ bool GUI_App::load_language(wxString language, bool initial)
 #endif
         if (initial)
         	message + "\n\nApplication will close.";
-        wxMessageBox(message, "Bambu Studio - Switching language failed", wxOK | wxICON_ERROR);
+        wxMessageBox(message, "GalaxySlicerNeo - Switching language failed", wxOK | wxICON_ERROR);
         if (initial)
 			std::exit(EXIT_FAILURE);
 		else

@@ -1030,12 +1030,12 @@ wxWindow* PreferencesDialog::create_general_page()
 
     std::vector<wxString> Units         = {_L("Metric") + " (mm, g)", _L("Imperial") + " (in, oz)"};
     auto item_currency = create_item_combobox(_L("Units"), page, _L("Units"), "use_inches", Units);
-    auto item_single_instance = create_item_checkbox(_L("Keep only one Bambu Studio instance"), page,
+    auto item_single_instance = create_item_checkbox(_L("Keep only one GalaxySlicerNeo instance"), page,
 #if __APPLE__
         _L("On OSX there is always only one instance of app running by default. However it is allowed to run multiple instances "
 			  "of same app from the command line. In such case this settings will allow only one instance."),
 #else
-        _L("If this is enabled, when starting Bambu Studio and another instance of the same Bambu Studio is already running, that instance will be reactivated instead."),
+        _L("If this is enabled, when starting GalaxySlicerNeo and another instance of the same GalaxySlicerNeo is already running, that instance will be reactivated instead."),
 #endif
         50, "single_instance");
 
@@ -1059,11 +1059,11 @@ wxWindow* PreferencesDialog::create_general_page()
 
     // associate file
     auto item_associate_3mf  = create_item_checkbox(_L("Associate .3mf files to GalaxySlicerNeo"), page,
-                                                        _L("If enabled, sets Bambu Studio as default application to open .3mf files"), 50, "associate_3mf");
+                                                        _L("If enabled, sets GalaxySlicerNeo as default application to open .3mf files"), 50, "associate_3mf");
     auto item_associate_stl  = create_item_checkbox(_L("Associate .stl files to GalaxySlicerNeo"), page,
-                                                        _L("If enabled, sets Bambu Studio as default application to open .stl files"), 50, "associate_stl");
+                                                        _L("If enabled, sets GalaxySlicerNeo as default application to open .stl files"), 50, "associate_stl");
     auto item_associate_step = create_item_checkbox(_L("Associate .step/.stp files to GalaxySlicerNeo"), page,
-                                                         _L("If enabled, sets Bambu Studio as default application to open .step files"), 50, "associate_step");
+                                                         _L("If enabled, sets GalaxySlicerNeo as default application to open .step files"), 50, "associate_step");
 #endif // _WIN32
 
     auto title_modelmall = create_item_title(_L("Online Models"), page, _L("Online Models"));

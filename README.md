@@ -5,7 +5,7 @@ It contains project-based workflows, systematically optimized slicing algorithms
 
 Prebuilt Windows, macOS 64-bit and Linux releases are available through the [github releases page](https://github.com/fr3ak2402/GalaxySlicerNeo/releases/).
 
-Bambu Studio is based on [PrusaSlicer](https://github.com/prusa3d/PrusaSlicer) by Prusa Research, which is from [Slic3r](https://github.com/Slic3r/Slic3r) by Alessandro Ranellucci and the RepRap community.
+GalaxySlicerNeo is based on [PrusaSlicer](https://github.com/prusa3d/PrusaSlicer) by Prusa Research, which is from [Slic3r](https://github.com/Slic3r/Slic3r) by Alessandro Ranellucci and the RepRap community.
 
 See the [wiki](https://github.com/fr3ak2402/GalaxySlicerNeo/wiki) and the [documentation directory](https://github.com/fr3ak2402/GalaxySlicerNeo/tree/master/doc) for more informations.
 
@@ -39,7 +39,7 @@ Following platforms are currently supported to compile:
 You can add an issue to the [github tracker](https://github.com/fr3ak2402/GalaxySlicerNeo/issues) if **it isn't already present.**
 
 # License
-Bambu Studio is licensed under the GNU Affero General Public License, version 3. Bambu Studio is based on PrusaSlicer by PrusaResearch.
+Bambu Studio is licensed under the GNU Affero General Public License, version 3. GalaxySlicerNeo is based on PrusaSlicer by PrusaResearch.
 
 PrusaSlicer is licensed under the GNU Affero General Public License, version 3. PrusaSlicer is owned by Prusa Research. PrusaSlicer is originally based on Slic3r by Alessandro Ranellucci.
 
