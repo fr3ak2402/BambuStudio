@@ -149,7 +149,8 @@ wxString CopyrightsDialog::get_html_text()
         _L("License"),
         _L("GalaxySlicerNeo is licensed under "),
         "https://www.gnu.org/licenses/agpl-3.0.html",_L("GNU Affero General Public License, version 3"),
-        _L("GalaxySlicerNeo is based on PrusaSlicer by Prusa Research, which is from Slic3r by Alessandro Ranellucci and the RepRap community"),
+        _L("GalaxySlicerNeo is based on Bambu Studio by Bambu Lab"),
+        _L("Bambu Studio is based on PrusaSlicer by Prusa Research, which is from Slic3r by Alessandro Ranellucci and the RepRap community"),
         _L("Libraries"),
         _L("This software uses open source components whose copyright and other proprietary rights belong to their respective owners"));
 
@@ -326,7 +327,7 @@ AboutDialog::AboutDialog()
 
     copyright_hor_sizer->Add(copyright_ver_sizer, 0, wxLEFT, FromDIP(20));
 
-    wxStaticText *html_text = new wxStaticText(this, wxID_ANY, "Copyright(C) 2021-2024 Lunkuo All Rights Reserved", wxDefaultPosition, wxDefaultSize);
+    wxStaticText *html_text = new wxStaticText(this, wxID_ANY, "Copyright(C) 2024 Fr3ak2402 All Rights Reserved", wxDefaultPosition, wxDefaultSize);
     html_text->SetForegroundColour(wxColour(107, 107, 107));
 
     copyright_ver_sizer->Add(html_text, 0, wxALL , 0);
@@ -343,7 +344,7 @@ AboutDialog::AboutDialog()
               (boost::format(
               "<html>"
               "<body>"
-              "<p style=\"text-align:left\"><a  href=\"www.bambulab.com\">www.bambulab.com</ a></p>"
+              "<p style=\"text-align:left\"><a  href=\"https://github.com/fr3ak2402/GalaxySlicerNeo\">https://github.com/fr3ak2402/GalaxySlicerNeo</ a></p>"
               "</body>"
               "</html>")
             ).str());
