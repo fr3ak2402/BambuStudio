@@ -238,6 +238,23 @@ AboutDialog::AboutDialog()
 
     panel_versizer->Add(m_logo, 1, wxALL | wxEXPAND, 0);
 
+    //GalaxySlicerNeo: about build
+    wxBoxSizer *build_sizer_horiz = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer *build_sizer_verti = new wxBoxSizer(wxVERTICAL);
+
+    build_sizer_verti->Add( 0, 0, 0, wxTOP, FromDIP(5));
+    build_sizer_horiz->Add(build_sizer_verti, 0, wxLEFT, FromDIP(20));
+
+    auto build_string = "Build: " + std::string(GSN_BUILD);
+    wxStaticText *build_text = new wxStaticText(this, wxID_ANY, build_string.c_str(), wxDefaultPosition, wxDefaultSize);
+    
+    build_text->SetForegroundColour(wxColour("#6B6B6B"));
+    build_text->SetFont(Label::Body_10);
+
+    build_sizer_verti->Add(build_text, 0, wxALL , 0);
+
+    ver_sizer->Add(build_sizer_horiz, 0, wxALL,0);
+
     // version
     /*{
         vesizer->Add(0, FromDIP(165), 1, wxEXPAND, FromDIP(5));

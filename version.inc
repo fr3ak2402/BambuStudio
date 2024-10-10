@@ -16,3 +16,10 @@ endif()
 # The build_version should start from 50 in master branch
 
 set(SLIC3R_VERSION "01.09.07.52")
+
+# GalaxySlicerNeo version
+set(GSN_VERSION "V1.0.1")
+
+# Build number
+string(TIMESTAMP BUILD_NUM "%Y.%j" UTC)
+set(GSN_BUILD ${BUILD_NUM})
