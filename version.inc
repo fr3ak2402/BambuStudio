@@ -18,7 +18,7 @@ endif()
 set(SLIC3R_VERSION "01.09.07.52")
 
 # GalaxySlicerNeo version
-set(GSN_VERSION "V1.0.1")
+set(GSN_VERSION "V1.0.2")
 
 # Build number
 string(TIMESTAMP BUILD_NUM "%Y.%j" UTC)
