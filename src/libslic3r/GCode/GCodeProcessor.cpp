@@ -1952,12 +1952,14 @@ void GCodeProcessor::process_gcode_line(const GCodeReader::GCodeLine& line, bool
                         case '0': { process_M140(line); break; } // Set bed temperature
                         default: break;
                         }
+                        break;
                     case '9':
                         switch (cmd[3]) {
                         case '0': { process_M190(line); break; } // Wait bed temperature
                         case '1': { process_M191(line); break; } // Wait chamber temperature
                         default: break;
-                    }
+                        }
+                        break;
                     default:
                         break;
                     }
@@ -3677,6 +3679,17 @@ void  GCodeProcessor::process_G2_G3(const GCodeReader::GCodeLine& line)
         m_seams_detector.activate(true);
         m_seams_detector.set_first_vertex(m_result.moves.back().position - m_extruder_offsets[m_extruder_id] - plate_offset);
     }
+
+    //BBS: some layer may only has G3/G3, update right layer height
+    if (m_detect_layer_based_on_tag && !m_result.spiral_vase_layers.empty()) {
+        if (delta_pos[Z] >= 0.0 && type == EMoveType::Extrude && m_result.spiral_vase_layers.back().first == FLT_MAX) {
+            // replace layer height placeholder with correct value
+            m_result.spiral_vase_layers.back().first = static_cast<float>(m_end_position[Z]);
+        }
+        if (!m_result.moves.empty())
+            m_result.spiral_vase_layers.back().second.second = m_result.moves.size() - 1 - m_seams_count;
+    }
+
     //BBS: store move
     store_move_vertex(type, m_move_path_type);
 }

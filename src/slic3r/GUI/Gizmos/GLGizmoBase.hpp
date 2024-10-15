@@ -5,8 +5,7 @@
 #include "libslic3r/Color.hpp"
 
 #include "slic3r/GUI/I18N.hpp"
-#include "slic3r/GUI/GLModel.hpp"
-#include "slic3r/GUI/MeshUtils.hpp"
+#include "slic3r/GUI/3DScene.hpp"
 
 #include <cereal/archives/binary.hpp>
 
@@ -26,8 +25,8 @@ class Linef3;
 class ModelObject;
 
 namespace GUI {
-
-
+#define MAX_NUM 9999.99
+#define MAX_SIZE "9999.99"
 
 class ImGuiWrapper;
 class GLCanvas3D;
@@ -61,13 +60,14 @@ public:
     static void update_render_colors();
     static void load_render_colors();
 
-protected:
+
     struct Grabber
     {
         static const float SizeFactor;
         static const float MinHalfSize;
         static const float DraggingScaleFactor;
         static const float FixedGrabberSize;
+        static float       GrabberSizeFactor;
         static const float FixedRadiusSize;
 
         Vec3d center;
@@ -172,7 +172,7 @@ protected:
                                               DoubleShowType               show_type = DoubleShowType::Normal);
     bool render_combo(const std::string &label, const std::vector<std::string> &lines,
         size_t &selection_idx, float label_width, float item_width);
-
+    void render_cross_mark(const Vec3f& target,bool is_single =false);
 public:
     GLGizmoBase(GLCanvas3D& parent,
                 const std::string& icon_filename,
@@ -275,6 +275,22 @@ protected:
 
     // Mark gizmo as dirty to Re-Render when idle()
     void set_dirty();
+
+    /// <summary>
+    /// function which
+    /// Set up m_dragging and call functions
+    /// on_start_dragging / on_dragging / on_stop_dragging
+    /// </summary>
+    /// <param name="mouse_event">Keep information about mouse click</param>
+    /// <returns>same as on_mouse</returns>
+    bool use_grabbers(const wxMouseEvent &mouse_event);
+    void do_stop_dragging(bool perform_mouse_cleanup);
+    template<typename T> void limit_value(T &value, T _min, T _max)
+    {
+        if (value >= _max) { value = _max;}
+        if (value <= _min) { value = _min; }
+    }
+
 private:
     // Flag for dirty visible state of Gizmo
     // When True then need new rendering

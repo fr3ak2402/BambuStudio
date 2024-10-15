@@ -172,8 +172,14 @@ void AppConfig::set_defaults()
 
     if (get("zoom_to_mouse").empty())
         set_bool("zoom_to_mouse", false);
-    if (get("user_bed_type").empty()) 
+    if (get("show_shells_in_preview").empty())
+        set_bool("show_shells_in_preview", true);
+    if (get("enable_lod").empty())
+        set_bool("enable_lod", true);
+    if (get("user_bed_type").empty())
         set_bool("user_bed_type", true);
+    if (get("grabber_size_factor").empty())
+        set("grabber_size_factor", "1.0");
 //#ifdef SUPPORT_SHOW_HINTS
     if (get("show_hints").empty())
         set_bool("show_hints", true);
@@ -304,7 +310,7 @@ void AppConfig::set_defaults()
     if (get("mouse_wheel").empty()) {
         set("mouse_wheel", "0");
     }
-    
+
     if (get("max_recent_count").empty()) {
         set("max_recent_count", "18");
     }

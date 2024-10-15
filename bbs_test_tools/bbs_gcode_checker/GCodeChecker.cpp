@@ -7,7 +7,7 @@ namespace GalaxySlicerNeo {
 
 //BBS: only check wodth when dE is longer than this value
 const double CHECK_WIDTH_E_THRESHOLD = 0.0025;
-const double WIDTH_THRESHOLD = 0.02;
+const double WIDTH_THRESHOLD = 0.05;
 const double RADIUS_THRESHOLD = 0.005;
 
 const double filament_diameter = 1.75;
@@ -20,6 +20,7 @@ const std::string Wipe_End_Tag       = " WIPE_END";
 const std::string Layer_Change_Tag   = " CHANGE_LAYER";
 const std::string Height_Tag         = " LAYER_HEIGHT: ";
 const std::string filament_flow_ratio_tag = " filament_flow_ratio";
+const std::string has_scarf_joint_seam_tag = " has_scarf_joint_seam";
 const std::string nozzle_temperature_Tag   = " nozzle_temperature =";
 const std::string nozzle_temperature_initial_layer_Tag  = " nozzle_temperature_initial_layer";
 const std::string Z_HEIGHT_TAG                         = " Z_HEIGHT: ";
@@ -162,6 +163,11 @@ GCodeCheckResult GCodeChecker::parse_comment(GCodeLine& line)
             return GCodeCheckResult::ParseFailed;
         }
     }
+    else if (starts_with(comment, has_scarf_joint_seam_tag))
+    {
+        std::string str = comment.substr(has_scarf_joint_seam_tag.size() + 3);
+        has_scarf_joint_seam = (str == "1");
+    }
     else if (starts_with(comment, nozzle_temperature_Tag)) {
         std::string str = comment.substr(nozzle_temperature_Tag.size() + 1);
         if (!parse_double_from_str(str, nozzle_temperature)) {
@@ -232,6 +238,10 @@ GCodeCheckResult GCodeChecker::parse_command(GCodeLine& gcode_line)
                     ret = parse_M104_M109(gcode_line);
                     break;
                 } // Set to nozzle temperature
+                case 1020: {
+                    ret = parse_M1020(gcode_line);
+                    break;
+                }
                 default: { break; }
             }
             break;
@@ -469,6 +479,46 @@ GCodeCheckResult GCodeChecker::parse_M104_M109(const GCodeLine &gcode_line)
     return GCodeCheckResult::Success;
 }
 
+GCodeCheckResult GCodeChecker::parse_M1020(const GCodeLine& gcode_line)
+{
+    const char* c = gcode_line.m_raw.c_str();
+    const char* rs = strchr(c, 'S');
+
+    if (rs != nullptr) {
+        std::string str = rs;
+        str = str.substr(1);
+        for (int i = 0; i < str.size(); i++) {
+            if (str[i] == ' ')
+                str = str.substr(0, i);
+        }
+
+        try {
+            int value = std::stoi(str);
+            if (value >= 0 && value <= filament_flow_ratio.size() - 1) {
+                filament_id = value;
+                flow_ratio = filament_flow_ratio[value];
+                return GCodeCheckResult::Success;
+            }
+            else {
+                return GCodeCheckResult::ParseFailed;
+            }
+        }
+        catch (std::invalid_argument&) {
+            std::cout << "Invalid argument: not a valid integer" << std::endl;
+            return GCodeCheckResult::ParseFailed;
+        }
+        catch (std::out_of_range&) {
+            std::cout << "Out of range: number is too large" << std::endl;
+            return GCodeCheckResult::ParseFailed;
+        }
+    }
+    else
+    {
+        std::cout << "Missing 'S' character in the G-code line!" << std::endl;
+        return GCodeCheckResult::ParseFailed;
+    }
+}
+
 double GCodeChecker::calculate_G1_width(const std::array<double, 3>& source,
                                        const std::array<double, 3>& target,
                                        double e, double height, bool is_bridge) const
@@ -594,7 +644,16 @@ GCodeCheckResult GCodeChecker::check_G0_G1_width(const GCodeLine& line)
 
         bool is_bridge = m_role == erOverhangPerimeter || m_role == erBridgeInfill;
         if (!is_bridge) {
-            double width_real = calculate_G1_width(source, target, delta_pos[E], m_height, is_bridge);
+            double real_height = m_height;
+            if (line.has(Z) && has_scarf_joint_seam && line.get(Z) != 0)
+            {
+                if (line.get(Z) == z_height)
+                {
+                    return GCodeCheckResult::Success;
+                }
+                real_height = line.get(Z) - (z_height - m_height);
+            }
+            double width_real = calculate_G1_width(source, target, delta_pos[E], real_height, is_bridge);
             if (fabs(width_real - m_width) > WIDTH_THRESHOLD) {
                 std::cout << "Invalid G0_G1 because has abnormal line width." << std::endl;
                 std::cout << "Width: " << m_width << " Width_real: " << width_real << std::endl;

@@ -320,11 +320,14 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
 
     wxBoxSizer *bSizer_buttons = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer *bSizer_text = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer *bSizer_finish_time = new wxBoxSizer(wxHORIZONTAL);
     wxPanel* penel_bottons = new wxPanel(parent);
     wxPanel* penel_text = new wxPanel(penel_bottons);
+    wxPanel* penel_finish_time = new wxPanel(parent);
 
     penel_text->SetBackgroundColour(*wxWHITE);
     penel_bottons->SetBackgroundColour(*wxWHITE);
+    penel_finish_time->SetBackgroundColour(*wxWHITE);
 
     wxBoxSizer *sizer_percent = new wxBoxSizer(wxVERTICAL);
     sizer_percent->Add(0, 0, 1, wxEXPAND, 0);
@@ -383,6 +386,22 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     penel_text->SetSizer(bSizer_text);
     penel_text->Layout();
 
+    m_staticText_finish_time = new wxStaticText(penel_finish_time, wxID_ANY, _L("Finish Time: N/A"));
+    m_staticText_finish_time->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
+    m_staticText_finish_time->SetForegroundColour(wxColour(146, 146, 146));
+    m_staticText_finish_time->SetToolTip(_L("The estimated printing time for \nmulti-color models may be inaccurate."));
+    m_staticText_finish_day = new RectTextPanel(penel_finish_time);
+    m_staticText_finish_day->Hide();
+    bSizer_finish_time->Add(0, 0, 1, wxEXPAND, 0);
+    bSizer_finish_time->Add(0, 0, 0, wxLEFT, FromDIP(20));
+    bSizer_finish_time->Add(m_staticText_finish_time, 0, wxALIGN_CENTER | wxALL, 0);
+    bSizer_finish_time->Add(m_staticText_finish_day, 0,wxLEFT | wxRIGHT , FromDIP(10));
+    bSizer_finish_time->Add(0, 0, 0, wxLEFT, FromDIP(20));
+    bSizer_finish_time->Add(panel_button_block, 0, wxALIGN_CENTER | wxALL, 0);
+    penel_finish_time->SetMaxSize(wxSize(FromDIP(600), -1));
+    penel_finish_time->SetSizer(bSizer_finish_time);
+    penel_finish_time->Layout();
+
     bSizer_buttons->Add(penel_text, 1, wxEXPAND | wxALL, 0);
     bSizer_buttons->Add(panel_button_block, 0, wxALIGN_CENTER | wxALL, 0);
 
@@ -395,14 +414,13 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     bSizer_subtask_info->Add(m_printing_stage_value, 0, wxEXPAND | wxTOP, FromDIP(5));
     bSizer_subtask_info->Add(penel_bottons, 0, wxEXPAND | wxTOP, FromDIP(10));
     bSizer_subtask_info->Add(m_panel_progress, 0, wxEXPAND|wxRIGHT, FromDIP(25));
-
+    bSizer_subtask_info->Add(penel_finish_time, 0, wxEXPAND, 0);
 
     m_printing_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_printing_sizer->SetMinSize(wxSize(PAGE_MIN_WIDTH, -1));
     m_printing_sizer->Add(m_bitmap_thumbnail, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxLEFT, FromDIP(12));
     m_printing_sizer->Add(FromDIP(8), 0, 0, wxEXPAND, 0);
     m_printing_sizer->Add(bSizer_subtask_info, 1, wxALL | wxEXPAND, 0);
-
 
     m_staticline = new wxPanel( parent, wxID_ANY);
     m_staticline->SetBackgroundColour(wxColour(238,238,238));
@@ -563,7 +581,7 @@ void PrintingTaskPanel::paint(wxPaintEvent&)
         dc.SetTextForeground(*wxBLACK);
     dc.DrawBitmap(m_thumbnail_bmp_display, wxPoint(0, 0));
     dc.SetFont(Label::Body_12);
-    
+
     if (m_plate_index >= 0) {
         wxString plate_id_str = wxString::Format("%d", m_plate_index);
         dc.DrawText(plate_id_str, wxPoint(4, 4));
@@ -687,14 +705,41 @@ void PrintingTaskPanel::update_left_time(wxString time)
     m_staticText_progress_left->SetLabelText(time);
 }
 
+void PrintingTaskPanel::update_finish_time(wxString finish_time)
+{
+    static wxString finish_day = "";
+    if (finish_time == "Finished") {
+        m_staticText_finish_time->SetLabelText(_L("Finished"));
+        finish_day = "";
+        if (m_staticText_finish_day->IsShown()) m_staticText_finish_day->Hide();
+    }
+    else {
+        if (!finish_time.Contains('+')) {
+            if (m_staticText_finish_day->IsShown()) m_staticText_finish_day->Hide();
+        } else {
+            int index = finish_time.find_last_of('+');
+            wxString day   = finish_time.Mid(index);
+            finish_time    = finish_time.Mid(0, index);
+            if (finish_day != day) {
+                m_staticText_finish_day->setText(day);
+                finish_day = day;
+                if (!m_staticText_finish_day->IsShown()) m_staticText_finish_day->Show();
+            }
+        }
+        m_staticText_finish_time->SetLabelText(_L("Finish Time: ") + finish_time);
+    }
+}
+
 void PrintingTaskPanel::update_left_time(int mc_left_time)
 {
     // update gcode progress
     std::string left_time;
+    std::string right_time;
     wxString    left_time_text = NA_STR;
 
     try {
         left_time = get_bbl_monitor_time_dhm(mc_left_time);
+        right_time = get_bbl_finish_time_dhm(mc_left_time);
     }
     catch (...) {
         ;
@@ -702,6 +747,7 @@ void PrintingTaskPanel::update_left_time(int mc_left_time)
 
     if (!left_time.empty()) left_time_text = wxString::Format("-%s", left_time);
     update_left_time(left_time_text);
+    update_finish_time(right_time);
 }
 
 void PrintingTaskPanel::update_layers_num(bool show, wxString num)
@@ -770,10 +816,13 @@ void PrintingTaskPanel::set_plate_index(int plate_idx)
 }
 
 void PrintingTaskPanel::market_scoring_show()
-{ 
+{
     m_score_staticline->Show();
     m_score_subtask_info->Show();
 }
+
+bool PrintingTaskPanel::is_market_scoring_show() { 
+    return m_score_staticline->IsShown() && m_score_subtask_info->IsShown(); }
 
 void PrintingTaskPanel::market_scoring_hide()
 {
@@ -891,7 +940,7 @@ void StatusBasePanel::init_bitmaps()
     m_bitmap_fan_off         = ScalableBitmap(this, "monitor_fan_off", 22);
     m_bitmap_speed           = ScalableBitmap(this, "monitor_speed", 24);
     m_bitmap_speed_active    = ScalableBitmap(this, "monitor_speed_active", 24);
-    
+
     m_thumbnail_brokenimg    = ScalableBitmap(this, "monitor_brokenimg", 120);
     m_thumbnail_sdcard       = ScalableBitmap(this, "monitor_sdcard_thumbnail", 120);
     //m_bitmap_camera          = create_scaled_bitmap("monitor_camera", nullptr, 18);
@@ -987,7 +1036,7 @@ wxBoxSizer *StatusBasePanel::create_monitoring_page()
 //    media_ctrl_panel              = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 //    media_ctrl_panel->SetBackgroundColour(*wxBLACK);
 //    wxBoxSizer *bSizer_monitoring = new wxBoxSizer(wxVERTICAL);
-    m_media_ctrl = new wxMediaCtrl2(this);
+    m_media_ctrl = new wxMediaCtrl3(this);
     m_media_ctrl->SetMinSize(wxSize(PAGE_MIN_WIDTH, FromDIP(288)));
 
     m_media_play_ctrl = new MediaPlayCtrl(this, m_media_ctrl, wxDefaultPosition, wxSize(-1, FromDIP(40)));
@@ -1527,13 +1576,15 @@ wxBoxSizer *StatusBasePanel::create_ams_group(wxWindow *parent)
 
 void StatusBasePanel::show_ams_group(bool show)
 {
-    m_ams_control->Show(true);
-    m_ams_control_box->Show(true);
-    m_ams_control->show_noams_mode();
-    if (m_show_ams_group != show) {
-        Fit();
+    if (m_show_ams_group != show || m_show_ams_group_reset) {
+        m_ams_control->Show(true);
+        m_ams_control_box->Show(true);
+        m_ams_control->show_noams_mode();
+        if (m_show_ams_group != show) { Fit(); }
+        m_show_ams_group = show;
+        m_show_ams_group_reset = false;
+        Layout();
     }
-    m_show_ams_group = show;
 }
 
 void StatusPanel::update_camera_state(MachineObject* obj)
@@ -1664,7 +1715,7 @@ StatusPanel::StatusPanel(wxWindow *parent, wxWindowID id, const wxPoint &pos, co
     m_project_task_panel->get_pause_resume_button()->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_subtask_pause_resume), NULL, this);
     m_project_task_panel->get_abort_button()->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_subtask_abort), NULL, this);
     m_project_task_panel->get_market_scoring_button()->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_market_scoring), NULL, this);
-    m_project_task_panel->get_market_retry_buttom()->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_market_retry), NULL, this); 
+    m_project_task_panel->get_market_retry_buttom()->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_market_retry), NULL, this);
     m_project_task_panel->get_clean_button()->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_print_error_clean), NULL, this);
 
     m_setting_button->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(StatusPanel::on_camera_enter), NULL, this);
@@ -1678,7 +1729,7 @@ StatusPanel::StatusPanel(wxWindow *parent, wxWindowID id, const wxPoint &pos, co
     m_switch_lamp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_lamp_switch), NULL, this);
     m_switch_nozzle_fan->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_nozzle_fan_switch), NULL, this); // TODO
     m_switch_printing_fan->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_nozzle_fan_switch), NULL, this);
-    m_switch_cham_fan->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_nozzle_fan_switch), NULL, this); 
+    m_switch_cham_fan->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_nozzle_fan_switch), NULL, this);
     m_bpButton_xy->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_axis_ctrl_xy), NULL, this); // TODO
     m_bpButton_z_10->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_axis_ctrl_z_up_10), NULL, this);
     m_bpButton_z_1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_axis_ctrl_z_up_1), NULL, this);
@@ -1723,7 +1774,7 @@ StatusPanel::~StatusPanel()
     m_project_task_panel->get_pause_resume_button()->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_subtask_pause_resume), NULL, this);
     m_project_task_panel->get_abort_button()->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_subtask_abort), NULL, this);
     m_project_task_panel->get_market_scoring_button()->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_market_scoring), NULL, this);
-    m_project_task_panel->get_market_retry_buttom()->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_market_retry), NULL, this); 
+    m_project_task_panel->get_market_retry_buttom()->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_market_retry), NULL, this);
     m_project_task_panel->get_clean_button()->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(StatusPanel::on_print_error_clean), NULL, this);
 
     m_setting_button->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(StatusPanel::on_camera_enter), NULL, this);
@@ -1762,7 +1813,7 @@ StatusPanel::~StatusPanel()
     if (sdcard_hint_dlg != nullptr)
         delete sdcard_hint_dlg;
 
-    if (m_score_data != nullptr) { 
+    if (m_score_data != nullptr) {
         delete m_score_data;
     }
 }
@@ -1786,7 +1837,7 @@ void StatusPanel::init_scaled_buttons()
     m_bpButton_e_down_10->SetCornerRadius(FromDIP(12));
 }
 
-void StatusPanel::on_market_scoring(wxCommandEvent &event) { 
+void StatusPanel::on_market_scoring(wxCommandEvent &event) {
     if (obj && obj->is_makeworld_subtask() && obj->rating_info && obj->rating_info->request_successful) { // model is mall model and has rating_id
         BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": on_market_scoring" ;
         if (m_score_data && m_score_data->rating_id == obj->rating_info->rating_id) { // current score data for model is same as mall model
@@ -1795,7 +1846,7 @@ void StatusPanel::on_market_scoring(wxCommandEvent &event) {
             int ret = m_score_dlg.ShowModal();
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": old data";
 
-            if (ret == wxID_OK) { 
+            if (ret == wxID_OK) {
                 BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": old data is upload";
                 m_score_data->rating_id = -1;
                 m_project_task_panel->set_star_count_dirty(false);
@@ -1817,11 +1868,11 @@ void StatusPanel::on_market_scoring(wxCommandEvent &event) {
 
             std::string comment = obj->rating_info->content;
             if (!comment.empty()) { m_score_dlg.set_comment(comment); }
-            
+
             std::vector<std::string> images_json_array;
             images_json_array = obj->rating_info->image_url_paths;
             if (!images_json_array.empty()) m_score_dlg.set_cloud_bitmap(images_json_array);
-            
+
             int ret = m_score_dlg.ShowModal();
 
             if (ret == wxID_OK) {
@@ -1856,11 +1907,11 @@ void StatusPanel::on_subtask_pause_resume(wxCommandEvent &event)
         if (obj->can_resume()) {
             BOOST_LOG_TRIVIAL(info) << "monitor: resume current print task dev_id =" << obj->dev_id;
             obj->command_task_resume();
-        }  
+        }
         else {
             BOOST_LOG_TRIVIAL(info) << "monitor: pause current print task dev_id =" << obj->dev_id;
             obj->command_task_pause();
-        } 
+        }
         if (m_print_error_dlg) {
             m_print_error_dlg->on_hide();
         }if (m_print_error_dlg_no_action) {
@@ -1877,11 +1928,20 @@ void StatusPanel::on_subtask_abort(wxCommandEvent &event)
         abort_dlg->Bind(EVT_SECONDARY_CHECK_CONFIRM, [this](wxCommandEvent &e) {
             if (obj) {
                 BOOST_LOG_TRIVIAL(info) << "monitor: stop current print task dev_id =" << obj->dev_id;
-                obj->command_task_abort(); 
+                obj->command_task_abort();
             }
         });
     }
     abort_dlg->update_text(_L("Are you sure you want to cancel this print?"));
+
+    abort_dlg->m_button_cancel->SetBackgroundColor(abort_dlg->btn_bg_green);
+    abort_dlg->m_button_cancel->SetBorderColor(*wxWHITE);
+    abort_dlg->m_button_cancel->SetTextColor(wxColor("#FFFFFE"));
+
+    abort_dlg->m_button_ok->SetBackgroundColor(abort_dlg->btn_bg_white);
+    abort_dlg->m_button_ok->SetBorderColor(wxColor(38, 46, 48));
+    abort_dlg->m_button_ok->SetTextColor(*wxBLACK);
+
     abort_dlg->on_show();
 }
 
@@ -1974,25 +2034,22 @@ bool StatusPanel::is_task_changed(MachineObject* obj)
 
 void StatusPanel::update(MachineObject *obj)
 {
+   
     if (!obj) return;
     m_project_task_panel->Freeze();
     update_subtask(obj);
     m_project_task_panel->Thaw();
-
+    
 #if !BBL_RELEASE_TO_PUBLIC
-    auto delay1  = std::chrono::duration_cast<std::chrono::milliseconds>(obj->last_utc_time - std::chrono::system_clock::now()).count();
-    auto delay2  = std::chrono::duration_cast<std::chrono::milliseconds>(obj->last_push_time - std::chrono::system_clock::now()).count();
-    auto delay = wxString::Format(" %ld/%ld", delay1, delay2);
-    m_staticText_timelapse
-        ->SetLabel((obj->is_lan_mode_printer() ? "Local Mqtt" : obj->is_tunnel_mqtt ? "Tunnel Mqtt" : "Cloud Mqtt") + delay);
-    m_bmToggleBtn_timelapse
-        ->Enable(!obj->is_lan_mode_printer());
-    m_bmToggleBtn_timelapse
-        ->SetValue(obj->is_tunnel_mqtt);
+    auto delay1 = std::chrono::duration_cast<std::chrono::milliseconds>(obj->last_utc_time - std::chrono::system_clock::now()).count();
+    auto delay2 = std::chrono::duration_cast<std::chrono::milliseconds>(obj->last_push_time - std::chrono::system_clock::now()).count();
+    auto delay  = wxString::Format(" %ld/%ld", delay1, delay2);
+    m_staticText_timelapse->SetLabel((obj->is_lan_mode_printer() ? "Local Mqtt" : obj->is_tunnel_mqtt ? "Tunnel Mqtt" : "Cloud Mqtt") + delay);
+    m_bmToggleBtn_timelapse->Enable(!obj->is_lan_mode_printer());
+    m_bmToggleBtn_timelapse->SetValue(obj->is_tunnel_mqtt);
 #endif
 
-    m_machine_ctrl_panel->Freeze();
-
+    //m_machine_ctrl_panel->Freeze();
     if (obj->is_in_printing() && !obj->can_resume())
         show_printing_status(false, true);
     else
@@ -2016,7 +2073,7 @@ void StatusPanel::update(MachineObject *obj)
             calibration_dlg->update_machine_obj(obj);
             calibration_dlg->update_cali(obj);
         }
-        
+
 
 
         if (obj->is_support_first_layer_inspect
@@ -2031,7 +2088,6 @@ void StatusPanel::update(MachineObject *obj)
         } else {
             m_options_btn->Hide();
         }
-
         m_parts_btn->Show();
 
         //support edit chamber temp
@@ -2048,14 +2104,13 @@ void StatusPanel::update(MachineObject *obj)
 
             if (obj->get_printer_series() == PrinterSeries::SERIES_X1) {
                 m_tempCtrl_chamber->SetTagTemp(TEMP_BLANK_STR);
-            }if (obj->get_printer_series() == PrinterSeries::SERIES_P1P)
+            }
+            
+            if (obj->get_printer_series() == PrinterSeries::SERIES_P1P)
             {
                 m_tempCtrl_chamber->SetLabel(TEMP_BLANK_STR);
                 m_tempCtrl_chamber->GetTextCtrl()->SetValue(TEMP_BLANK_STR);
             }
-
-            //m_tempCtrl_chamber->Disable();
-
         }
 
         if (!obj->dev_connection_type.empty()) {
@@ -2080,7 +2135,7 @@ void StatusPanel::update(MachineObject *obj)
 
     update_camera_state(obj);
 
-    m_machine_ctrl_panel->Thaw();
+    //m_machine_ctrl_panel->Thaw();
 }
 
 void StatusPanel::show_recenter_dialog() {
@@ -2089,9 +2144,9 @@ void StatusPanel::show_recenter_dialog() {
         obj->command_go_home();
 }
 
-void StatusPanel::show_error_message(MachineObject* obj, wxString msg, std::string print_error_str, wxString image_url, std::vector<int> used_button)
+void StatusPanel::show_error_message(MachineObject *obj, bool is_exist, wxString msg, std::string print_error_str, wxString image_url, std::vector<int> used_button)
 {
-    if (msg.IsEmpty()) {
+    if (is_exist && msg.IsEmpty()) {
         error_info_reset();
     } else {
         m_project_task_panel->show_error_msg(msg);
@@ -2103,7 +2158,7 @@ void StatusPanel::show_error_message(MachineObject* obj, wxString msg, std::stri
             }
 
             m_print_error_dlg->update_title_style(_L("Error"), used_button, this);
-            m_print_error_dlg->update_text_image(msg, image_url);
+            m_print_error_dlg->update_text_image(msg, print_error_str, image_url);
             m_print_error_dlg->Bind(EVT_SECONDARY_CHECK_CONFIRM, [this, obj](wxCommandEvent& e) {
                 if (obj) {
                     obj->command_clean_print_error(obj->subtask_id_, obj->print_error);
@@ -2125,6 +2180,11 @@ void StatusPanel::show_error_message(MachineObject* obj, wxString msg, std::stri
             auto it_resume = std::find(message_containing_resume.begin(), message_containing_resume.end(), print_error_str);
 
             BOOST_LOG_TRIVIAL(info) << "show print error! error_msg = " << msg;
+
+            wxDateTime now = wxDateTime::Now();
+            wxString show_time = now.Format("%H%M%d");
+            wxString error_code_msg = wxString::Format("%S\n[%S %S]", msg, print_error_str, show_time);
+
             if (m_print_error_dlg_no_action == nullptr) {
                 m_print_error_dlg_no_action = new SecondaryCheckDialog(this->GetParent(), wxID_ANY, _L("Warning"), SecondaryCheckDialog::ButtonStyle::ONLY_CONFIRM);
             }
@@ -2144,7 +2204,7 @@ void StatusPanel::show_error_message(MachineObject* obj, wxString msg, std::stri
             else {
                 m_print_error_dlg_no_action->update_title_style(_L("Warning"), SecondaryCheckDialog::ButtonStyle::ONLY_CONFIRM, this);
             }
-            m_print_error_dlg_no_action->update_text(msg);
+            m_print_error_dlg_no_action->update_text(error_code_msg);
             m_print_error_dlg_no_action->Bind(EVT_SECONDARY_CHECK_CONFIRM, [this, obj](wxCommandEvent& e) {
                 if (obj) {
                     obj->command_clean_print_error(obj->subtask_id_, obj->print_error);
@@ -2167,7 +2227,7 @@ void StatusPanel::update_error_message()
 {
     if (obj->print_error <= 0) {
         before_error_code = obj->print_error;
-        show_error_message(obj, wxEmptyString);
+        show_error_message(obj, true, wxEmptyString);
         return;
     } else if (before_error_code != obj->print_error && obj->print_error != skip_print_error) {
         before_error_code = obj->print_error;
@@ -2176,27 +2236,17 @@ void StatusPanel::update_error_message()
             char buf[32];
             ::sprintf(buf, "%08X", obj->print_error);
             std::string print_error_str = std::string(buf);
-            if (print_error_str.size() > 4) {
-                print_error_str.insert(4, " ");
-            }
+            if (print_error_str.size() > 4) { print_error_str.insert(4, " "); }
 
-            wxString error_msg = wxGetApp().get_hms_query()->query_print_error_msg(obj->print_error);
+            wxString error_msg;
+            bool is_errocode_exist = wxGetApp().get_hms_query()->query_print_error_msg(obj->print_error, error_msg);
             std::vector<int> used_button;
-            wxString error_image_url = wxGetApp().get_hms_query()->query_print_error_url_action(obj->print_error,obj->dev_id, used_button);
+            wxString error_image_url = wxGetApp().get_hms_query()->query_print_error_url_action(obj->print_error, obj->dev_id, used_button);
             // special case
-            if (print_error_str == "0300 8003" || print_error_str == "0300 8002" || print_error_str == "0300 800A")
+            if (print_error_str == "0300 8003" || print_error_str == "0300 8002" || print_error_str == "0300 800A") {
                 used_button.emplace_back(PrintErrorDialog::PrintErrorButton::JUMP_TO_LIVEVIEW);
-            if (!error_msg.IsEmpty()) {
-                wxDateTime now = wxDateTime::Now();
-                wxString show_time = now.Format("%Y-%m-%d %H:%M:%S");
-
-                error_msg = wxString::Format("%s\n[%s %s]",
-                    error_msg,
-                    print_error_str, show_time);
-                show_error_message(obj, error_msg, print_error_str,error_image_url,used_button);
-            } else {
-                BOOST_LOG_TRIVIAL(info) << "show print error! error_msg is empty, print error = " << obj->print_error;
             }
+            show_error_message(obj, is_errocode_exist, error_msg, print_error_str, error_image_url, used_button);
         }
     }
 }
@@ -2237,12 +2287,12 @@ void StatusPanel::show_printing_status(bool ctrl_area, bool temp_area)
         m_bpButton_e_10->Enable();
         m_bpButton_e_down_10->Enable();
 
-		m_bpButton_z_10->SetIcon("monitor_bed_up");
-		m_bpButton_z_1->SetIcon("monitor_bed_up");
-		m_bpButton_z_down_1->SetIcon("monitor_bed_down");
-		m_bpButton_z_down_10->SetIcon("monitor_bed_down");
-		m_bpButton_e_10->SetIcon("monitor_extruder_up");
-		m_bpButton_e_down_10->SetIcon("monitor_extrduer_down");
+	    m_bpButton_z_10->SetIcon("monitor_bed_up");
+        m_bpButton_z_1->SetIcon("monitor_bed_up");
+        m_bpButton_z_down_1->SetIcon("monitor_bed_down");
+        m_bpButton_z_down_10->SetIcon("monitor_bed_down");
+        m_bpButton_e_10->SetIcon("monitor_extruder_up");
+        m_bpButton_e_down_10->SetIcon("monitor_extrduer_down");
 
         m_staticText_z_tip->SetForegroundColour(TEXT_LIGHT_FONT_COL);
         m_staticText_e->SetForegroundColour(TEXT_LIGHT_FONT_COL);
@@ -2337,12 +2387,12 @@ void StatusPanel::update_misc_ctrl(MachineObject *obj)
     if (obj->can_unload_filament()) {
         if (!m_button_unload->IsShown()) {
             m_button_unload->Show();
-            m_button_unload->GetParent()->Layout();
+            //m_button_unload->GetParent()->Layout();
         }
     } else {
         if (m_button_unload->IsShown()) {
             m_button_unload->Hide();
-            m_button_unload->GetParent()->Layout();
+            //m_button_unload->GetParent()->Layout();
         }
     }
 
@@ -2380,27 +2430,34 @@ void StatusPanel::update_misc_ctrl(MachineObject *obj)
 
     if (m_current_support_aux_fan != is_suppt_aux_fun) {
         if (is_suppt_aux_fun) {
-            m_switch_printing_fan->Show();
-            m_switch_nozzle_fan->SetMinSize(MISC_BUTTON_3FAN_SIZE);
-            m_switch_nozzle_fan->SetMaxSize(MISC_BUTTON_3FAN_SIZE);
-            m_switch_cham_fan->SetMinSize(MISC_BUTTON_3FAN_SIZE);
-            m_switch_cham_fan->SetMaxSize(MISC_BUTTON_3FAN_SIZE);
+            if (!m_switch_printing_fan->IsShown()) {
+                m_switch_printing_fan->Show();
+                m_switch_nozzle_fan->SetMinSize(MISC_BUTTON_3FAN_SIZE);
+                m_switch_nozzle_fan->SetMaxSize(MISC_BUTTON_3FAN_SIZE);
+                m_switch_cham_fan->SetMinSize(MISC_BUTTON_3FAN_SIZE);
+                m_switch_cham_fan->SetMaxSize(MISC_BUTTON_3FAN_SIZE);
+            }
         }
         else {
-            m_switch_printing_fan->Hide();
-            m_switch_nozzle_fan->SetMinSize(MISC_BUTTON_2FAN_SIZE);
-            m_switch_nozzle_fan->SetMaxSize(MISC_BUTTON_2FAN_SIZE);
-            m_switch_cham_fan->SetMinSize(MISC_BUTTON_2FAN_SIZE);
-            m_switch_cham_fan->SetMaxSize(MISC_BUTTON_2FAN_SIZE);
+            if (m_switch_printing_fan->IsShown()) {
+                m_switch_printing_fan->Hide();
+                m_switch_nozzle_fan->SetMinSize(MISC_BUTTON_2FAN_SIZE);
+                m_switch_nozzle_fan->SetMaxSize(MISC_BUTTON_2FAN_SIZE);
+                m_switch_cham_fan->SetMinSize(MISC_BUTTON_2FAN_SIZE);
+                m_switch_cham_fan->SetMaxSize(MISC_BUTTON_2FAN_SIZE);
+            }
         }
 
         m_misc_ctrl_sizer->Layout();
     }
 
     if (!is_suppt_aux_fun && !is_suppt_cham_fun) {
-        m_switch_nozzle_fan->SetMinSize(MISC_BUTTON_1FAN_SIZE);
-        m_switch_nozzle_fan->SetMaxSize(MISC_BUTTON_1FAN_SIZE);
-        m_misc_ctrl_sizer->Layout();
+        if (!m_switch_nozzle_fan->IsShown()) {
+            m_switch_nozzle_fan->Show();
+            m_switch_nozzle_fan->SetMinSize(MISC_BUTTON_1FAN_SIZE);
+            m_switch_nozzle_fan->SetMaxSize(MISC_BUTTON_1FAN_SIZE);
+            m_misc_ctrl_sizer->Layout();
+        }
     }
 
 
@@ -2466,21 +2523,27 @@ void StatusPanel::update_misc_ctrl(MachineObject *obj)
 void StatusPanel::update_extruder_status(MachineObject* obj)
 {
     if (!obj) return;
-    if (obj->is_filament_at_extruder()) {
-        if (obj->extruder_axis_status == MachineObject::ExtruderAxisStatus::LOAD) {
-            m_bitmap_extruder_img->SetBitmap(m_bitmap_extruder_filled_load);
-        }
-        else {
-            m_bitmap_extruder_img->SetBitmap(m_bitmap_extruder_filled_unload);
-        }
-    }
-    else {
-        if (obj->extruder_axis_status == MachineObject::ExtruderAxisStatus::LOAD) {
-            m_bitmap_extruder_img->SetBitmap(m_bitmap_extruder_empty_load);
-        } else {
-            m_bitmap_extruder_img->SetBitmap(m_bitmap_extruder_empty_unload);
-        }
-    }
+     wxBitmap tmp;
+     if (obj->is_filament_at_extruder()) {
+         if (obj->extruder_axis_status == MachineObject::ExtruderAxisStatus::LOAD) {
+             tmp = m_bitmap_extruder_filled_load;
+         }
+         else {
+             tmp = m_bitmap_extruder_filled_unload;
+         }
+     }
+     else {
+         if (obj->extruder_axis_status == MachineObject::ExtruderAxisStatus::LOAD) {
+             tmp = m_bitmap_extruder_empty_load;
+         }
+         else {
+             tmp = m_bitmap_extruder_empty_unload;
+         }
+     }
+     if (!tmp.IsSameAs(m_bitmap_extruder_now)) {
+         m_bitmap_extruder_now = tmp;
+         m_bitmap_extruder_img->SetBitmap(tmp);
+     }
 }
 
 void StatusPanel::update_ams(MachineObject *obj)
@@ -2499,7 +2562,7 @@ void StatusPanel::update_ams(MachineObject *obj)
     }
     if (m_filament_setting_dlg) { m_filament_setting_dlg->obj = obj; }
 
-    if (obj->cali_version != -1 && last_cali_version != obj->cali_version) {
+    if (obj && (!last_cali_version.has_value() || last_cali_version != obj->cali_version)) {
         last_cali_version = obj->cali_version;
         CalibUtils::emit_get_PA_calib_info(obj->nozzle_diameter, "");
     }
@@ -2530,16 +2593,14 @@ void StatusPanel::update_ams(MachineObject *obj)
 
         m_ams_control->SetAmsModel(AMSModel::NO_AMS, ams_mode);
         show_ams_group(false);
-
         m_ams_control->show_auto_refill(false);
     }
     else {
 
         m_ams_control->SetAmsModel(ams_mode, ams_mode);
         show_ams_group(true);
-        m_ams_control->show_auto_refill(true); 
+        m_ams_control->show_auto_refill(true);
     }
-
 
     if (is_support_virtual_tray) m_ams_control->update_vams_kn_value(obj->vt_tray, obj);
     if (m_filament_setting_dlg) m_filament_setting_dlg->update();
@@ -2550,18 +2611,6 @@ void StatusPanel::update_ams(MachineObject *obj)
         info.ams_id = ams->first;
         if (ams->second->is_exists && info.parse_ams_info(obj, ams->second, obj->ams_calibrate_remain_flag, obj->is_support_ams_humidity)) ams_info.push_back(info);
     }
-    //if (obj->ams_exist_bits != last_ams_exist_bits || obj->tray_exist_bits != last_tray_exist_bits || obj->tray_is_bbl_bits != last_tray_is_bbl_bits ||
-    //    obj->tray_read_done_bits != last_read_done_bits || obj->ams_version != last_ams_version) {
-    //    m_ams_control->UpdateAms(ams_info, false);
-    //    // select current ams
-    //    //if (!obj->m_ams_id.empty()) m_ams_control->SwitchAms(obj->m_ams_id);
-
-    //    last_tray_exist_bits  = obj->tray_exist_bits;
-    //    last_ams_exist_bits   = obj->ams_exist_bits;
-    //    last_tray_is_bbl_bits = obj->tray_is_bbl_bits;
-    //    last_read_done_bits   = obj->tray_read_done_bits;
-    //    last_ams_version      = obj->ams_version;
-    //}
 
     // must select a current can
     m_ams_control->UpdateAms(ams_info, false);
@@ -2601,7 +2650,6 @@ void StatusPanel::update_ams(MachineObject *obj)
         m_ams_control->SetExtruder(obj->is_filament_at_extruder(), true, obj->m_ams_id, obj->vt_tray.get_color());
     } else {
         m_ams_control->SetExtruder(obj->is_filament_at_extruder(), false, obj->m_ams_id, m_ams_control->GetCanColour(obj->m_ams_id, obj->m_tray_id));
-       
     }
 
     if (obj->ams_status_main == AMS_STATUS_MAIN_FILAMENT_CHANGE) {
@@ -2654,7 +2702,7 @@ void StatusPanel::update_ams(MachineObject *obj)
                     }else{
                         m_ams_control->SetFilamentStep(FilamentStep::STEP_PUSH_NEW_FILAMENT, FilamentStepType::STEP_TYPE_LOAD);
                     }
-                    
+
                 }
                 else {
                     m_ams_control->SetFilamentStep(FilamentStep::STEP_PUSH_NEW_FILAMENT, FilamentStepType::STEP_TYPE_UNLOAD);
@@ -2694,7 +2742,7 @@ void StatusPanel::update_ams(MachineObject *obj)
     } else {
         m_ams_control->SetFilamentStep(FilamentStep::STEP_IDLE, FilamentStepType::STEP_TYPE_LOAD);
     }
-    
+
 
     for (auto ams_it = obj->amsList.begin(); ams_it != obj->amsList.end(); ams_it++) {
         std::string ams_id = ams_it->first;
@@ -2741,7 +2789,7 @@ void StatusPanel::update_ams(MachineObject *obj)
     }else {
         is_curr_tray_selected = true;
     }
-        
+
     update_ams_control_state(is_curr_tray_selected);
 }
 
@@ -2797,7 +2845,7 @@ void StatusPanel::update_ams_control_state(bool is_curr_tray_selected)
     if (!obj->is_filament_at_extruder()) {
         enable[ACTION_BTN_UNLOAD] = false;
     }
-    
+
     if (obj->ams_exist_bits == 0) {
         if (obj->is_in_printing()) {
             if (!obj->can_resume()) {
@@ -2815,7 +2863,7 @@ void StatusPanel::update_ams_control_state(bool is_curr_tray_selected)
                 }
             }
         }
-        
+
     }
     else {
         if (obj->is_in_printing() /*&& obj->can_resume() && obj->m_tray_now != std::to_string(VIRTUAL_TRAY_ID) */) {
@@ -2834,7 +2882,7 @@ void StatusPanel::update_ams_control_state(bool is_curr_tray_selected)
                     else if (!m_ams_control->GetCurrentCan(m_ams_control->GetCurentAms()).empty()) {
                         enable[ACTION_BTN_LOAD] = false;
                         enable[ACTION_BTN_UNLOAD] = false;
-                    } 
+                    }
                 }
                 else if (obj->m_tray_now == std::to_string(VIRTUAL_TRAY_ID)) {
                     if (m_ams_control->GetCurentAms() == std::to_string(VIRTUAL_TRAY_ID)) {
@@ -2850,7 +2898,7 @@ void StatusPanel::update_ams_control_state(bool is_curr_tray_selected)
                     enable[ACTION_BTN_LOAD] = false;
                     enable[ACTION_BTN_UNLOAD] = false;
                 }
-            } 
+            }
         }
     }
 
@@ -2910,14 +2958,14 @@ void StatusPanel::update_basic_print_data(bool def)
 void StatusPanel::update_model_info()
 {
     auto get_subtask_fn = [this](BBLModelTask* subtask) {
-        CallAfter([this, subtask]() { 
+        CallAfter([this, subtask]() {
             if (obj && obj->subtask_id_ == subtask->task_id) {
                 obj->set_modeltask(subtask);
             }
         });
     };
 
-     
+
     if (wxGetApp().getAgent() && obj) {
         BBLSubTask* curr_task = obj->get_subtask();
         if (curr_task) {
@@ -2982,7 +3030,7 @@ void StatusPanel::update_subtask(MachineObject *obj)
         if (calib_bitmap != nullptr)
             m_project_task_panel->set_thumbnail_img(*calib_bitmap);
     }
-    
+
     if (obj->is_support_layer_num) {
         m_project_task_panel->update_layers_num(true);
     }
@@ -2996,6 +3044,24 @@ void StatusPanel::update_subtask(MachineObject *obj)
         || obj->is_in_calibration()) {
         reset_printing_values();
     } else if (obj->is_in_printing() || obj->print_status == "FINISH") {
+
+        m_project_task_panel->update_subtask_name(wxString::Format("%s", GUI::from_u8(obj->subtask_name)));
+
+        if (obj->get_modeltask() && obj->get_modeltask()->design_id > 0) {
+            m_project_task_panel->show_profile_info(wxString::FromUTF8(obj->get_modeltask()->profile_name));
+        } else {
+            m_project_task_panel->show_profile_info(false);
+        }
+
+        // update thumbnail
+        if (obj->is_sdcard_printing()) {
+            update_basic_print_data(false);
+            update_sdcard_subtask(obj);
+        } else {
+            update_basic_print_data(true);
+            update_cloud_subtask(obj);
+        }
+
         if (obj->is_in_prepare() || obj->print_status == "SLICING") {
             m_project_task_panel->market_scoring_hide();
             m_project_task_panel->get_request_failed_panel()->Hide();
@@ -3040,6 +3106,20 @@ void StatusPanel::update_subtask(MachineObject *obj)
             } else {
                  m_project_task_panel->enable_pause_resume_button(true, "pause");
             }
+
+            // update printing stage
+            m_project_task_panel->update_left_time(obj->mc_left_time);
+            if (obj->subtask_) {
+                m_project_task_panel->update_stage_value(obj->get_curr_stage(), obj->subtask_->task_progress);
+                m_project_task_panel->update_progress_percent(wxString::Format("%d", obj->subtask_->task_progress), "%");
+                m_project_task_panel->update_layers_num(true, wxString::Format(_L("Layer: %d/%d"), obj->curr_layer, obj->total_layers));
+
+            } else {
+                m_project_task_panel->update_stage_value(obj->get_curr_stage(), 0);
+                m_project_task_panel->update_progress_percent(NA_STR, wxEmptyString);
+                m_project_task_panel->update_layers_num(true, wxString::Format(_L("Layer: %s"), NA_STR));
+            }
+
             if (obj->is_printing_finished()) {
                 obj->update_model_task();
                 m_project_task_panel->enable_abort_button(false);
@@ -3065,7 +3145,9 @@ void StatusPanel::update_subtask(MachineObject *obj)
                                 m_project_task_panel->set_has_reted_text(false);
                             }
                         }
+
                         m_project_task_panel->market_scoring_show();
+
                     } else if (obj && obj->rating_info && !obj->rating_info->request_successful) {
                         BOOST_LOG_TRIVIAL(info) << "model mall result request failed";
                         if (403 != obj->rating_info->http_code) {
@@ -3084,43 +3166,12 @@ void StatusPanel::update_subtask(MachineObject *obj)
                 m_project_task_panel->market_scoring_hide();
                 m_project_task_panel->get_request_failed_panel()->Hide();
             }
-            // update printing stage
-            
-            m_project_task_panel->update_left_time(obj->mc_left_time);
-            if (obj->subtask_) {
-                m_project_task_panel->update_stage_value(obj->get_curr_stage(), obj->subtask_->task_progress);
-                m_project_task_panel->update_progress_percent(wxString::Format("%d", obj->subtask_->task_progress), "%");
-                m_project_task_panel->update_layers_num(true, wxString::Format(_L("Layer: %d/%d"), obj->curr_layer, obj->total_layers));
-
-            } else {
-                m_project_task_panel->update_stage_value(obj->get_curr_stage(), 0);
-                m_project_task_panel->update_progress_percent(NA_STR, wxEmptyString);
-                m_project_task_panel->update_layers_num(true, wxString::Format(_L("Layer: %s"), NA_STR));
-            }
-        }
-
-        m_project_task_panel->update_subtask_name(wxString::Format("%s", GUI::from_u8(obj->subtask_name)));
-
-        if (obj->get_modeltask() && obj->get_modeltask()->design_id > 0) {
-            m_project_task_panel->show_profile_info(wxString::FromUTF8(obj->get_modeltask()->profile_name));
-        }
-        else {
-            m_project_task_panel->show_profile_info(false);
-        }
-
-        //update thumbnail
-        if (obj->is_sdcard_printing()) {
-            update_basic_print_data(false);
-            update_sdcard_subtask(obj);
-        } else {
-            update_basic_print_data(true);
-            update_cloud_subtask(obj);
         }
     } else {
         reset_printing_values();
     }
 
-    this->Layout();
+    Layout();
 }
 
 void StatusPanel::update_cloud_subtask(MachineObject *obj)
@@ -3199,14 +3250,14 @@ void StatusPanel::reset_printing_values()
     m_project_task_panel->get_request_failed_panel()->Hide();
     update_basic_print_data(false);
     m_project_task_panel->update_left_time(NA_STR);
+    m_project_task_panel->update_finish_time(NA_STR);
     m_project_task_panel->update_layers_num(true, wxString::Format(_L("Layer: %s"), NA_STR));
     update_calib_bitmap();
-    
+
     task_thumbnail_state = ThumbnailState::PLACE_HOLDER;
     m_start_loading_thumbnail = false;
     m_load_sdcard_thumbnail   = false;
     skip_print_error = 0;
-    this->Layout();
 }
 
 void StatusPanel::on_axis_ctrl_xy(wxCommandEvent &event)
@@ -3220,7 +3271,20 @@ void StatusPanel::on_axis_ctrl_xy(wxCommandEvent &event)
     if (event.GetInt() == 5) { obj->command_axis_control("X", 1.0, -1.0f, 3000); }
     if (event.GetInt() == 6) { obj->command_axis_control("Y", 1.0, -1.0f, 3000); }
     if (event.GetInt() == 7) { obj->command_axis_control("X", 1.0, 1.0f, 3000); }
-    if (event.GetInt() == 8) { obj->command_go_home(); }
+    if (event.GetInt() == 8) {
+        if (axis_go_home_dlg == nullptr) {
+            axis_go_home_dlg = new SecondaryCheckDialog(this->GetParent(), wxID_ANY, _L("Auto homing"));
+            axis_go_home_dlg->update_text(_L("Are you sure you want to trigger auto homing?"));
+            axis_go_home_dlg->m_button_ok->SetLabel(_L("Homing"));
+            axis_go_home_dlg->Bind(EVT_SECONDARY_CHECK_CONFIRM, [this](wxCommandEvent& e) {
+                if (obj) {
+                    BOOST_LOG_TRIVIAL(info) << "Axis have go home";
+                    obj->command_go_home();
+                }
+            });
+        }
+        axis_go_home_dlg->on_show();
+    }
 
     //check is at home
     if (event.GetInt() == 1
@@ -3259,7 +3323,7 @@ bool StatusPanel::check_axis_z_at_home(MachineObject* obj)
 }
 
 void StatusPanel::on_axis_ctrl_z_up_10(wxCommandEvent &event)
-{    
+{
     if (obj) {
         obj->command_axis_control("Z", 1.0, -10.0f, 900);
         if (!check_axis_z_at_home(obj))
@@ -3424,7 +3488,7 @@ void StatusPanel::on_ams_load_curr()
         std::string                            curr_ams_id = m_ams_control->GetCurentAms();
         std::string                            curr_can_id = m_ams_control->GetCurrentCan(curr_ams_id);
 
-        
+
         update_filament_step();
         //virtual tray
         if (curr_ams_id.compare(std::to_string(VIRTUAL_TRAY_ID)) == 0) {
@@ -3799,7 +3863,7 @@ void StatusPanel::on_ams_guide(wxCommandEvent& event)
     else {
         ams_wiki_url = "https://wiki.bambulab.com/en/software/galaxyslicer-neo/use-ams-on-galaxyslicer-neo";
     }
-    
+
     wxLaunchDefaultBrowser(ams_wiki_url);
 }
 
@@ -3937,7 +4001,7 @@ void StatusPanel::on_switch_speed(wxCommandEvent &event)
             speed_dismiss_time = boost::posix_time::microsec_clock::universal_time();
         }
         });
-    
+
     m_ams_control->Bind(EVT_CLEAR_SPEED_CONTROL, [this, popUp](auto& e) {
         if (m_showing_speed_popup) {
             if (popUp && popUp->IsShown()) {
@@ -4324,8 +4388,8 @@ void StatusPanel::msw_rescale()
     m_calibration_btn->Rescale();
 
     m_options_btn->SetMinSize(wxSize(-1, FromDIP(26)));
-    m_options_btn->Rescale(); 
-    
+    m_options_btn->Rescale();
+
     m_parts_btn->SetMinSize(wxSize(-1, FromDIP(26)));
     m_parts_btn->Rescale();
 
@@ -4366,11 +4430,11 @@ ScoreDialog::ScoreDialog(wxWindow *parent, ScoreData *score_data)
     , m_upload_status_code(StatusCode::CODE_NUMBER)
 {
     m_tocken.reset(new int(0));
-    
+
     wxBoxSizer *m_main_sizer = get_main_sizer(score_data->local_to_url_image, score_data->comment_text);
 
     m_image_url_paths        = score_data->image_url_paths;
-    
+
 
     this->SetSizer(m_main_sizer);
     Fit();
@@ -4386,16 +4450,16 @@ void ScoreDialog::on_dpi_changed(const wxRect &suggested_rect) {}
 void ScoreDialog::OnBitmapClicked(wxMouseEvent &event)
 {
     wxStaticBitmap *clickedBitmap = dynamic_cast<wxStaticBitmap *>(event.GetEventObject());
-    if (m_image.find(clickedBitmap) != m_image.end()) { 
+    if (m_image.find(clickedBitmap) != m_image.end()) {
         if (!m_image[clickedBitmap].is_selected) {
-            for (auto panel : m_image[clickedBitmap].image_broad) { 
+            for (auto panel : m_image[clickedBitmap].image_broad) {
                 panel->Show();
             }
             m_image[clickedBitmap].is_selected = true;
             m_selected_image_list.insert(clickedBitmap);
         } else {
-            for (auto panel : m_image[clickedBitmap].image_broad) { 
-                panel->Hide(); 
+            for (auto panel : m_image[clickedBitmap].image_broad) {
+                panel->Hide();
             }
             m_image[clickedBitmap].is_selected = false;
             m_selected_image_list.erase(clickedBitmap);
@@ -4412,9 +4476,9 @@ void ScoreDialog::OnBitmapClicked(wxMouseEvent &event)
 }
 
  std::set <std::pair<wxStaticBitmap * ,wxString>> ScoreDialog::add_need_upload_imgs()
-{ 
+{
     std::set<std::pair<wxStaticBitmap *, wxString>> need_upload_images;
-    for (auto bitmap : m_image) { 
+    for (auto bitmap : m_image) {
         if (!bitmap.second.is_uploaded) {
             wxString &local_image_path = bitmap.second.local_image_url;
             if (!local_image_path.empty()) { need_upload_images.insert(std::make_pair(bitmap.first, local_image_path)); }
@@ -4434,7 +4498,7 @@ std::pair<wxStaticBitmap *, ScoreDialog::ImageMsg> ScoreDialog::create_local_thu
     cur_image_msg.local_image_url = local_path;
     cur_image_msg.img_url_paths   = "";
     cur_image_msg.is_uploaded     = false;
-    
+
     wxStaticBitmap *imageCtrl = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxImage(local_path, wxBITMAP_TYPE_ANY).Rescale(FromDIP(80), FromDIP(60))), wxDefaultPosition,
                                                    wxDefaultSize, 0);
     imageCtrl->Bind(wxEVT_LEFT_DOWN, &ScoreDialog::OnBitmapClicked, this);
@@ -4499,7 +4563,7 @@ void ScoreDialog::update_static_bitmap(wxStaticBitmap* static_bitmap, wxImage im
 }
 
 wxBoxSizer *ScoreDialog::create_broad_sizer(wxStaticBitmap *bitmap, ImageMsg& cur_image_msg)
-{ 
+{
     // tb: top and bottom  lr: left and right
     auto m_image_tb_broad = new wxBoxSizer(wxVERTICAL);
     auto line_top         = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, 1), wxTAB_TRAVERSAL);
@@ -4546,7 +4610,7 @@ void ScoreDialog::init() {
     SetIcon(wxIcon(encode_path(icon_path.c_str()), wxBITMAP_TYPE_ICO));
 }
 
-wxBoxSizer *ScoreDialog::get_score_sizer() { 
+wxBoxSizer *ScoreDialog::get_score_sizer() {
     wxBoxSizer    *score_sizer      = new wxBoxSizer(wxHORIZONTAL);
     wxStaticText *static_score_text = new wxStaticText(this, wxID_ANY, _L("Rate"), wxDefaultPosition, wxDefaultSize, 0);
     static_score_text->Wrap(-1);
@@ -4666,18 +4730,18 @@ wxBoxSizer *ScoreDialog::get_photo_btn_sizer() {
         for (int i = 0; i < filePaths.GetCount(); i++) { //It's ugly, but useful
             bool is_repeat = false;
             for (auto image : m_image) {
-                if (filePaths[i] == image.second.local_image_url) { 
+                if (filePaths[i] == image.second.local_image_url) {
                     is_repeat = true;
                     continue;
                 }
             }
             if (!is_repeat) {
                 local_path.push_back(std::make_pair(filePaths[i], ""));
-                if (local_path.size() + m_image.size() > m_photo_nums) { 
-                    break; 
+                if (local_path.size() + m_image.size() > m_photo_nums) {
+                    break;
                 }
             }
-            
+
         }
 
         load_photo(local_path);
@@ -4804,7 +4868,7 @@ wxBoxSizer *ScoreDialog::get_button_sizer()
                     }
                 }
                 progress_dialog->Hide();
-                if (progress_dialog) { 
+                if (progress_dialog) {
                     delete progress_dialog;
                     progress_dialog = nullptr;
                 }
@@ -4944,7 +5008,7 @@ wxBoxSizer *ScoreDialog::get_main_sizer(const std::vector<std::pair<wxString, st
     m_main_sizer->Add(m_photo_sizer, 0, wxEXPAND | wxTOP, FromDIP(8));
 
     m_image_sizer = new wxGridSizer(5, FromDIP(5), FromDIP(5));
-    if (!images.empty()) { 
+    if (!images.empty()) {
         load_photo(images);
     }
     m_main_sizer->Add(m_image_sizer, 0, wxEXPAND | wxLEFT, FromDIP(24));
@@ -4956,7 +5020,7 @@ wxBoxSizer *ScoreDialog::get_main_sizer(const std::vector<std::pair<wxString, st
     return m_main_sizer;
 }
 
-ScoreData ScoreDialog::get_score_data() { 
+ScoreData ScoreDialog::get_score_data() {
     ScoreData score_data;
     score_data.rating_id          = m_rating_id;
     score_data.design_id          = m_design_id;
@@ -4967,20 +5031,20 @@ ScoreData ScoreDialog::get_score_data() {
     score_data.comment_text       = m_comment_text->GetValue();
     score_data.image_url_paths    = m_image_url_paths;
     for (auto img : m_image) { score_data.local_to_url_image.push_back(std::make_pair(img.second.local_image_url, img.second.img_url_paths)); }
-    
+
     return score_data;
 }
 
 void ScoreDialog::set_comment(std::string comment)
 {
-    if (m_comment_text) { 
+    if (m_comment_text) {
 
         m_comment_text->SetValue(wxString::FromUTF8(comment));
     }
 }
 
 void ScoreDialog::set_cloud_bitmap(std::vector<std::string> cloud_bitmaps)
-{ 
+{
     m_image_url_paths = cloud_bitmaps;
     for (std::string &url : cloud_bitmaps) {
         if (std::string::npos == url.find(m_model_id)) continue;
@@ -4990,5 +5054,29 @@ void ScoreDialog::set_cloud_bitmap(std::vector<std::string> cloud_bitmaps)
     Fit();
 }
 
-} // namespace GUI
-} // namespace Slic3r
+RectTextPanel::RectTextPanel(wxWindow *parent) : wxPanel(parent)
+{
+    Bind(wxEVT_PAINT, &RectTextPanel::OnPaint, this);
+}
+
+void RectTextPanel::setText(const wxString text)
+{
+    this->text = text;
+    Refresh();
+}
+
+void RectTextPanel::OnPaint(wxPaintEvent &event) {
+    wxPaintDC dc(this);
+    dc.SetFont(::Label::Body_12);
+    wxSize textSize = dc.GetTextExtent(text);
+
+    dc.SetBrush(wxBrush(wxColour("#00AE42")));
+    dc.SetPen(wxPen(wxColour("#00AE42")));
+    wxRect rect(0, 0, textSize.GetWidth() + 4, textSize.GetHeight() + 4);
+    SetSize(rect.GetSize());
+    dc.DrawRoundedRectangle(rect, 4);
+    dc.SetTextForeground(wxColour(255, 255, 255));
+    dc.DrawText(text, wxPoint(2, 2));
+}
+
+}} // namespace Slic3r

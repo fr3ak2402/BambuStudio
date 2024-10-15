@@ -493,11 +493,11 @@ void Preset::remove_files()
 }
 
 //BBS: add logic for only difference save
-void Preset::save(DynamicPrintConfig* parent_config)
+bool Preset::save(DynamicPrintConfig* parent_config)
 {
     //BBS: add project embedded preset logic
     if (this->is_project_embedded)
-        return;
+        return false;
     //BBS: change to json format
     //this->config.save(this->file);
     std::string from_str;
@@ -510,7 +510,11 @@ void Preset::save(DynamicPrintConfig* parent_config)
     else
         from_str = std::string("Default");
 
-    boost::filesystem::create_directories(fs::path(this->file).parent_path());
+    boost::system::error_code ec;
+    if (!boost::filesystem::exists(fs::path(this->file).parent_path()) && !boost::filesystem::create_directories(fs::path(this->file).parent_path(), ec)) {
+        BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << " create directory failed: " << this->file << " " << ec.message();
+        return false;
+    }
 
     //BBS: only save difference if it has parent
     if (parent_config) {
@@ -536,6 +540,7 @@ void Preset::save(DynamicPrintConfig* parent_config)
     fs::path idx_file(this->file);
     idx_file.replace_extension(".info");
     this->save_info(idx_file.string());
+    return true;
 }
 
 void Preset::reload(Preset const &parent)
@@ -799,7 +804,7 @@ static std::vector<std::string> s_Preset_print_options {
     "seam_position", "wall_sequence", "is_infill_first", "sparse_infill_density", "sparse_infill_pattern", "sparse_infill_anchor", "sparse_infill_anchor_max",
     "top_surface_pattern", "bottom_surface_pattern", "internal_solid_infill_pattern", "infill_direction", "bridge_angle",
     "minimum_sparse_infill_area", "reduce_infill_retraction", "ironing_pattern", "ironing_type",
-    "ironing_flow", "ironing_speed", "ironing_spacing","ironing_direction",
+    "ironing_flow", "ironing_speed", "ironing_spacing","ironing_direction", "ironing_inset",
     "max_travel_detour_distance",
     "fuzzy_skin", "fuzzy_skin_thickness", "fuzzy_skin_point_distance",
 #ifdef HAS_PRESSURE_EQUALIZER
@@ -846,20 +851,21 @@ static std::vector<std::string> s_Preset_print_options {
      // calib
     "print_flow_ratio",
     //Orca
-    "exclude_object", "seam_slope_type", "seam_slope_conditional", "scarf_angle_threshold", "seam_slope_start_height", "seam_slope_entire_loop", "seam_slope_min_length",
-    "seam_slope_steps", "seam_slope_inner_walls"};
+    "exclude_object", /*"seam_slope_type",*/ "seam_slope_conditional", "scarf_angle_threshold", /*"seam_slope_start_height", */"seam_slope_entire_loop",/* "seam_slope_min_length",*/
+    "seam_slope_steps", "seam_slope_inner_walls", "role_base_wipe_speed"/*, "seam_slope_gap"*/};
 
 static std::vector<std::string> s_Preset_filament_options {
-    /*"filament_colour", */ "default_filament_colour","required_nozzle_HRC","filament_diameter", "filament_type", "filament_soluble", "filament_is_support",
+    /*"filament_colour", */ "default_filament_colour","required_nozzle_HRC","filament_diameter", "filament_type", "filament_soluble", "filament_is_support","filament_scarf_seam_type", "filament_scarf_height", "filament_scarf_gap","filament_scarf_length",
     "filament_max_volumetric_speed",
     "filament_flow_ratio", "filament_density", "filament_cost", "filament_minimal_purge_on_wipe_tower",
     "nozzle_temperature", "nozzle_temperature_initial_layer",
     // BBS
     "cool_plate_temp", "eng_plate_temp", "hot_plate_temp", "textured_plate_temp", "cool_plate_temp_initial_layer", "eng_plate_temp_initial_layer", "hot_plate_temp_initial_layer","textured_plate_temp_initial_layer",
+    "supertack_plate_temp_initial_layer", "supertack_plate_temp",
     // "bed_type",
     //BBS:temperature_vitrification
     "temperature_vitrification", "reduce_fan_stop_start_freq", "slow_down_for_layer_cooling", "fan_min_speed",
-    "fan_max_speed", "enable_overhang_bridge_fan", "overhang_fan_speed", "overhang_fan_threshold", "close_fan_the_first_x_layers", "full_fan_speed_layer", "fan_cooling_layer_time", "slow_down_layer_time", "slow_down_min_speed",
+    "fan_max_speed", "enable_overhang_bridge_fan", "overhang_fan_speed", "overhang_fan_threshold", "overhang_threshold_participating_cooling","close_fan_the_first_x_layers", "full_fan_speed_layer", "fan_cooling_layer_time", "slow_down_layer_time", "slow_down_min_speed",
     "filament_start_gcode", "filament_end_gcode",
     //exhaust fan control
     "activate_air_filtration","during_print_exhaust_fan_speed","complete_print_exhaust_fan_speed",
@@ -1323,6 +1329,14 @@ int PresetCollection::get_differed_values_to_update(Preset& preset, std::map<std
                             << " and base_id is: " << preset.base_id;
     key_values[BBL_JSON_KEY_UPDATE_TIME] = std::to_string(preset.updated_time);
     key_values[BBL_JSON_KEY_TYPE] = Preset::get_iot_type_string(preset.type);
+
+    int update_size = 0;
+    for (const auto &pair : key_values) {
+        update_size += pair.first.size();
+        update_size += pair.second.size();
+    }
+    if (update_size > 350 * 1024) return -2;
+
     return 0;
 }
 
@@ -1477,7 +1491,10 @@ void PresetCollection::set_sync_info_and_save(std::string name, std::string sett
             preset->setting_id = setting_id;
             if (update_time > 0)
                 preset->updated_time = update_time;
-            preset->sync_info == "update" ? preset->save(nullptr) : preset->save_info();
+            if (preset->sync_info == "update")
+                preset->save(nullptr);
+            else
+                preset->save_info();
             break;
         }
     }
@@ -2234,7 +2251,7 @@ std::map<std::string, std::vector<Preset const *>> PresetCollection::get_filamen
 }
 
 //BBS: add project embedded preset logic
-void PresetCollection::save_current_preset(const std::string &new_name, bool detach, bool save_to_project, Preset* _curr_preset)
+void PresetCollection::save_current_preset(const std::string &new_name, bool detach, bool save_to_project, Preset *_curr_preset, std::map<std::string, std::string> *extra_map)
 {
     Preset curr_preset = _curr_preset ? *_curr_preset : m_edited_preset;
     //BBS: add lock logic for sync preset in background
@@ -2273,8 +2290,12 @@ void PresetCollection::save_current_preset(const std::string &new_name, bool det
             preset.config.option<ConfigOptionString>("print_settings_id", true)->value = new_name;
         else if (m_type == Preset::TYPE_FILAMENT)
             preset.config.option<ConfigOptionStrings>("filament_settings_id", true)->values[0] = new_name;
-        else if (m_type == Preset::TYPE_PRINTER)
+        else if (m_type == Preset::TYPE_PRINTER) {
             preset.config.option<ConfigOptionString>("printer_settings_id", true)->value = new_name;
+            for (auto iter : *extra_map) {
+                preset.config.option<ConfigOptionString>(iter.first, true)->value = iter.second;
+            }
+        }
         final_inherits = preset.inherits();
         unlock();
         // TODO: apply change from custom root to devided presets.
@@ -2318,8 +2339,12 @@ void PresetCollection::save_current_preset(const std::string &new_name, bool det
             preset.config.option<ConfigOptionString>("print_settings_id", true)->value = new_name;
         else if (m_type == Preset::TYPE_FILAMENT)
             preset.config.option<ConfigOptionStrings>("filament_settings_id", true)->values[0] = new_name;
-        else if (m_type == Preset::TYPE_PRINTER)
+        else if (m_type == Preset::TYPE_PRINTER) {
             preset.config.option<ConfigOptionString>("printer_settings_id", true)->value = new_name;
+            for (auto iter : *extra_map) {
+                preset.config.option<ConfigOptionString>(iter.first, true)->value = iter.second;
+            }
+        }
         //BBS: add lock logic for sync preset in background
         final_inherits = inherits;
         unlock();
@@ -2661,6 +2686,7 @@ inline t_config_option_keys deep_diff(const ConfigBase &config_this, const Confi
                 case coFloats:  add_correct_opts_to_diff<ConfigOptionFloats     >(opt_key, diff, config_other, config_this);  break;
                 case coStrings: add_correct_opts_to_diff<ConfigOptionStrings    >(opt_key, diff, config_other, config_this);  break;
                 case coPercents:add_correct_opts_to_diff<ConfigOptionPercents   >(opt_key, diff, config_other, config_this);  break;
+                case coFloatsOrPercents: add_correct_opts_to_diff<ConfigOptionFloatsOrPercents>(opt_key, diff, config_other, config_this); break;
                 case coPoints:  add_correct_opts_to_diff<ConfigOptionPoints     >(opt_key, diff, config_other, config_this);  break;
                 // BBS
                 case coEnums:   add_correct_opts_to_diff<ConfigOptionInts       >(opt_key, diff, config_other, config_this);  break;

@@ -21,8 +21,9 @@ static const std::string temp_gcode_path = temp_dir + "/temp.gcode";
 static const std::string path            = temp_dir + "/test.3mf";
 static const std::string config_3mf_path = temp_dir + "/test_config.3mf";
 
-static std::string MachineBedTypeString[5] = {
+static std::string MachineBedTypeString[6] = {
     "auto",
+    "suprtack",
     "pc",
     "ep",
     "pei",
@@ -1125,7 +1126,7 @@ bool CalibUtils::process_and_store_3mf(Model *model, const DynamicPrintConfig &f
                 const ModelVolume &model_volume = *model_object.volumes[volume_idx];
                 for (int instance_idx = 0; instance_idx < (int)model_object.instances.size(); ++ instance_idx) {
                     const ModelInstance &model_instance = *model_object.instances[instance_idx];
-                    glvolume_collection.load_object_volume(&model_object, obj_idx, volume_idx, instance_idx, "volume", true, false, true);
+                    glvolume_collection.load_object_volume(&model_object, obj_idx, volume_idx, instance_idx, "volume", true, false, true, false);
                     glvolume_collection.volumes.back()->set_render_color( new_color[0], new_color[1], new_color[2], new_color[3]);
                     glvolume_collection.volumes.back()->set_color(new_color);
                     //glvolume_collection.volumes.back()->printable = model_instance.printable;

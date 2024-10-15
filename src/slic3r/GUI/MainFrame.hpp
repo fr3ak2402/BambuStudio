@@ -257,7 +257,6 @@ public:
     void        update_title();
     void        set_max_recent_count(int max);
 
-    void        show_publish_button(bool show);
     void        show_calibration_button(bool show);
 
 	void        update_title_colour_after_set_title();
@@ -354,6 +353,7 @@ public:
     MaxVolumetricSpeed_Test_Dlg *m_vol_test_dlg{nullptr};
     VFA_Test_Dlg *               m_vfa_test_dlg{nullptr};
     Retraction_Test_Dlg *        m_retraction_calib_dlg{nullptr};
+    SecondaryCheckDialog*        m_confirm_download_plugin_dlg{ nullptr };
 
     // BBS. Replace title bar and menu bar with top bar.
     BBLTopbar*            m_topbar{ nullptr };
@@ -385,7 +385,6 @@ public:
     // BBS
     mutable int m_print_select{ ePrintAll };
     mutable int m_slice_select{ eSliceAll };
-    Button* m_publish_btn{ nullptr };
     SideButton* m_slice_btn{ nullptr };
     SideButton* m_slice_option_btn{ nullptr };
     SideButton* m_print_btn{ nullptr };

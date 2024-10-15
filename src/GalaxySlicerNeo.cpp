@@ -4161,12 +4161,11 @@ int CLI::run(int argc, char **argv)
                     arrange_cfg.align_to_y_axis = (printer_structure_opt->value == PrinterStructure::psI3);
                 }
 
-                arrangement::update_arrange_params(arrange_cfg, &m_print_config, selected);
-                arrangement::update_selected_items_inflation(selected, &m_print_config, arrange_cfg);
-                arrangement::update_unselected_items_inflation(unselected, &m_print_config, arrange_cfg);
-                arrangement::update_selected_items_axis_align(selected, &m_print_config, arrange_cfg);
+                arrangement::update_arrange_params(arrange_cfg, m_print_config, selected);
+                arrangement::update_selected_items_inflation(selected, m_print_config, arrange_cfg);
+                arrangement::update_unselected_items_inflation(unselected, m_print_config, arrange_cfg);
 
-                beds = get_shrink_bedpts(&m_print_config, arrange_cfg);
+                beds = get_shrink_bedpts(m_print_config, arrange_cfg);
 
                 partplate_list.preprocess_exclude_areas(arrange_cfg.excluded_regions, 1, scale_(1));
 
@@ -4562,12 +4561,11 @@ int CLI::run(int argc, char **argv)
                     arrange_cfg.align_to_y_axis = (printer_structure_opt->value == PrinterStructure::psI3);
                 }
 
-                arrangement::update_arrange_params(arrange_cfg, &m_print_config, selected);
-                arrangement::update_selected_items_inflation(selected, &m_print_config, arrange_cfg);
-                arrangement::update_unselected_items_inflation(unselected, &m_print_config, arrange_cfg);
-                arrangement::update_selected_items_axis_align(selected, &m_print_config, arrange_cfg);
+                arrangement::update_arrange_params(arrange_cfg, m_print_config, selected);
+                arrangement::update_selected_items_inflation(selected, m_print_config, arrange_cfg);
+                arrangement::update_unselected_items_inflation(unselected, m_print_config, arrange_cfg);
 
-                beds=get_shrink_bedpts(&m_print_config, arrange_cfg);
+                beds=get_shrink_bedpts(m_print_config, arrange_cfg);
 
                 partplate_list.preprocess_exclude_areas(arrange_cfg.excluded_regions, 1, scale_(1));
 
@@ -4971,7 +4969,7 @@ int CLI::run(int argc, char **argv)
                         //    continue;
                         for (int instance_idx = 0; instance_idx < (int)model_object.instances.size(); ++ instance_idx) {
                             const ModelInstance &model_instance = *model_object.instances[instance_idx];
-                            glvolume_collection.load_object_volume(&model_object, obj_idx, volume_idx, instance_idx, "volume", true, false, true);
+                            glvolume_collection.load_object_volume(&model_object, obj_idx, volume_idx, instance_idx, "volume", true, false, true, false);
                             //glvolume_collection.volumes.back()->geometry_id = key.geometry_id;
                             std::string color = filament_color?filament_color->get_at(volume_extruder_id - 1):"#00FF00FF";
 
@@ -5845,7 +5843,7 @@ int CLI::run(int argc, char **argv)
                             //    continue;
                             for (int instance_idx = 0; instance_idx < (int)model_object.instances.size(); ++ instance_idx) {
                                 const ModelInstance &model_instance = *model_object.instances[instance_idx];
-                                glvolume_collection.load_object_volume(&model_object, obj_idx, volume_idx, instance_idx, "volume", true, false, true);
+                                glvolume_collection.load_object_volume(&model_object, obj_idx, volume_idx, instance_idx, "volume", true, false, true, false);
                                 //glvolume_collection.volumes.back()->geometry_id = key.geometry_id;
                                 std::string color = filament_color?filament_color->get_at(volume_extruder_id - 1):"#00FF00FF";
 

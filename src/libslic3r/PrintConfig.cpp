@@ -38,7 +38,12 @@ std::set<std::string> SplitStringAndRemoveDuplicateElement(const std::string &st
 void ReplaceString(std::string &resource_str, const std::string &old_str, const std::string &new_str)
 {
     std::string::size_type pos = 0;
-    while ((pos = resource_str.find(old_str)) != std::string::npos) { resource_str.replace(pos, old_str.length(), new_str); }
+    size_t new_size = 0;
+    while ((pos = resource_str.find(old_str, pos + new_size)) != std::string::npos)
+    {
+        resource_str.replace(pos, old_str.length(), new_str);
+        new_size = new_str.size();
+    }
 }
 }
 
@@ -267,7 +272,8 @@ static const t_config_enum_values s_keys_map_BrimType = {
     {"outer_only",      btOuterOnly},
     {"inner_only",      btInnerOnly},
     {"outer_and_inner", btOuterAndInner},
-    {"auto_brim", btAutoBrim}  // BBS
+    {"auto_brim", btAutoBrim},  // BBS
+    {"brim_ears", btBrimEars}  // BBS
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(BrimType)
 
@@ -302,9 +308,21 @@ static const t_config_enum_values s_keys_map_OverhangFanThreshold = {
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(OverhangFanThreshold)
 
+//BBS
+static const t_config_enum_values s_keys_map_OverhangThresholdParticipatingCooling = {
+    { "0%",         Overhang_threshold_participating_cooling_none },
+    { "10%",        Overhang_threshold_participating_cooling_1_4  },
+    { "25%",        Overhang_threshold_participating_cooling_2_4  },
+    { "50%",        Overhang_threshold_participating_cooling_3_4  },
+    { "75%",        Overhang_threshold_participating_cooling_4_4  },
+    { "95%",        Overhang_threshold_participating_cooling_bridge  }
+};
+CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(OverhangThresholdParticipatingCooling)
+
 // BBS
 static const t_config_enum_values s_keys_map_BedType = {
     { "Default Plate",      btDefault },
+    { "Supertack Plate",    btSuperTack },
     { "Cool Plate",         btPC },
     { "Engineering Plate",  btEP  },
     { "High Temp Plate",    btPEI  },
@@ -568,6 +586,16 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionFloatOrPercent(0., false));
 
     // BBS
+    def             = this->add("supertack_plate_temp", coInts);
+    def->label      = L("Other layers");
+    def->tooltip    = L("Bed temperature for layers except the initial one. "
+                     "Value 0 means the filament does not support to print on the Cool Plate");
+    def->sidetext   = "°C";
+    def->full_label = L("Bed temperature");
+    def->min        = 0;
+    def->max        = 120;
+    def->set_default_value(new ConfigOptionInts{35});
+
     def = this->add("cool_plate_temp", coInts);
     def->label = L("Other layers");
     def->tooltip = L("Bed temperature for layers except the initial one. "
@@ -608,11 +636,21 @@ void PrintConfigDef::init_fff_params()
     def->max        = 120;
     def->set_default_value(new ConfigOptionInts{45});
 
+    def = this->add("supertack_plate_temp_initial_layer", coInts);
+    def->label = L("Initial layer");
+    def->full_label = L("Initial layer bed temperature");
+    def->tooltip = L("Bed temperature of the initial layer. "
+        "Value 0 means the filament does not support to print on the Bambu Cool Plate SuperTack");
+    def->sidetext = "°C";
+    def->min = 0;
+    def->max = 120;
+    def->set_default_value(new ConfigOptionInts{ 35 });
+
     def = this->add("cool_plate_temp_initial_layer", coInts);
     def->label = L("Initial layer");
     def->full_label = L("Initial layer bed temperature");
     def->tooltip = L("Bed temperature of the initial layer. "
-        "Value 0 means the filament does not support to print on the Cool Plate");
+        "Value 0 means the filament does not support to print on the Bambu Cool Plate SuperTack");
     def->sidetext = "°C";
     def->min = 0;
     def->max = 120;
@@ -653,10 +691,12 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("Bed types supported by the printer");
     def->mode = comSimple;
     def->enum_keys_map = &s_keys_map_BedType;
+    def->enum_values.emplace_back("Supertack Plate");
     def->enum_values.emplace_back("Cool Plate");
     def->enum_values.emplace_back("Engineering Plate");
     def->enum_values.emplace_back("High Temp Plate");
     def->enum_values.emplace_back("Textured PEI Plate");
+    def->enum_labels.emplace_back(L("Bambu Cool Plate SuperTack"));
     def->enum_labels.emplace_back(L("Cool Plate / PLA Plate"));
     def->enum_labels.emplace_back(L("Engineering Plate"));
     def->enum_labels.emplace_back(L("Smooth PEI Plate / High Temp Plate"));
@@ -769,6 +809,28 @@ void PrintConfigDef::init_fff_params()
     def->enum_labels.emplace_back("75%");
     def->enum_labels.emplace_back("95%");
     def->set_default_value(new ConfigOptionEnumsGeneric{ (int)Overhang_threshold_bridge });
+
+    def = this->add("overhang_threshold_participating_cooling", coEnums);
+    def->label = L("Overhang threshold for participating cooling");
+    def->tooltip = L("Decide which overhang part join the cooling function to slow down the speed."
+                     "Expressed as percentage which indicides how much width of the line without support from lower layer. "
+                     "100% means forcing cooling for all outer wall no matter how much overhang degree");
+    def->sidetext = "";
+    def->enum_keys_map = &ConfigOptionEnum<OverhangThresholdParticipatingCooling>::get_enum_values();
+    def->mode = comAdvanced;
+    def->enum_values.emplace_back("0%");
+    def->enum_values.emplace_back("10%");
+    def->enum_values.emplace_back("25%");
+    def->enum_values.emplace_back("50%");
+    def->enum_values.emplace_back("75%");
+    def->enum_values.emplace_back("100%");
+    def->enum_labels.emplace_back("0%");
+    def->enum_labels.emplace_back("10%");
+    def->enum_labels.emplace_back("25%");
+    def->enum_labels.emplace_back("50%");
+    def->enum_labels.emplace_back("75%");
+    def->enum_labels.emplace_back("100%");
+    def->set_default_value(new ConfigOptionEnumsGeneric{(int) Overhang_threshold_participating_cooling_bridge});
 
     def = this->add("bridge_angle", coFloat);
     def->label = L("Bridge direction");
@@ -920,6 +982,7 @@ void PrintConfigDef::init_fff_params()
                      "Auto means the brim width is analysed and calculated automatically.");
     def->enum_keys_map = &ConfigOptionEnum<BrimType>::get_enum_values();
     def->enum_values.emplace_back("auto_brim");
+    def->enum_values.emplace_back("brim_ears");
     def->enum_values.emplace_back("outer_only");
 #if 1 //!BBL_RELEASE_TO_PUBLIC
     // BBS: The following two types are disabled
@@ -929,6 +992,7 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.emplace_back("no_brim");
 
     def->enum_labels.emplace_back(L("Auto"));
+    def->enum_labels.emplace_back(L("Painted"));
     def->enum_labels.emplace_back(L("Outer brim only"));
 #if 1 //!BBL_RELEASE_TO_PUBLIC
     // BBS: The following two types are disabled
@@ -949,6 +1013,7 @@ void PrintConfigDef::init_fff_params()
     def->max = 2;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(0.));
+
 
     def = this->add("compatible_printers", coStrings);
     def->label = L("Compatible machine");
@@ -1327,6 +1392,8 @@ void PrintConfigDef::init_fff_params()
     //               "from the XY coordinate).");
     def->sidetext = L("mm");
     def->mode = comAdvanced;
+    def->min = -5;
+    def->max = 5;
     def->set_default_value(new ConfigOptionPoints { Vec2d(0,0) });
 
     def = this->add("filament_flow_ratio", coFloats);
@@ -1497,9 +1564,11 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.push_back("PLA");
     def->enum_values.push_back("ABS");
     def->enum_values.push_back("ASA");
+    def->enum_values.push_back("ASA-CF");
     def->enum_values.push_back("PETG");
     def->enum_values.push_back("PCTG");
     def->enum_values.push_back("TPU");
+    def->enum_values.push_back("TPU-AMS");
     def->enum_values.push_back("PC");
     def->enum_values.push_back("PA");
     def->enum_values.push_back("PA-CF");
@@ -1535,11 +1604,50 @@ void PrintConfigDef::init_fff_params()
     def->mode = comDevelop;
     def->set_default_value(new ConfigOptionBools { false });
 
-    def = this->add("filament_is_support", coBools);
-    def->label = L("Support material");
+    def                = this->add("filament_scarf_seam_type", coEnums);
+    def->label         = L("Scarf seam type");
+    def->tooltip       = L("Set scarf seam type for this filament. This setting could minimize seam visibiliy.");
+    def->enum_keys_map = &ConfigOptionEnum<SeamScarfType>::get_enum_values();
+    def->enum_values.push_back("none");
+    def->enum_values.push_back("external");
+    def->enum_values.push_back("all");
+    def->enum_labels.push_back(L("None"));
+    def->enum_labels.push_back(L("Contour"));
+    def->enum_labels.push_back(L("Contour and hole"));
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionEnumsGeneric{0});
+
+    def          = this->add("filament_scarf_height", coFloatsOrPercents);
+    def->label   = L("Scarf start height");
+    def->tooltip    = L("This amount can be specified in millimeters or as a percentage of the current layer height.");
+    def->min        = 0;
+    def->ratio_over = "layer_height";
+    def->sidetext   = L("mm/%");
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionFloatsOrPercents{FloatOrPercent( 0, 10)});
+
+    def        = this->add("filament_scarf_gap", coFloatsOrPercents);
+    def->label = L("Scarf slope gap");
+    def->tooltip    = L("In order to reduce the visiblity of the seam in closed loop, the inner wall and outer wall are shortened by a specified amount.");
+    def->min   = 0;
+    def->ratio_over = "nozzle_diameter";
+    def->sidetext   = L("mm/%");
+    def->mode  = comAdvanced;
+    def->set_default_value(new ConfigOptionFloatsOrPercents{FloatOrPercent(0, 0)});
+
+    def        = this->add("filament_scarf_length", coFloats);
+    def->label = L("Scarf length");
+    def->tooltip = L("Length of the scarf. Setting this parameter to zero effectively disables the scarf.");
+    def->min   = 0;
+    def->sidetext = "mm";
+    def->mode  = comAdvanced;
+    def->set_default_value(new ConfigOptionFloats{10});
+
+    def          = this->add("filament_is_support", coBools);
+    def->label   = L("Support material");
     def->tooltip = L("Support material is commonly used to print support and support interface");
-    def->mode = comDevelop;
-    def->set_default_value(new ConfigOptionBools { false });
+    def->mode    = comDevelop;
+    def->set_default_value(new ConfigOptionBools{false});
 
     // BBS
     def = this->add("temperature_vitrification", coInts);
@@ -2200,6 +2308,16 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(0.1));
 
+    def           = this->add("ironing_inset", coFloat);
+    def->label    = L("Ironing inset");
+    def->category = L("Quality");
+    def->tooltip  = L("The distance to keep the from the edges of ironing line. 0 means not apply.");
+    def->sidetext = L("mm");
+    def->min      = 0;
+    def->max      = 100;
+    def->mode     = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(0));
+
     def = this->add("ironing_speed", coFloat);
     def->label = L("Ironing speed");
     def->category = L("Quality");
@@ -2682,7 +2800,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Raft layers");
     def->category = L("Support");
     def->tooltip = L("Object will be raised by this number of support layers. "
-                     "Use this function to avoid wrapping when print ABS");
+                     "Use this function to avoid warping when print ABS");
     def->sidetext = L("layers");
     def->min = 0;
     def->max = 100;
@@ -2869,19 +2987,6 @@ void PrintConfigDef::init_fff_params()
     def->mode = comDevelop;
     def->set_default_value(new ConfigOptionPercent(15));
 
-    def                = this->add("seam_slope_type", coEnum);
-    def->label         = L("Scarf joint seam (experimental)");
-    def->tooltip       = L("Use scarf joint to minimize seam visibility and increase seam strength.");
-    def->enum_keys_map = &ConfigOptionEnum<SeamScarfType>::get_enum_values();
-    def->enum_values.push_back("none");
-    def->enum_values.push_back("external");
-    def->enum_values.push_back("all");
-    def->enum_labels.push_back(L("None"));
-    def->enum_labels.push_back(L("Contour"));
-    def->enum_labels.push_back(L("Contour and hole"));
-    def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionEnum<SeamScarfType>(SeamScarfType::None));
-
     def          = this->add("seam_slope_conditional", coBool);
     def->label   = L("Conditional scarf joint");
     def->tooltip = L("Apply scarf joints only to smooth perimeters where traditional seams do not conceal the seams at sharp corners effectively.");
@@ -2897,28 +3002,11 @@ void PrintConfigDef::init_fff_params()
     def->max      = 180;
     def->set_default_value(new ConfigOptionInt(155));
 
-    def           = this->add("seam_slope_start_height", coFloatOrPercent);
-    def->label    = L("Scarf start height");
-    def->tooltip  = L("Start height of the scarf.\n"
-                     "This amount can be specified in millimeters or as a percentage of the current layer height. The default value for this parameter is 0.");
-    def->sidetext = L("mm or %");
-    def->min      = 0;
-    def->mode     = comAdvanced;
-    def->set_default_value(new ConfigOptionFloatOrPercent(50, true));
-
     def          = this->add("seam_slope_entire_loop", coBool);
     def->label   = L("Scarf around entire wall");
     def->tooltip = L("The scarf extends to the entire length of the wall.");
     def->mode    = comAdvanced;
     def->set_default_value(new ConfigOptionBool(false));
-
-    def           = this->add("seam_slope_min_length", coFloat);
-    def->label    = L("Scarf length");
-    def->tooltip  = L("Length of the scarf. Setting this parameter to zero effectively disables the scarf.");
-    def->sidetext = L("mm");
-    def->min      = 0;
-    def->mode     = comAdvanced;
-    def->set_default_value(new ConfigOptionFloat(10));
 
     def          = this->add("seam_slope_steps", coInt);
     def->label   = L("Scarf steps");
@@ -2940,6 +3028,12 @@ void PrintConfigDef::init_fff_params()
     def->min = 0.01;
     def->mode = comDevelop;
     def->set_default_value(new ConfigOptionPercent(80));
+
+    def          = this->add("role_base_wipe_speed", coBool);
+    def->label   = L("Role base wipe speed");
+    def->tooltip = L("The wipe speed is determined by speed of current extrusion role. " "e.g if a wip action is executed immediately following an outer wall extrusion, the speed of the outer wall extrusion will be utilized for the wipe action.");
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(true));
 
     def = this->add("skirt_distance", coFloat);
     def->label = L("Skirt distance");
@@ -3513,8 +3607,9 @@ void PrintConfigDef::init_fff_params()
     def = this->add("tree_support_wall_count", coInt);
     def->label = L("Support wall loops");
     def->category = L("Support");
-    def->tooltip = L("This setting specifies the count of walls around support");
+    def->tooltip = L("This setting specifies the count of support walls in the range of [0,2]. 0 means auto.");
     def->min = 0;
+    def->max = 2;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionInt(0));
 
@@ -4738,7 +4833,8 @@ void PrintConfigDef::handle_legacy(t_config_option_key &opt_key, std::string &va
         "support_transition_line_width", "support_transition_speed", "bed_temperature", "bed_temperature_initial_layer",
         "can_switch_nozzle_type", "can_add_auxiliary_fan", "extra_flush_volume", "spaghetti_detector", "adaptive_layer_height",
         "z_hop_type","nozzle_hrc","chamber_temperature","only_one_wall_top","bed_temperature_difference","long_retraction_when_cut",
-        "retraction_distance_when_cut"
+        "retraction_distance_when_cut",
+        "seam_slope_type","seam_slope_start_height","seam_slope_gap", "seam_slope_min_length"
     };
 
     if (ignore.find(opt_key) != ignore.end()) {
@@ -5094,7 +5190,12 @@ std::string DynamicPrintConfig::get_filament_type(std::string &displayed_filamen
                 } else if (filament_type->get_at(id) == "PA") {
                     displayed_filament_type = "Sup.PA";
                     return "PA-S";
-                } else {
+                }
+                else if (filament_type->get_at(id) == "ABS") {
+                    displayed_filament_type = "Sup.ABS";
+                    return "ABS-S";
+                }
+                else {
                     displayed_filament_type = filament_type->get_at(id);
                     return filament_type->get_at(id);
                 }

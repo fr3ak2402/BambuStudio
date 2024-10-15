@@ -10,6 +10,7 @@
 
 namespace Slic3r {
 struct SupportParameters {
+    SupportParameters() = delete;
     SupportParameters(const PrintObject& object)
     {
         const PrintConfig& print_config = object.print()->config();
@@ -43,6 +44,7 @@ struct SupportParameters {
         this->first_layer_flow = Slic3r::support_material_1st_layer_flow(&object, float(slicing_params.first_print_layer_height));
         this->support_material_flow = Slic3r::support_material_flow(&object, float(slicing_params.layer_height));
         this->support_material_interface_flow = Slic3r::support_material_interface_flow(&object, float(slicing_params.layer_height));
+    	this->raft_interface_flow                = support_material_interface_flow;
 
         // Calculate a minimum support layer height as a minimum over all extruders, but not smaller than 10um.
         this->support_layer_height_min = scaled<coord_t>(0.01);
@@ -89,6 +91,8 @@ struct SupportParameters {
         this->interface_angle = Geometry::deg2rad(float(object_config.support_angle.value + 90.));
         this->interface_spacing = object_config.support_interface_spacing.value + this->support_material_interface_flow.spacing();
         this->interface_density = std::min(1., this->support_material_interface_flow.spacing() / this->interface_spacing);
+	    double raft_interface_spacing = object_config.support_interface_spacing.value + this->raft_interface_flow.spacing();
+	    this->raft_interface_density = std::min(1., this->raft_interface_flow.spacing() / raft_interface_spacing);
         this->support_spacing = object_config.support_base_pattern_spacing.value + this->support_material_flow.spacing();
         this->support_density = std::min(1., this->support_material_flow.spacing() / this->support_spacing);
         if (object_config.support_interface_top_layers.value == 0) {
@@ -98,11 +102,12 @@ struct SupportParameters {
         }
 
         SupportMaterialPattern  support_pattern = object_config.support_base_pattern;
-        this->with_sheath = /*is_tree(object_config.support_type) &&*/ object_config.tree_support_wall_count > 0;
+        this->with_sheath = object_config.tree_support_wall_count > 0;
         this->base_fill_pattern =
             support_pattern == smpHoneycomb ? ipHoneycomb :
             this->support_density > 0.95 || this->with_sheath ? ipRectilinear : ipSupportBase;
         this->interface_fill_pattern = (this->interface_density > 0.95 ? ipRectilinear : ipSupportBase);
+		this->raft_interface_fill_pattern = this->raft_interface_density > 0.95 ? ipRectilinear : ipSupportBase;
         if (object_config.support_interface_pattern == smipGrid)
             this->contact_fill_pattern = ipGrid;
         else if (object_config.support_interface_pattern == smipRectilinearInterlaced)
@@ -113,6 +118,52 @@ struct SupportParameters {
             object_config.support_interface_pattern == smipConcentric ?
             ipConcentric :
             (this->interface_density > 0.95 ? ipRectilinear : ipSupportBase);
+		
+		this->raft_angle_1st_layer  = 0.f;
+	    this->raft_angle_base       = 0.f;
+	    this->raft_angle_interface  = 0.f;
+	    if (slicing_params.base_raft_layers > 1) {
+	        assert(slicing_params.raft_layers() >= 4);
+	        // There are all raft layer types (1st layer, base, interface & contact layers) available.
+	        this->raft_angle_1st_layer  = this->interface_angle;
+	        this->raft_angle_base       = this->base_angle;
+	        this->raft_angle_interface  = this->interface_angle;
+	        if ((slicing_params.interface_raft_layers & 1) == 0)
+	            // Allign the 1st raft interface layer so that the object 1st layer is hatched perpendicularly to the raft contact interface.
+	            this->raft_angle_interface += float(0.5 * M_PI);
+	    } else if (slicing_params.base_raft_layers == 1 || slicing_params.interface_raft_layers > 1) {
+	        assert(slicing_params.raft_layers() == 2 || slicing_params.raft_layers() == 3);
+	        // 1st layer, interface & contact layers available.
+	        this->raft_angle_1st_layer  = this->base_angle;
+	        this->raft_angle_interface  = this->interface_angle + 0.5 * M_PI;
+	    } else if (slicing_params.interface_raft_layers == 1) {
+	        // Only the contact raft layer is non-empty, which will be printed as the 1st layer.
+	        assert(slicing_params.base_raft_layers == 0);
+	        assert(slicing_params.interface_raft_layers == 1);
+	        assert(slicing_params.raft_layers() == 1);
+	        this->raft_angle_1st_layer = float(0.5 * M_PI);
+	        this->raft_angle_interface = this->raft_angle_1st_layer;
+	    } else {
+	        // No raft.
+	        assert(slicing_params.base_raft_layers == 0);
+	        assert(slicing_params.interface_raft_layers == 0);
+	        assert(slicing_params.raft_layers() == 0);
+	    }
+
+        support_extrusion_width = object_config.support_line_width.value > 0 ? object_config.support_line_width : object_config.line_width;
+        // Check if set to zero, use default if so.
+        if (support_extrusion_width <= 0.0) {
+            const auto nozzle_diameter               = print_config.nozzle_diameter.get_at(object_config.support_interface_filament - 1);
+            support_extrusion_width = Flow::auto_extrusion_width(FlowRole::frSupportMaterial, (float) nozzle_diameter);
+        }
+
+        independent_layer_height = print_config.independent_support_layer_height;
+
+        // force double walls everywhere if wall count is larger than 1        
+        tree_branch_diameter_double_wall_area_scaled = object_config.tree_support_wall_count.value > 1  ? 0.1 :
+                                                       object_config.tree_support_wall_count.value == 0 ? 0.25 * sqr(scaled<double>(5.0)) * M_PI :
+                                                                                                          std::numeric_limits<double>::max();
+        
     }
 	// Both top / bottom contacts and interfaces are soluble.
     bool                    soluble_interface;
@@ -142,6 +193,8 @@ struct SupportParameters {
     Flow 		support_material_flow;
     Flow 		support_material_interface_flow;
     Flow 		support_material_bottom_interface_flow;
+	// Flow at raft inteface & contact layers.
+	Flow    				raft_interface_flow;
     coordf_t support_extrusion_width;
     // Is merging of regions allowed? Could the interface & base support regions be printed with the same extruder?
     bool 		can_merge_support_regions;
@@ -157,13 +210,28 @@ struct SupportParameters {
     coordf_t 				interface_spacing;
     coordf_t				support_expansion=0;
     coordf_t 				interface_density;
+    // Density of the raft interface and contact layers.
+    coordf_t 				raft_interface_density;
     coordf_t 				support_spacing;
     coordf_t 				support_density;
 
     InfillPattern           base_fill_pattern;
     InfillPattern           interface_fill_pattern;
+    // Pattern of the raft interface and contact layers.
+    InfillPattern           raft_interface_fill_pattern;
     InfillPattern 			contact_fill_pattern;
     bool                    with_sheath;
+    // Branches of organic supports with area larger than this threshold will be extruded with double lines.
+    double                  tree_branch_diameter_double_wall_area_scaled = 0.25 * sqr(scaled<double>(5.0)) * M_PI;;
+
+    float 					raft_angle_1st_layer;
+    float 					raft_angle_base;
+    float 					raft_angle_interface;
+
+    // Produce a raft interface angle for a given SupportLayer::interface_id()
+    float 					raft_interface_angle(size_t interface_id) const 
+    	{ return this->raft_angle_interface + ((interface_id & 1) ? float(- M_PI / 4.) : float(+ M_PI / 4.)); }
+		
     bool independent_layer_height = false;
     const double thresh_big_overhang = Slic3r::sqr(scale_(10));
 };

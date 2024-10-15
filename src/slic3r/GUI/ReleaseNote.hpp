@@ -189,7 +189,7 @@ public:
         const wxSize& size = wxDefaultSize,
         long            style = wxCLOSE_BOX | wxCAPTION
     );
-    void update_text_image(wxString text, wxString image_url);
+    void update_text_image(const wxString& text, const wxString& error_code,const wxString& image_url);
     void on_show();
     void on_hide();
     void update_title_style(wxString title, std::vector<int> style, wxWindow* parent = nullptr);
@@ -206,6 +206,7 @@ public:
     wxWebRequest web_request;
     wxStaticBitmap* m_error_prompt_pic_static;
     Label* m_staticText_release_note{ nullptr };
+    Label* m_staticText_error_code{ nullptr };
     wxBoxSizer* m_sizer_main;
     wxBoxSizer* m_sizer_button;
     wxScrolledWindow* m_vebview_release_note{ nullptr };
@@ -275,6 +276,8 @@ public:
     wxString comfirm_before_enter_text;
     wxString comfirm_after_enter_text;
 
+    boost::thread* m_thread{nullptr};
+
     std::string m_ip;
     Label* m_tip1{ nullptr };
     Label* m_tip2{ nullptr };
@@ -296,6 +299,8 @@ public:
     wxStaticBitmap* m_img_step2{ nullptr };
     wxStaticBitmap* m_img_step3{ nullptr };
     wxHyperlinkCtrl* m_trouble_shoot{ nullptr };
+    wxTimer* closeTimer{ nullptr };
+    int     closeCount{3};
     bool   m_show_access_code{ false };
     int    m_result;
     std::shared_ptr<SendJob> m_send_job{nullptr};
@@ -309,6 +314,8 @@ public:
     void check_ip_address_failed(int result);
     void on_check_ip_address_failed(wxCommandEvent& evt);
     void on_ok(wxMouseEvent& evt);
+    void workerThreadFunc(std::string str_ip, std::string str_access_code);
+    void OnTimer(wxTimerEvent& event);
     void on_text(wxCommandEvent& evt);
     void on_dpi_changed(const wxRect& suggested_rect) override;
 };
