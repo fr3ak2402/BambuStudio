@@ -1430,10 +1430,16 @@ msgstr ""
 msgid "Cone"
 msgstr ""
 
+msgid "Pyramid"
+msgstr ""
+
 msgid "Double Tear Romboid Cylinder"
 msgstr ""
 
 msgid "Disc"
+msgstr ""
+
+msgid "Square"
 msgstr ""
 
 msgid "Torus"

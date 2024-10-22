@@ -553,7 +553,7 @@ wxMenu* MenuFactory::append_submenu_add_generic(wxMenu* menu, ModelVolumeType ty
 
     std::vector<std::string> icons = {"Cube", "Cylinder", "Sphere", "Cone", "double_tear_romboid_cylinder", "Disc", "Torus", "rounded_rectangle"};
     size_t i = 0;
-    for (auto &item : {L("Cube"), L("Cylinder"), L("Sphere"), L("Cone"), L("Double Tear Romboid Cylinder"), L("Disc"), L("Torus"), L("Rounded Rectangle")})
+    for (auto &item : {L("Cube"), L("Cylinder"), L("Sphere"), L("Cone"), L("Pyramid"), L("Double Tear Romboid Cylinder"), L("Disc"), L("Square"), L("Torus"), L("Rounded Rectangle")})
     {
         append_menu_item(sub_menu, wxID_ANY, _(item), "",
             [type, item](wxCommandEvent&) { obj_list()->load_generic_subobject(item, type); }, Slic3r::resources_dir() + "/model/" + icons[i++] + ".png", menu);

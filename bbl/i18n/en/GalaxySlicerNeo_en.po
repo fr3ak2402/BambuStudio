@@ -1426,11 +1426,17 @@ msgstr "Cylinder"
 msgid "Cone"
 msgstr "Cone"
 
+msgid "Pyramid"
+msgstr "Pyramid"
+
 msgid "Double Tear Romboid Cylinder"
 msgstr "Double Tear Romboid Cylinder"
 
 msgid "Disc"
 msgstr "Disc"
+
+msgid "Square"
+msgstr "Square"
 
 msgid "Torus"
 msgstr "Torus"
