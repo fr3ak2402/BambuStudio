@@ -25,6 +25,29 @@ powershell -command "Remove-Item 'D:/BambuStudio/deps/build' -Recurse -Force"
 
 echo Deletion of unnecessary files completed...
 
+:: create folder for pkg-config
+mkdir pkg-config
+
+echo Start downloading pkg-config files...
+
+:: download pkg-config zip
+powershell -Command "Invoke-WebRequest https://github.com/fr3ak2402/GalaxySlicer_deps/releases/download/September_23/pkg-config-lite-0.28.1.zip -OutFile D:/work/Projects/GalaxySlicerNeo_deps/pkg-config.zip"
+
+:: expand pkg-config zip
+powershell -command "Expand-Archive -Path 'D:/work/Projects/GalaxySlicerNeo_deps/pkg-config.zip' -DestinationPath 'D:/work/Projects/GalaxySlicerNeo_deps/pkg-config'"
+
+:: remove pkg-config zip
+powershell -command "Remove-Item 'D:/work/Projects/GalaxySlicerNeo_deps/pkg-config.zip'"
+
+::copy pkg-config.exe to deps bin folder
+powershell -command "Copy-Item 'D:\work\Projects\GalaxySlicerNeo_deps\pkg-config\bin\pkg-config.exe' -Destination 'D:\work\Projects\GalaxySlicerNeo_deps\usr\local\bin'"
+
+::copy pkg-config files to deps share folder
+powershell -command "Copy-Item -Path 'D:\work\Projects\GalaxySlicerNeo_deps\pkg-config\share\aclocal' -Destination 'D:\work\Projects\GalaxySlicerNeo_deps\usr\local\share' -Recurse"
+
+:: remove pkg-config folder
+powershell -command "Remove-Item 'D:/work/Projects/GalaxySlicerNeo_deps/pkg-config' -Recurse"
+
 :: create folder for python
 mkdir python
 cd python

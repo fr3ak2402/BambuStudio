@@ -649,14 +649,8 @@ void PrintObject::clear_support_layers()
 std::shared_ptr<TreeSupportData> PrintObject::alloc_tree_support_preview_cache()
 {
     if (!m_tree_support_preview_cache) {
-        const coordf_t layer_height = m_config.layer_height.value;
         const coordf_t xy_distance = m_config.support_object_xy_distance.value;
-        const double angle = m_config.tree_support_branch_angle.value * M_PI / 180.;
-        const coordf_t max_move_distance
-            = (angle < M_PI / 2) ? (coordf_t)(tan(angle) * layer_height) : std::numeric_limits<coordf_t>::max();
-        const coordf_t radius_sample_resolution = g_config_tree_support_collision_resolution;
-
-        m_tree_support_preview_cache = std::make_shared<TreeSupportData>(*this, xy_distance, max_move_distance, radius_sample_resolution);
+        m_tree_support_preview_cache = std::make_shared<TreeSupportData>(*this, xy_distance, g_config_tree_support_collision_resolution);
     }
 
     return m_tree_support_preview_cache;
@@ -665,7 +659,6 @@ std::shared_ptr<TreeSupportData> PrintObject::alloc_tree_support_preview_cache()
 SupportLayer* PrintObject::add_tree_support_layer(int id, coordf_t height, coordf_t print_z, coordf_t slice_z)
 {
     m_support_layers.emplace_back(new SupportLayer(id, 0, this, height, print_z, slice_z));
-    m_support_layers.back()->support_type = stInnerTree;
     return m_support_layers.back();
 }
 
@@ -895,16 +888,14 @@ bool PrintObject::invalidate_state_by_config_options(
             steps.emplace_back(posSlice);
         } else if (
                opt_key == "seam_position"
-            || opt_key == "seam_slope_type"
             || opt_key == "seam_slope_conditional"
             || opt_key == "scarf_angle_threshold"
-            || opt_key == "seam_slope_start_height"
             || opt_key == "seam_slope_entire_loop"
-            || opt_key == "seam_slope_min_length"
             || opt_key == "seam_slope_steps"
             || opt_key == "seam_slope_inner_walls"
             || opt_key == "seam_gap"
             || opt_key == "wipe_speed"
+            || opt_key == "role_base_wipe_speed"
             || opt_key == "support_speed"
             || opt_key == "support_interface_speed"
             || opt_key == "smooth_speed_discontinuity_area"
@@ -1026,19 +1017,8 @@ void PrintObject::detect_surfaces_type()
             		// In non-spiral vase mode, go over all layers.
             		m_layers.size()),
             [this, spiral_mode, region_id, interface_shells, &surfaces_new](const tbb::blocked_range<size_t>& range) {
-                // If we have soluble support material, don't bridge. The overhang will be squished against a soluble layer separating
-                // the support from the print.
-                // BBS: the above logic only applys for normal(auto) support. Complete logic:
-                // 1. has support, top z distance=0 (soluble material), auto support
-                // 2. for normal(auto), bridge_no_support is off
-                // 3. for tree(auto), interface top layers=0, max bridge length=0, support_critical_regions_only=false (only in this way the bridge is fully supported)
-                bool bottom_is_fully_supported = this->has_support() && m_config.support_top_z_distance.value == 0 && is_auto(m_config.support_type.value);
-                if (m_config.support_type.value == stNormalAuto)
-                    bottom_is_fully_supported &= !m_config.bridge_no_support.value;
-                else if (m_config.support_type.value == stTreeAuto) {
-                    bottom_is_fully_supported &= (m_config.support_interface_top_layers.value > 0 && m_config.max_bridge_length.value == 0 && m_config.support_critical_regions_only.value==false);
-                }
-                SurfaceType surface_type_bottom_other = bottom_is_fully_supported ? stBottom : stBottomBridge;
+                // BBS coconut: can't set to stBottom when soluable support is used, as the support may not be actaully generated, e.g. when "on build plate only" option is enabled. See github #3507.
+                SurfaceType surface_type_bottom_other = stBottomBridge;
                 for (size_t idx_layer = range.begin(); idx_layer < range.end(); ++ idx_layer) {
                     m_print->throw_if_canceled();
                     // BOOST_LOG_TRIVIAL(trace) << "Detecting solid surfaces for region " << region_id << " and layer " << layer->print_z;
@@ -2574,12 +2554,14 @@ void PrintObject::bridge_over_infill()
                             const Flow &flow              = candidate.region->bridging_flow(frSolidInfill, true);
                             Polygons    area_to_be_bridge = expand(candidate.new_polys, flow.scaled_spacing());
                             area_to_be_bridge             = intersection(area_to_be_bridge, deep_infill_area);
-
-                            area_to_be_bridge.erase(std::remove_if(area_to_be_bridge.begin(), area_to_be_bridge.end(),
-                                [internal_unsupported_area](const Polygon &p) {
+                            ExPolygons area_to_be_bridge_ex = union_ex(area_to_be_bridge);
+                            area_to_be_bridge_ex.erase(std::remove_if(area_to_be_bridge_ex.begin(), area_to_be_bridge_ex.end(),
+                                [internal_unsupported_area](const ExPolygon &p) {
                                     return intersection({p}, internal_unsupported_area).empty();
                                 }),
-                                area_to_be_bridge.end());
+                                area_to_be_bridge_ex.end());
+
+                            area_to_be_bridge = to_polygons(area_to_be_bridge_ex);
 
                             Polygons limiting_area = union_(area_to_be_bridge, expansion_area);
 
@@ -3804,7 +3786,7 @@ static void project_triangles_to_slabs(ConstLayerPtrsAdaptor layers, const index
 }
 
 void PrintObject::project_and_append_custom_facets(
-        bool seam, EnforcerBlockerType type, std::vector<Polygons>& out) const
+        bool seam, EnforcerBlockerType type, std::vector<Polygons>& out, std::vector<std::pair<Vec3f, Vec3f>>* vertical_points) const
 {
     for (const ModelVolume* mv : this->model_object()->volumes)
         if (mv->is_model_part()) {
@@ -3819,7 +3801,7 @@ void PrintObject::project_and_append_custom_facets(
                 else {
                     std::vector<Polygons> projected;
                     // Support blockers or enforcers. Project downward facing painted areas upwards to their respective slicing plane.
-                    slice_mesh_slabs(custom_facets, zs_from_layers(this->layers()), this->trafo_centered() * mv->get_matrix(), nullptr, &projected, [](){});
+                    slice_mesh_slabs(custom_facets, zs_from_layers(this->layers()), this->trafo_centered() * mv->get_matrix(), nullptr, &projected, vertical_points, [](){});
                     // Merge these projections with the output, layer by layer.
                     assert(! projected.empty());
                     assert(out.empty() || out.size() == projected.size());

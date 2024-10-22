@@ -88,6 +88,8 @@
 #include "Jobs/SLAImportJob.hpp"
 #include "Jobs/PrintJob.hpp"
 #include "Jobs/NotificationProgressIndicator.hpp"
+#include "Jobs/PlaterWorker.hpp"
+#include "Jobs/BoostThreadWorker.hpp"
 #include "BackgroundSlicingProcess.hpp"
 #include "SelectMachine.hpp"
 #include "SendMultiMachinePage.hpp"
@@ -107,7 +109,7 @@
 #include "MsgDialog.hpp"
 #include "ProjectDirtyStateManager.hpp"
 #include "Gizmos/GLGizmoSimplify.hpp" // create suggestion notification
-
+#include "Gizmos/GLGizmoSVG.hpp" // Drop SVG file
 // BBS
 #include "Widgets/ProgressDialog.hpp"
 #include "BBLStatusBar.hpp"
@@ -139,6 +141,7 @@
 #include "PlateSettingsDialog.hpp"
 #include "DailyTips.hpp"
 #include "CreatePresetsDialog.hpp"
+#include "StepMeshDialog.hpp"
 
 using boost::optional;
 namespace fs = boost::filesystem;
@@ -2217,7 +2220,9 @@ struct Plater::priv
 
     BackgroundSlicingProcess    background_process;
     bool suppressed_backround_processing_update { false };
-
+    // UIThreadWorker can be used as a replacement for BoostThreadWorker if
+    // no additional worker threads are desired (useful for debugging or profiling)
+    PlaterWorker<BoostThreadWorker> m_worker;
     // Jobs defined inside the group class will be managed so that only one can
     // run at a time. Also, the background process will be stopped if a job is
     // started. It is up the the plater to ensure that the background slicing
@@ -2296,7 +2301,7 @@ struct Plater::priv
     bool                        show_render_statistic_dialog{ false };
     bool                        show_wireframe{ false };
     bool                        wireframe_enabled{ true };
-
+    bool                        show_non_manifold_edges{false};
     static const std::regex pattern_bundle;
     static const std::regex pattern_3mf;
     static const std::regex pattern_zip_amf;
@@ -2564,6 +2569,7 @@ struct Plater::priv
     void on_add_custom_filament(ColorEvent &);
 
     void on_object_select(SimpleEvent&);
+    void show_right_click_menu(Vec2d mouse_position, wxMenu *menu);
     void on_plate_name_change(SimpleEvent &);
     void on_right_click(RBtnEvent&);
     //BBS: add model repair
@@ -2618,7 +2624,7 @@ struct Plater::priv
     bool can_decrease_instances() const;
     bool can_split_to_objects() const;
     bool can_split_to_volumes() const;
-    bool can_arrange() const;
+    bool can_do_ui_job() const;
     bool can_layers_editing() const;
     bool can_fix_through_netfabb() const;
     bool can_simplify() const;
@@ -2746,6 +2752,7 @@ Plater::priv::priv(Plater *q, MainFrame *main_frame)
         }))
     , sidebar(new Sidebar(q))
     , notification_manager(std::make_unique<NotificationManager>(q))
+    , m_worker{q, std::make_unique<NotificationProgressIndicator>(notification_manager.get()), "ui_worker"}
     , m_ui_jobs(this)
     , m_job_prepare_state(Job::JobPrepareState::PREPARE_STATE_DEFAULT)
     , delayed_scene_refresh(false)
@@ -2797,6 +2804,7 @@ Plater::priv::priv(Plater *q, MainFrame *main_frame)
     this->q->Bind(EVT_DEL_FILAMENT, &priv::on_delete_filament, this);
     this->q->Bind(EVT_ADD_CUSTOM_FILAMENT, &priv::on_add_custom_filament, this);
     view3D = new View3D(q, bed, &model, config, &background_process);
+    partplate_list.set_bed3d(&bed);
     //BBS: use partplater's gcode
     preview = new Preview(q, bed, &model, config, &background_process, partplate_list.get_current_slice_result(), [this]() { schedule_background_process(); });
 
@@ -3362,6 +3370,10 @@ void Plater::priv::reset_all_gizmos()
     view3D->get_canvas3d()->reset_all_gizmos();
 }
 
+Worker &Plater::get_ui_job_worker() { return p->m_worker; }
+
+const Worker &Plater::get_ui_job_worker() const { return p->m_worker; }
+
 // Called after the Preferences dialog is closed and the program settings are saved.
 // Update the UI based on the current preferences.
 void Plater::priv::update_ui_from_settings()
@@ -3399,7 +3411,8 @@ BoundingBox Plater::priv::scaled_bed_shape_bb() const
 }
 
 
-void read_binary_stl(const std::string& filename, std::string& model_id, std::string& code) {
+void read_binary_stl(const std::string& filename, std::string& model_id, std::string& code,
+    std::string& ml_name, std::string& ml_region, std::string& ml_id) {
     std::ifstream file( encode_path(filename.c_str()), std::ios::binary);
     if (!file) {
         return;
@@ -3419,42 +3432,60 @@ void read_binary_stl(const std::string& filename, std::string& model_id, std::st
             return;
         }
 
-        char magic[2] = { data[0], data[1] };
-        if (magic[0] != 'M' || magic[1] != 'W') {
-            file.close();
-            return;
+        /*include ml info*/
+        std::string ext_content(data);
+        std::string ml_content;
+        std::string mw_content;
+
+        size_t pos = ext_content.find('&');
+        if (pos != std::string::npos) {
+            ml_content = ext_content.substr(0, pos);
+            mw_content = ext_content.substr(pos + 1);
         }
 
-        if (data[2] != ' ') {
-            file.close();
-            return;
+        if (ml_content.empty() && ext_content.find("ML") != std::string::npos) {
+            ml_content = ext_content;
         }
 
-        char protocol_version[3] = { data[3], data[4], data[5] };
-
-        //version
-        if (protocol_version[0] != '1' || protocol_version[1] != '.' || protocol_version[2] != '0') {
-            file.close();
-            return;
+        if (mw_content.empty() && ext_content.find("MW") != std::string::npos) {
+            mw_content = ext_content;
         }
 
-        std::vector<char*> tokens;
-        std::istringstream iss(data);
-        std::string token;
-        while (std::getline(iss, token, ' ')) {
-            char* tokenPtr = new char[token.length() + 1];
-            std::strcpy(tokenPtr, token.c_str());
-            tokens.push_back(tokenPtr);
+        /*parse ml info*/
+        if (!ml_content.empty()) {
+            std::istringstream iss(ml_content);
+            std::string token;
+            std::vector<std::string> result;
+            while (iss >> token) {
+                if (token.find(' ') == std::string::npos) {
+                    result.push_back(token);
+                }
+            }
+
+            if (result.size() == 4 && result[0] == "ML") {
+                ml_region   = result[1];
+                ml_name     = result[2];
+                ml_id       = result[3];
+            }
         }
 
-        //model id
-        if (tokens.size() < 4) {
-            file.close();
-            return;
+        /*parse mw info*/
+        if (!mw_content.empty()) {
+            std::istringstream iss(mw_content);
+            std::string token;
+            std::vector<std::string> result;
+            while (iss >> token) {
+                if (token.find(' ') == std::string::npos) {
+                    result.push_back(token);
+                }
+            }
+
+            if (result.size() == 4 && result[0] == "MW") {
+                model_id    = result[2];
+                code        = result[3];
+            }
         }
 
-        model_id = tokens[2];
-        code = tokens[3];
         file.close();
     }
     catch (...) {
@@ -3501,6 +3532,9 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
 
     std::string  designer_model_id;
     std::string  designer_country_code;
+    std::string  makerlab_region;
+    std::string  makerlab_name;
+    std::string  makerlab_id;
 
     int answer_convert_from_meters          = wxOK_DEFAULT;
     int answer_convert_from_imperial_units  = wxOK_DEFAULT;
@@ -3535,7 +3569,7 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
     const float INIT_MODEL_RATIO             = 0.75;
     const float CENTER_AROUND_ORIGIN_RATIO   = 0.8;
     const float LOAD_MODEL_RATIO             = 0.9;
-
+    bool        import_obj_or_stl            = false;
     for (size_t i = 0; i < input_files.size(); ++i) {
         int file_percent = 0;
 
@@ -3963,8 +3997,13 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                 bool                  is_xxx;
                 Semver                file_version;
                 //ObjImportColorFn obj_color_fun=nullptr;
-                auto obj_color_fun = [this, &path](std::vector<RGBA> &input_colors, bool is_single_color, std::vector<unsigned char> &filament_ids,
-                                                   unsigned char &first_extruder_id) {
+                auto obj_color_fun = [this, &path, &makerlab_region, &makerlab_name, &makerlab_id](std::vector<RGBA> &input_colors, bool is_single_color, std::vector<unsigned char> &filament_ids,
+                    unsigned char& first_extruder_id, std::string ml_origin, std::string ml_name, std::string ml_id) {
+
+                    makerlab_region = ml_origin;
+                    makerlab_name = ml_name;
+                    makerlab_id = ml_id;
+
                     if (!boost::iends_with(path.string(), ".obj")) { return; }
                     const std::vector<std::string> extruder_colours = wxGetApp().plater()->get_extruder_colors_from_plater_config();
                     ObjColorDialog                 color_dlg(nullptr, input_colors, is_single_color, extruder_colours, filament_ids, first_extruder_id);
@@ -3972,12 +4011,29 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                         filament_ids.clear();
                     }
                 };
-                model = Slic3r::Model::read_from_file(
+                auto step_mesh = [this, &path, &is_user_cancel](Slic3r::Step& file, double& linear_value, double& angle_value)-> int {
+                    if (boost::iends_with(path.string(), ".step") ||
+                    boost::iends_with(path.string(), ".stp")){
+                        StepMeshDialog mesh_dlg(nullptr, file);
+                        if (mesh_dlg.ShowModal() == wxID_OK) {
+                            linear_value = mesh_dlg.get_linear_defletion();
+                            angle_value = mesh_dlg.get_angle_defletion();
+                            return 1;
+                        }
+                    }
+                    is_user_cancel = true;
+                    return -1;
+                };
+                model = Slic3r::Model:: read_from_file(
                     path.string(), nullptr, nullptr, strategy, &plate_data, &project_presets, &is_xxx, &file_version, nullptr,
-                    [this, &dlg, real_filename, &progress_percent, &file_percent, INPUT_FILES_RATIO, total_files, i, &designer_model_id, &designer_country_code](int current, int total, bool &cancel, std::string &mode_id, std::string &code)
+                    [this, &dlg, real_filename, &progress_percent, &file_percent, INPUT_FILES_RATIO, total_files, i, &designer_model_id, &designer_country_code, &makerlab_region, &makerlab_name, &makerlab_id](int current, int total, bool &cancel,
+                        std::string &mode_id, std::string &code, std::string &ml_region,  std::string &ml_name, std::string &ml_id)
                     {
-                            designer_model_id = mode_id;
-                            designer_country_code = code;
+                            designer_model_id       = mode_id;
+                            designer_country_code   = code;
+                            makerlab_region         = ml_region;
+                            makerlab_name           = ml_name;
+                            makerlab_id             = ml_id;
 
                             bool     cont = true;
                             float percent_float = (100.0f * (float)i / (float)total_files) + INPUT_FILES_RATIO * 100.0f * ((float)current / (float)total) / (float)total_files;
@@ -4002,11 +4058,11 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                             Slic3r::GUI::show_info(nullptr, _L("Name of components inside step file is not UTF8 format!") + "\n\n" + _L("The name may show garbage characters!"),
                                                    _L("Attention!"));
                         },
-                    nullptr, 0, obj_color_fun);
+                nullptr, 0, obj_color_fun, step_mesh);
 
 
                 if (designer_model_id.empty() && boost::algorithm::iends_with(path.string(), ".stl")) {
-                    read_binary_stl(path.string(), designer_model_id, designer_country_code);
+                    read_binary_stl(path.string(), designer_model_id, designer_country_code, makerlab_name, makerlab_region, makerlab_id);
                 }
 
                 if (type_any_amf && is_xxx) imperial_units = true;
@@ -4159,7 +4215,9 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
             q->skip_thumbnail_invalid = false;
             return empty_result;
         }
-
+        if (boost::algorithm::iends_with(path.string(), ".stl") || boost::algorithm::iends_with(path.string(), ".obj")) {
+            import_obj_or_stl = true;
+        }
         if (one_by_one) {
             // BBS: add load_old_project logic
             if (type_3mf && !is_project_file && !load_old_project)
@@ -4174,7 +4232,11 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ":" << __LINE__ << boost::format(", before load_model_objects, count %1%")%model.objects.size();
             auto loaded_idxs = load_model_objects(model.objects, is_project_file);
             obj_idxs.insert(obj_idxs.end(), loaded_idxs.begin(), loaded_idxs.end());
-
+            if (import_obj_or_stl) {
+                for (int i = 0; i < loaded_idxs.size(); i++) {
+                    q->model().set_assembly_pos(q->model().objects[q->model().objects.size() - 1 - i]);
+                }
+            }
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ":" << __LINE__ << boost::format(", finished load_model_objects");
             wxString msg = wxString::Format(_L("Loading file: %s"), from_path(real_filename));
             dlg_cont     = dlg.Update(progress_percent, msg);
@@ -4209,6 +4271,11 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
 
         auto loaded_idxs = load_model_objects(new_model->objects);
         obj_idxs.insert(obj_idxs.end(), loaded_idxs.begin(), loaded_idxs.end());
+        if (import_obj_or_stl) {
+            for (int i = 0; i < loaded_idxs.size(); i++) {
+                q->model().set_assembly_pos(q->model().objects[q->model().objects.size() - 1 - i]);
+            }
+        }
     }
 
     if (new_model) delete new_model;
@@ -4306,6 +4373,10 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
     //set designer_model_id
     q->model().stl_design_id = designer_model_id;
     q->model().stl_design_country = designer_country_code;
+    q->model().makerlab_region = makerlab_region;
+    q->model().makerlab_name = makerlab_name;
+    q->model().makerlab_id = makerlab_id;
+
     //if (!designer_model_id.empty() && q->model().stl_design_id.empty() && !designer_country_code.empty()) {
     //    q->model().stl_design_id = designer_model_id;
     //    q->model().stl_design_country = designer_country_code;
@@ -4547,6 +4618,17 @@ fs::path Plater::priv::get_export_file_path(GUI::FileType file_type)
     }
     return output_file;
 }
+bool delete_file_name_redundant_suffix(fs::path &path, const std::wstring &suffix) {
+    auto temp_str = path.filename().wstring();
+    boost::ireplace_last(temp_str, suffix, "");
+    if (boost::icontains(temp_str, suffix)) {
+        boost::ireplace_all(temp_str, suffix, "");
+        std::wstring temp = L"/";
+        path = (path.parent_path().wstring() + temp + temp_str + suffix);
+        return true;
+    }
+    return false;
+}
 
 wxString Plater::priv::get_export_file(GUI::FileType file_type)
 {
@@ -4612,7 +4694,7 @@ wxString Plater::priv::get_export_file(GUI::FileType file_type)
     fs::path path(into_path(out_path));
 #ifdef __WXMSW__
     if (boost::iequals(path.extension().string(), output_file.extension().string()) == false) {
-        out_path += output_file.extension().string();
+        out_path += output_file.extension().wstring();
         boost::system::error_code ec;
         if (boost::filesystem::exists(into_u8(out_path), ec)) {
             auto result = MessageBox(q->GetHandle(),
@@ -4624,6 +4706,9 @@ wxString Plater::priv::get_export_file(GUI::FileType file_type)
         }
     }
 #endif
+    if (delete_file_name_redundant_suffix(path, output_file.extension().wstring())) {
+        out_path = path.wstring();
+    }
     wxGetApp().app_config->update_last_output_dir(path.parent_path().string());
 
     return out_path;
@@ -4921,6 +5006,11 @@ void Plater::priv::split_object()
     ModelObject* current_model_object = new_model.objects[obj_idx];
 
     wxBusyCursor wait;
+    if (current_model_object->volumes.size() == 1) {
+        split_volume();//keep color
+        new_model = model;
+        current_model_object = new_model.objects[obj_idx];
+    }
     ModelObjectPtrs new_objects;
     current_model_object->split(&new_objects);
     if (new_objects.size() == 1)
@@ -5717,15 +5807,17 @@ void Plater::priv::reload_from_disk()
     // load one file at a time
     for (size_t i = 0; i < input_paths.size(); ++i) {
         const auto& path = input_paths[i].string();
-        auto obj_color_fun = [this, &path](std::vector<RGBA> &input_colors, bool is_single_color, std::vector<unsigned char> &filament_ids, unsigned char &first_extruder_id) {
+        auto obj_color_fun = [this, &path](std::vector<RGBA> &input_colors, bool is_single_color, std::vector<unsigned char> &filament_ids, unsigned char &first_extruder_id,
+             std::string ml_origin,  std::string ml_name,  std::string ml_id) {
             if (!boost::iends_with(path, ".obj")) { return; }
             const std::vector<std::string> extruder_colours = wxGetApp().plater()->get_extruder_colors_from_plater_config();
             ObjColorDialog                 color_dlg(nullptr, input_colors, is_single_color, extruder_colours, filament_ids, first_extruder_id);
             if (color_dlg.ShowModal() != wxID_OK) { filament_ids.clear(); }
         };
         wxBusyCursor wait;
-        wxBusyInfo info(_L("Reload from:") + " " + from_u8(path), q->get_current_canvas3D()->get_wxglcanvas());
-
+        if (!boost::iends_with(path, ".obj")) {
+            wxBusyInfo info(_L("Reload from:") + " " + from_u8(path), q->get_current_canvas3D()->get_wxglcanvas());
+        }
         Model new_model;
         try
         {
@@ -5798,6 +5890,11 @@ void Plater::priv::reload_from_disk()
                             }
                         }
                         if (found) break;
+                        // BBS: step model,object loaded as a volume. GUI_ObfectList.cpp load_modifier()
+                        if (obj->name == old_volume->name) {
+                            new_object_idx = (int) o;
+                            break;
+                        }
                     }
                 }
 
@@ -5806,22 +5903,34 @@ void Plater::priv::reload_from_disk()
                     continue;
                 }
                 ModelObject *new_model_object = new_model.objects[new_object_idx];
-                if (new_volume_idx < 0 || int(new_model_object->volumes.size()) <= new_volume_idx) {
+                if (int(new_model_object->volumes.size()) <= new_volume_idx) {
                     fail_list.push_back(from_u8(has_source ? old_volume->source.input_file : old_volume->name));
                     continue;
                 }
 
-                old_model_object->add_volume(*new_model_object->volumes[new_volume_idx]);
-                ModelVolume *new_volume = old_model_object->volumes.back();
+                ModelVolume *new_volume = nullptr;
+                // BBS: step model
+                if (new_volume_idx < 0 && new_object_idx >= 0) {
+                    TriangleMesh mesh = new_model_object->mesh();
+                    new_volume = old_model_object->add_volume(std::move(mesh));
+                    new_volume->name  = new_model_object->name;
+                    new_volume->source.input_file = new_model_object->input_file;
+                }else {
+                    new_volume = old_model_object->add_volume(*new_model_object->volumes[new_volume_idx]);
+                    // new_volume = old_model_object->volumes.back();
+                }
+
                 new_volume->set_new_unique_id();
                 new_volume->config.apply(old_volume->config);
                 new_volume->set_type(old_volume->type());
                 new_volume->set_material_id(old_volume->material_id());
 
-                Transform3d transform = Transform3d::Identity();
-                transform.translate(new_volume->source.mesh_offset - old_volume->source.mesh_offset);
-                new_volume->set_transformation(old_volume->get_transformation().get_matrix() * old_volume->source.transform.get_matrix(true) *
-                                               transform * new_volume->source.transform.get_matrix(true).inverse());
+                new_volume->source.mesh_offset = old_volume->source.mesh_offset;
+                new_volume->set_offset(old_volume->get_offset());
+                // Transform3d transform = Transform3d::Identity();
+                // transform.translate(new_volume->source.mesh_offset - old_volume->source.mesh_offset);
+                // new_volume->set_transformation(old_volume->get_transformation().get_matrix() * old_volume->source.transform.get_matrix(true) *
+                //                                transform * new_volume->source.transform.get_matrix(true).inverse());
 
                 new_volume->source.object_idx = old_volume->source.object_idx;
                 new_volume->source.volume_idx = old_volume->source.volume_idx;
@@ -6234,7 +6343,7 @@ void Plater::priv::set_current_panel(wxPanel* panel, bool no_slice)
 
         assemble_view->get_canvas3d()->bind_event_handlers();
         assemble_view->reload_scene(true);
-
+        assemble_view->get_canvas3d()->set_ignore_left_up();
         if (old_panel == view3D) {
             GLCanvas3D* view3D_canvas = view3D->get_canvas3d();
             Selection::IndicesList select_idxs = view3D_canvas->get_selection().get_volume_idxs();
@@ -6433,6 +6542,12 @@ void Plater::priv::on_select_preset(wxCommandEvent &evt)
                 view3D->select_object_from_idx(plate_object[i]);
                 this->sidebar->obj_list()->update_selections();
                 view3D->center_selected_plate(i);
+            }
+
+            if (std::any_of(plate_object.begin(), plate_object.end(), [](const std::vector<int> &obj_idxs) { return !obj_idxs.empty(); })) {
+                take_snapshot("Arrange after bed size changes");
+                q->set_prepare_state(Job::PREPARE_STATE_OUTSIDE_BED);
+                q->arrange();
             }
 
             view3D->deselect_all();
@@ -6890,10 +7005,7 @@ void Plater::priv::on_action_add(SimpleEvent&)
 void Plater::priv::on_action_add_plate(SimpleEvent&)
 {
     if (q != nullptr) {
-        take_snapshot("add partplate");
-        this->partplate_list.create_plate();
-        int new_plate = this->partplate_list.get_plate_count() - 1;
-        this->partplate_list.select_plate(new_plate);
+        partplate_list.add_plate();
         update();
 
         // BBS set default view
@@ -7246,6 +7358,41 @@ void Plater::priv::on_change_color_mode(SimpleEvent& evt) {
     if (m_send_to_sdcard_dlg) m_send_to_sdcard_dlg->on_change_color_mode();
 }
 
+static void get_position(wxWindowBase *child, wxWindowBase *until_parent, int &x, int &y)
+{
+    int res_x = 0, res_y = 0;
+
+    while (child != until_parent && child != nullptr) {
+        int _x, _y;
+        child->GetPosition(&_x, &_y);
+        res_x += _x;
+        res_y += _y;
+
+        child = child->GetParent();
+    }
+
+    x = res_x;
+    y = res_y;
+}
+
+void Plater::priv::show_right_click_menu(Vec2d mouse_position, wxMenu *menu)
+{
+    // BBS: GUI refactor: move sidebar to the left
+    int x, y;
+    get_position(current_panel, wxGetApp().mainframe, x, y);
+    wxPoint position(static_cast<int>(mouse_position.x() + x), static_cast<int>(mouse_position.y() + y));
+#ifdef __linux__
+    // For some reason on Linux the menu isn't displayed if position is
+    // specified (even though the position is sane).
+    position = wxDefaultPosition;
+#endif
+    GLCanvas3D &canvas = *q->canvas3D();
+    canvas.apply_retina_scale(mouse_position);
+    canvas.set_popup_menu_position(mouse_position);
+    q->PopupMenu(menu, position);
+    canvas.clear_popup_menu_position();
+}
+
 void Plater::priv::on_right_click(RBtnEvent& evt)
 {
     int obj_idx = get_selected_object_idx();
@@ -7293,24 +7440,33 @@ void Plater::priv::on_right_click(RBtnEvent& evt)
                 menu = is_some_full_instances   ? menus.assemble_object_menu() :
                    is_part                  ? menus.assemble_part_menu()   : menus.assemble_multi_selection_menu();
             } else {
-                menu = is_some_full_instances   ? menus.object_menu() :
-                       is_part                  ? menus.part_menu()   : menus.multi_selection_menu();
+                if (is_some_full_instances)
+                    menu = printer_technology == ptSLA ? menus.sla_object_menu() : menus.object_menu();
+                else if (is_part) {
+                    const GLVolume *   gl_volume    = selection.get_first_volume();
+                    const ModelVolume *model_volume = get_model_volume(*gl_volume, selection.get_model()->objects);
+                    if (model_volume != nullptr) {
+                        if (model_volume->is_svg()) {
+                            menu = menus.svg_part_menu();
+                        } else if (model_volume->is_cut_connector()) {
+                            menu = menus.cut_connector_menu();
+                        } else {
+                            menu = menus.part_menu();
+                        }
+                    }
+                } else {
+                    if (selection.is_any_cut_volume()) {
+                        menu = menus.cut_connector_menu();
+                    } else {
+                        menu = menus.multi_selection_menu();
+                    }
+                }
             }
         }
     }
 
     if (q != nullptr && menu) {
-#ifdef __linux__
-        // For some reason on Linux the menu isn't displayed if position is specified
-        // (even though the position is sane).
-        q->PopupMenu(menu);
-#else
-        //BBS: GUI refactor: move sidebar to the left
-        int x, y;
-        current_panel->GetPosition(&x, &y);
-        q->PopupMenu(menu, (int)evt.data.first.x() + x, (int)evt.data.first.y());
-        //q->PopupMenu(menu);
-#endif
+        show_right_click_menu(evt.data.first, menu);
     }
 }
 
@@ -7318,16 +7474,7 @@ void Plater::priv::on_right_click(RBtnEvent& evt)
 void Plater::priv::on_plate_right_click(RBtnPlateEvent& evt)
 {
     wxMenu* menu = menus.plate_menu();
-
-#ifdef __linux__
-    q->PopupMenu(menu);
-#else
-    //BBS: GUI refactor: move sidebar to the left
-    int x, y;
-    current_panel->GetPosition(&x, &y);
-    q->PopupMenu(menu, (int)evt.data.first.x() + x, (int)evt.data.first.y());
-    //q->PopupMenu(menu);
-#endif
+    show_right_click_menu(evt.data.first, menu);
 }
 
 void Plater::priv::on_update_geometry(Vec3dsEvent<2>&)
@@ -8017,9 +8164,9 @@ bool Plater::priv::can_split_to_volumes() const
     return (printer_technology != ptSLA) && q->can_split(false);
 }
 
-bool Plater::priv::can_arrange() const
+bool Plater::priv::can_do_ui_job() const
 {
-    return !model.objects.empty() && !m_ui_jobs.is_any_running();
+    return !model.objects.empty() && !m_ui_jobs.is_any_running() && !q->is_background_process_slicing();
 }
 
 bool Plater::priv::layers_height_allowed() const
@@ -8744,7 +8891,6 @@ void Plater::load_project(wxString const& filename2,
     wxString const& originfile)
 {
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << "filename is: " << filename2 << "and originfile is: " << originfile;
-    BOOST_LOG_TRIVIAL(info) << __FUNCTION__;
     auto filename = filename2;
     auto check = [&filename, this] (bool yes_or_no) {
         if (!yes_or_no && !wxGetApp().check_and_save_current_preset_changes(_L("Load project"),
@@ -10275,7 +10421,81 @@ void ProjectDropDialog::on_dpi_changed(const wxRect& suggested_rect)
     Refresh();
 }
 
-//BBS: remove GCodeViewer as seperate APP logic
+bool Plater::emboss_svg(const wxString &svg_file, bool from_toolbar_or_file_menu)
+{
+    std::string svg_file_str = into_u8(svg_file);
+    GLCanvas3D *canvas       = canvas3D();
+    if (canvas == nullptr)
+        return false;
+    auto base_svg = canvas->get_gizmos_manager().get_gizmo(GLGizmosManager::Svg);
+    if (base_svg == nullptr)
+        return false;
+    GLGizmoSVG *svg = dynamic_cast<GLGizmoSVG*>(base_svg);
+    if (svg == nullptr)
+        return false;
+    // Refresh hover state to find surface point under mouse
+    if (from_toolbar_or_file_menu) {
+        return svg->create_volume(svg_file_str, ModelVolumeType::MODEL_PART);
+    } else {
+        wxMouseEvent evt(wxEVT_MOTION);
+        auto         mouse_drop_position = canvas->get_local_mouse_position();
+        evt.SetPosition(wxPoint(mouse_drop_position.x(), mouse_drop_position.y()));
+        canvas->on_mouse(evt); // call render where is call GLCanvas3D::_picking_pass()
+        return svg->create_volume(svg_file_str, mouse_drop_position, ModelVolumeType::MODEL_PART);
+    }
+}
+
+bool Plater::load_svg(const wxArrayString &filenames, bool from_toolbar_or_file_menu)
+{
+    // When only one .svg file is dropped on scene
+    if (filenames.size() == 1) {
+        const wxString &filename       = filenames.Last();
+        const wxString  file_extension = filename.substr(filename.length() - 4);
+        if (file_extension.CmpNoCase(".svg") == 0) {
+            return emboss_svg(filename, from_toolbar_or_file_menu);
+        }
+    }
+    else {
+        const auto     loading = _L("Loading") + dots;
+        ProgressDialog dlg(loading, "", 100, wxGetApp().mainframe, wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_APP_MODAL);
+        wxBusyCursor   busy;
+        for (size_t i = 0; i < filenames.size(); i++) {
+            if (i > 0) {
+                deselect_all();
+            }
+            wxArrayString temp_filenames;
+            if (!boost::iends_with(filenames[i].ToStdString(), ".svg")) {
+                return false;
+            }
+            temp_filenames.push_back(filenames[i]);
+            const auto dlg_info = _L("Loading file") + ": " + filenames[i];
+            int        progress_percent = static_cast<int>(100.0f * static_cast<float>(i) / static_cast<float>(filenames.size()));
+            dlg.Update(progress_percent, dlg_info);
+            load_svg(temp_filenames,true);
+            get_ui_job_worker().wait_for_current_job();
+        }
+        return true;
+    }
+    return false;
+}
+
+bool Plater::load_same_type_files(const wxArrayString &filenames) {
+    if (filenames.size() <= 1) { return true; }
+    else {
+        const wxString &filename = filenames.front();
+        boost::filesystem::path path(filename.ToStdWstring());
+        auto   extension =path.extension();
+        for (size_t i = 1; i < filenames.size(); i++) {
+            boost::filesystem::path temp(filenames[i].ToStdWstring());
+            auto                    temp_extension = temp.extension();
+            if (extension != temp_extension) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+    //BBS: remove GCodeViewer as seperate APP logic
 bool Plater::load_files(const wxArrayString& filenames)
 {
     const std::regex pattern_drop(".*[.](stp|step|stl|oltp|obj|amf|3mf|svg)", std::regex::icase);
@@ -10283,6 +10503,15 @@ bool Plater::load_files(const wxArrayString& filenames)
 
     std::vector<fs::path> normal_paths;
     std::vector<fs::path> gcode_paths;
+    if (!load_same_type_files(filenames)) {
+        MessageDialog msg(wxGetApp().mainframe, _L("Please import multiple files with the same suffix."), _L("Warning"), wxYES | wxICON_WARNING);
+        if (msg.ShowModal() == wxID_YES) {
+            return true;
+        }
+    }
+    if (load_svg(filenames)) {
+        return true;
+    }
 
     for (const auto& filename : filenames) {
         fs::path path(into_path(filename));
@@ -10523,6 +10752,9 @@ void Plater::add_file()
 
     case LoadFilesType::SingleOther: {
         Plater::TakeSnapshot snapshot(this, snapshot_label);
+        if (load_svg(input_files,true)) {
+            return;
+        }
         if (!load_files(paths, LoadStrategy::LoadModel, false).empty()) {
             if (get_project_name() == _L("Untitled") && paths.size() > 0) {
                 p->set_project_filename(wxString::FromUTF8(paths[0].string()));
@@ -10544,6 +10776,19 @@ void Plater::add_file()
 
     case LoadFilesType::MultipleOther: {
         Plater::TakeSnapshot snapshot(this, snapshot_label);
+        wxArrayString        filenames;
+        for (auto path : paths) {
+            filenames.push_back(path.wstring());
+        }
+        if (!load_same_type_files(filenames)) {
+            MessageDialog msg(wxGetApp().mainframe, _L("Please import multiple files with the same suffix."), _L("Warning"), wxYES | wxICON_WARNING);
+            if (msg.ShowModal() == wxID_YES) {
+                return;
+            }
+        }
+        if (boost::iends_with(paths[0].string(), ".svg")&& load_svg(filenames)) {
+            return;
+        }
         if (!load_files(paths, LoadStrategy::LoadModel, true).empty()) {
             if (get_project_name() == _L("Untitled") && paths.size() > 0) {
                 p->set_project_filename(wxString::FromUTF8(paths[0].string()));
@@ -10702,6 +10947,7 @@ void Plater::set_selected_visible(bool visible)
         return;
 
     Plater::TakeSnapshot snapshot(this, "Set Selected Objects Visible in AssembleView");
+    get_ui_job_worker().cancel_all();
     p->m_ui_jobs.cancel_all();
 
     p->get_current_canvas3D()->set_selected_visible(visible);
@@ -10720,6 +10966,7 @@ void Plater::remove_selected()
         return;
 
     Plater::TakeSnapshot snapshot(this, "Delete Selected Objects");
+    get_ui_job_worker().cancel_all();
     p->m_ui_jobs.cancel_all();
 
     //BBS delete current selected
@@ -11140,10 +11387,16 @@ void Plater::export_gcode_3mf(bool export_all)
         );
         if (dlg.ShowModal() == wxID_OK) {
             output_path = into_path(dlg.GetPath());
+            delete_file_name_redundant_suffix(output_path, L".gcode.3mf");
             if (boost::iends_with(output_path.string(), ".gcode")) {
-                std::string path = output_path.string();
-                path             = path.substr(0, path.size() - 6);
-                output_path      = path + ".gcode.3mf";
+                std::wstring temp_path = output_path.wstring();
+                temp_path              = temp_path.substr(0, temp_path.size() - 6);
+                output_path            = temp_path + L".gcode.3mf";
+            }
+            else if (boost::iends_with(output_path.string(), ".gcode.gcode.3mf")) {//for mac
+                std::wstring temp_path = output_path.wstring();
+                temp_path              = temp_path.substr(0, temp_path.size() - 16);
+                output_path            = temp_path + L".gcode.3mf";
             }
             else if (!boost::iends_with(output_path.string(), ".gcode.3mf")) {
                 output_path = output_path.replace_extension(".gcode.3mf");
@@ -11496,6 +11749,101 @@ void Plater::export_stl(bool extended, bool selection_only, bool multi_stls)
         ; // store failed
     }
 }*/
+namespace {
+std::string get_file_name(const std::string &file_path)
+{
+    size_t pos_last_delimiter = file_path.find_last_of("/\\");
+    size_t pos_point          = file_path.find_last_of('.');
+    size_t offset             = pos_last_delimiter + 1;
+    size_t count              = pos_point - pos_last_delimiter - 1;
+    return file_path.substr(offset, count);
+}
+using SvgFile  = EmbossShape::SvgFile;
+using SvgFiles = std::vector<SvgFile *>;
+std::string create_unique_3mf_filepath(const std::string &file, const SvgFiles svgs)
+{
+    // const std::string MODEL_FOLDER = "3D/"; // copy from file 3mf.cpp
+    std::string path_in_3mf   = "3D/" + file + ".svg";
+    size_t      suffix_number = 0;
+    bool        is_unique     = false;
+    do {
+        is_unique   = true;
+        path_in_3mf = "3D/" + file + ((suffix_number++) ? ("_" + std::to_string(suffix_number)) : "") + ".svg";
+        for (SvgFile *svgfile : svgs) {
+            if (svgfile->path_in_3mf.empty()) continue;
+            if (svgfile->path_in_3mf.compare(path_in_3mf) == 0) {
+                is_unique = false;
+                break;
+            }
+        }
+    } while (!is_unique);
+    return path_in_3mf;
+}
+
+bool set_by_local_path(SvgFile &svg, const SvgFiles &svgs)
+{
+    // Try to find already used svg file
+    for (SvgFile *svg_ : svgs) {
+        if (svg_->path_in_3mf.empty()) continue;
+        if (svg.path.compare(svg_->path) == 0) {
+            svg.path_in_3mf = svg_->path_in_3mf;
+            return true;
+        }
+    }
+    return false;
+}
+
+/// <summary>
+/// Function to secure private data before store to 3mf
+/// </summary>
+/// <param name="model">Data(also private) to clean before publishing</param>
+void publish(Model &model, SaveStrategy strategy)
+{
+    // SVG file publishing
+    bool     exist_new = false;
+    SvgFiles svgfiles;
+    for (ModelObject *object : model.objects) {
+        for (ModelVolume *volume : object->volumes) {
+            if (!volume->emboss_shape.has_value()) continue;
+
+            assert(volume->emboss_shape->svg_file.has_value());
+            if (!volume->emboss_shape->svg_file.has_value()) continue;
+
+            SvgFile *svg = &(*volume->emboss_shape->svg_file);
+            if (svg->path_in_3mf.empty()) exist_new = true;
+            svgfiles.push_back(svg);
+        }
+    }
+
+    // Orca: don't show this in silence mode
+    if (exist_new && !(strategy & SaveStrategy::Silence)) {
+        MessageDialog dialog(nullptr,
+                             _L("Are you sure you want to store original SVGs with their local paths into the 3MF file?\n"
+                                "If you hit 'NO', all SVGs in the project will not be editable any more."),
+                             _L("Private protection"), wxYES_NO | wxICON_QUESTION);
+        if (dialog.ShowModal() == wxID_NO) {
+            for (ModelObject *object : model.objects)
+                for (ModelVolume *volume : object->volumes)
+                    if (volume->emboss_shape.has_value()) volume->emboss_shape.reset();
+        }
+    }
+
+    for (SvgFile *svgfile : svgfiles) {
+        if (!svgfile->path_in_3mf.empty())
+            continue; // already suggested path (previous save)
+
+        // create unique name for svgs, when local path differ
+        std::string filename = "unknown";
+        if (!svgfile->path.empty()) {
+            if (set_by_local_path(*svgfile, svgfiles))
+                continue;
+            // check whether original filename is already in:
+            filename = get_file_name(svgfile->path);
+        }
+        svgfile->path_in_3mf = create_unique_3mf_filepath(filename, svgfiles);
+    }
+}
+} // namespace
 
 // BBS: backup
 int Plater::export_3mf(const boost::filesystem::path& output_path, SaveStrategy strategy, int export_plate_idx, Export3mfProgressFn proFn)
@@ -11515,6 +11863,9 @@ int Plater::export_3mf(const boost::filesystem::path& output_path, SaveStrategy 
 
     if (!path.Lower().EndsWith(".3mf"))
         return -1;
+    // take care about private data stored into .3mf
+    // modify model
+    publish(p->model, strategy);
 
     DynamicPrintConfig cfg = wxGetApp().preset_bundle->full_config_secure();
     const std::string path_u8 = into_u8(path);
@@ -12466,13 +12817,29 @@ void Plater::set_bed_shape() const
     auto bundle = wxGetApp().preset_bundle;
     if (bundle != nullptr) {
         const Preset* curr = &bundle->printers.get_selected_preset();
-        if (curr->is_system)
+        if (curr->is_system) {
             texture_filename = PresetUtils::system_printer_bed_texture(*curr);
-        else {
-            auto *printer_model = curr->config.opt<ConfigOptionString>("printer_model");
-            if (printer_model != nullptr && ! printer_model->value.empty()) {
-                texture_filename = bundle->get_texture_for_printer_model(printer_model->value);
+            bool is_configed_by_BBL = PresetUtils::system_printer_bed_model(*curr).size() > 0;
+            if (is_configed_by_BBL) {
+                bool is_bbl_preset = bundle->printers.get_selected_preset().is_bbl_vendor_preset(bundle);
+                if (wxGetApp().app_config->has_section("user_bbl_svg_list")) {
+                    auto cur_preset_name   = bundle->printers.get_edited_preset().name;
+                    auto user_bbl_svg_list = wxGetApp().app_config->get_section("user_bbl_svg_list");
+                    if (user_bbl_svg_list.size() > 0 && user_bbl_svg_list[cur_preset_name].size() > 0) {
+                        texture_filename = user_bbl_svg_list[cur_preset_name];
+                    } else {
+                        if (is_bbl_preset) {
+                            texture_filename = "";
+                        }
+                    }
+                } else if (is_bbl_preset) {
+                    texture_filename = "";
+                }
             }
+        }
+        else {
+            auto *bed_custom_texture = curr->config.opt<ConfigOptionString>("bed_custom_texture");
+            texture_filename         = bed_custom_texture->value;
         }
     }
     set_bed_shape(p->config->option<ConfigOptionPoints>("printable_area")->values,
@@ -12750,6 +13117,28 @@ void Plater::changed_mesh(int obj_idx)
     update();
     p->object_list_changed();
     p->schedule_background_process();
+}
+
+void Plater::changed_object(ModelObject &object)
+{
+    assert(object.get_model() == &p->model); // is object from same model?
+    object.invalidate_bounding_box();
+
+    // recenter and re - align to Z = 0
+    object.ensure_on_bed(p->printer_technology != ptSLA);
+
+    if (p->printer_technology == ptSLA) {
+        // Update the SLAPrint from the current Model, so that the reload_scene()
+        // pulls the correct data, update the 3D scene.
+        p->update_restart_background_process(true, false);
+    } else
+        p->view3D->reload_scene(false);
+
+    // update print
+    p->schedule_background_process();
+
+    // Check outside bed
+    get_current_canvas3D()->requires_check_outside_state();
 }
 
 void Plater::changed_object(int obj_idx)
@@ -13322,7 +13711,7 @@ int Plater::select_plate_by_hover_id(int hover_id, bool right_click, bool isModi
     int action, plate_index;
 
     plate_index = hover_id / PartPlate::GRABBER_COUNT;
-    action      = isModidyPlateName ? PartPlate::PLATE_NAME_HOVER_ID : hover_id % PartPlate::GRABBER_COUNT;
+    action      = isModidyPlateName ? PartPlate::PLATE_NAME_ID : hover_id % PartPlate::GRABBER_COUNT;
 
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": enter, hover_id %1%, plate_index %2%, action %3%")%hover_id % plate_index %action;
     if (action == 0)
@@ -13412,36 +13801,42 @@ int Plater::select_plate_by_hover_id(int hover_id, bool right_click, bool isModi
     }
     else if ((action == 2)&&(!right_click))
     {
-        //arrange the plate
-        //take_snapshot("select_orient partplate");
-        ret = select_plate(plate_index);
-        if (!ret)
+        if (p->can_do_ui_job())
         {
-            set_prepare_state(Job::PREPARE_STATE_MENU);
-            orient();
-        }
-        else
-        {
-            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "can not select plate %1%" << plate_index;
-            ret = -1;
+            //arrange the plate
+            //take_snapshot("select_orient partplate");
+            ret = select_plate(plate_index);
+            if (!ret)
+            {
+                set_prepare_state(Job::PREPARE_STATE_MENU);
+                orient();
+            }
+            else
+            {
+                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "can not select plate %1%" << plate_index;
+                ret = -1;
+            }
         }
     }
     else if ((action == 3)&&(!right_click))
     {
-        //arrange the plate
-        //take_snapshot("select_arrange partplate");
-        ret = select_plate(plate_index);
-        if (!ret)
+        if (p->can_do_ui_job())
         {
-            if (last_arrange_job_is_finished()) {
-                set_prepare_state(Job::PREPARE_STATE_MENU);
-                arrange();
+            //arrange the plate
+            //take_snapshot("select_arrange partplate");
+            ret = select_plate(plate_index);
+            if (!ret)
+            {
+                if (last_arrange_job_is_finished()) {
+                    set_prepare_state(Job::PREPARE_STATE_MENU);
+                    arrange();
+                }
             }
-        }
-        else
-        {
-            BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "can not select plate %1%" << plate_index;
-            ret = -1;
+            else
+            {
+                BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << "can not select plate %1%" << plate_index;
+                ret = -1;
+            }
         }
     }
     else if ((action == 4)&&(!right_click))
@@ -13551,6 +13946,16 @@ void Plater::show_object_info()
     int obj_idx = selection.get_object_idx();
     std::string info_text;
 
+    if (selection.is_wipe_tower()) {
+        info_text += _u8L("Prime Tower:");
+        info_text += "\n";
+        info_text += _u8L("A cube printed during a filament change to purge old color and ensure smooth color transition.");
+        notify_manager->bbl_show_objectsinfo_notification(info_text, false, !(p->current_panel == p->view3D), _u8L("View Wiki for more information"), [](wxEvtHandler*) {
+            wxGetApp().open_browser_with_warning_dialog("https://wiki.bambulab.com/en/software/bambu-studio/multi-color-printing");
+            return false;
+            });
+        return;
+    }
     if (selCount > 1 && !selection.is_single_full_object()) {
         notify_manager->bbl_close_objectsinfo_notification();
         if (selection.get_mode() == Selection::EMode::Volume) {
@@ -13562,7 +13967,7 @@ void Plater::show_object_info()
         notify_manager->bbl_show_objectsinfo_notification(info_text, false, !(p->current_panel == p->view3D));
         return;
     }
-    else if (objects.empty() || (obj_idx < 0) || (obj_idx >= objects.size()) ||
+    if (objects.empty() || (obj_idx < 0) || (obj_idx >= objects.size()) ||
         objects[obj_idx]->volumes.empty() ||// hack to avoid crash when deleting the last object on the bed
         (selection.is_single_full_object() && objects[obj_idx]->instances.size()> 1) ||
         !(selection.is_single_full_instance() || selection.is_single_volume()))
@@ -13815,7 +14220,7 @@ bool Plater::can_fix_through_netfabb() const { return p->can_fix_through_netfabb
 bool Plater::can_simplify() const { return p->can_simplify(); }
 bool Plater::can_split_to_objects() const { return p->can_split_to_objects(); }
 bool Plater::can_split_to_volumes() const { return p->can_split_to_volumes(); }
-bool Plater::can_arrange() const { return p->can_arrange(); }
+bool Plater::can_do_ui_job() const { return p->can_do_ui_job(); }
 bool Plater::can_layers_editing() const { return p->can_layers_editing(); }
 bool Plater::can_paste_from_clipboard() const
 {
@@ -13892,8 +14297,14 @@ bool Plater::is_render_statistic_dialog_visible() const
     return p->show_render_statistic_dialog;
 }
 
-void Plater::toggle_show_wireframe()
-{
+void Plater::toggle_non_manifold_edges() {
+    p->show_non_manifold_edges = !p->show_non_manifold_edges; }
+
+bool Plater::is_show_non_manifold_edges() {
+    return p->show_non_manifold_edges;
+}
+
+void Plater::toggle_show_wireframe() {
     p->show_wireframe = !p->show_wireframe;
 }
 
@@ -13971,7 +14382,9 @@ bool Plater::PopupObjectTableBySelection()
 
 wxMenu* Plater::plate_menu()            { return p->menus.plate_menu();             }
 wxMenu* Plater::object_menu()           { return p->menus.object_menu();            }
-wxMenu* Plater::part_menu()             { return p->menus.part_menu();              }
+wxMenu *Plater::part_menu()             { return p->menus.part_menu();              }
+wxMenu *Plater::svg_part_menu()         { return p->menus.svg_part_menu();          }
+wxMenu* Plater::cut_connector_menu()    { return p->menus.cut_connector_menu(); }
 wxMenu* Plater::sla_object_menu()       { return p->menus.sla_object_menu();        }
 wxMenu* Plater::default_menu()          { return p->menus.default_menu();           }
 wxMenu* Plater::instance_menu()         { return p->menus.instance_menu();          }

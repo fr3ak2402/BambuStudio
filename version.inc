@@ -7,15 +7,16 @@ set(SLIC3R_APP_KEY "GalaxySlicerNeo")
 if(NOT DEFINED BBL_RELEASE_TO_PUBLIC)
 set(BBL_RELEASE_TO_PUBLIC "1")
 endif()
-# Note that defining BBL_INTERNAL_TESTING will create a beta version
-# not an "internal testing" version (the default)
 if(NOT DEFINED BBL_INTERNAL_TESTING)
 set(BBL_INTERNAL_TESTING "0")
 endif()
 
 # The build_version should start from 50 in master branch
 
-set(SLIC3R_VERSION "01.09.07.52")
+set(SLIC3R_VERSION "01.10.00.74")
+
+string(REPLACE "." "," SLIC3R_COMMA_SEPARATED_VERSION ${SLIC3R_VERSION})
+set(SLIC3R_COMMA_SEPARATED_VERSION "${SLIC3R_COMMA_SEPARATED_VERSION}")
 
 # GalaxySlicerNeo version
 set(GSN_VERSION "V1.0.2")
