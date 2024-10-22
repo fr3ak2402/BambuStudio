@@ -551,7 +551,7 @@ wxMenu* MenuFactory::append_submenu_add_generic(wxMenu* menu, ModelVolumeType ty
         sub_menu->AppendSeparator();
     }
 
-    std::vector<std::string> icons = {"Cube", "Cylinder", "Sphere", "Cone", "double_tear_romboid_cylinder", "Disc", "Torus", "rounded_rectangle"};
+    std::vector<std::string> icons = {"Cube", "Cylinder", "Sphere", "Cone", "Pyramid", "double_tear_romboid_cylinder", "Disc", "Square", "Torus", "rounded_rectangle"};
     size_t i = 0;
     for (auto &item : {L("Cube"), L("Cylinder"), L("Sphere"), L("Cone"), L("Pyramid"), L("Double Tear Romboid Cylinder"), L("Disc"), L("Square"), L("Torus"), L("Rounded Rectangle")})
     {

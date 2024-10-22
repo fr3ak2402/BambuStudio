@@ -2140,9 +2140,9 @@ static TriangleMesh create_mesh(const std::string& type_name, const BoundingBoxf
     
     //GalaxySlicerNeo: new primitive
     else if (type_name == "Pyramid")
-        mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/pyramid.step").c_str(), true, nullptr);
+        mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/pyramid.stl").c_str(), true, nullptr);
     else if (type_name == "Square")
-        mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/square.step").c_str(), true, nullptr);
+        mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/square.stl").c_str(), true, nullptr);
     return mesh;
 }
 
