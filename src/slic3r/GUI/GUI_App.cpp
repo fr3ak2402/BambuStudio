@@ -1129,7 +1129,7 @@ void GUI_App::post_init()
                 download_url = std::regex_replace(download_url, pattern, "");
             }
             catch (...){}
-            
+
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(", download_url %1%") % download_url;
 
             if (!download_url.empty()) {
@@ -1376,7 +1376,7 @@ void GUI_App::post_init()
                        std::time_t lw_t = boost::filesystem::last_write_time(temp_path) ;
                        files_vec.push_back({ lw_t, temp_path.filename().string() });
                    }
-               } catch (const std::exception &ex) {
+               } catch (const std::exception &) {
                }
            }
            std::sort(files_vec.begin(), files_vec.end(), [](
@@ -2192,7 +2192,7 @@ void GUI_App::init_networking_callbacks()
                     else {
                         obj->parse_json(msg, true);
                     }
-                    
+
 
                     if (!this->is_enable_multi_machine()) {
                         if ((sel == obj || sel == nullptr) && obj->is_ams_need_update) {
@@ -2368,8 +2368,12 @@ void GUI_App::init_app_config()
             if (!boost::filesystem::exists(data_dir_path))
                 boost::filesystem::create_directory(data_dir_path);
             set_data_dir(data_dir);
+#if defined(__WINDOWS__)
             // Change current dirtory of application
+            _chdir(encode_path((data_dir + "/log").c_str()).c_str());
+#else
             chdir(encode_path((data_dir + "/log").c_str()).c_str());
+#endif
     } else {
         m_datadir_redefined = true;
     }
@@ -2398,6 +2402,8 @@ void GUI_App::init_app_config()
         std::string error = app_config->load();
         if (!error.empty()) {
             // Error while parsing config file. We'll customize the error message and rethrow to be displayed.
+            BOOST_LOG_TRIVIAL(error) << __FUNCTION__
+            << "Configuration file may be corrupted and is not able to be parsed.Please delete the file and try again.";
             throw Slic3r::RuntimeError(
                 _u8L("GalaxySlicerNeo configuration file may be corrupted and is not able to be parsed."
                      "Please delete the file and try again.") +
@@ -3758,7 +3764,7 @@ void GUI_App::ShowUserGuide() {
             mainframe->refresh_plugin_tips();
             // BBS: remove SLA related message
         }
-    } catch (std::exception &e) {
+    } catch (std::exception &) {
         // wxMessageBox(e.what(), "", MB_OK);
     }
 }
@@ -3773,7 +3779,7 @@ void GUI_App::ShowDownNetPluginDlg(bool post_login)
             return;
         DownloadProgressDialog dlg(_L("Downloading Bambu Network Plug-in"), post_login);
         dlg.ShowModal();
-    } catch (std::exception &e) {
+    } catch (std::exception &) {
         ;
     }
 }
@@ -3790,7 +3796,7 @@ void GUI_App::ShowUserLogin(bool show)
                 login_dlg = new ZUserLogin();
             }
             login_dlg->ShowModal();
-        } catch (std::exception &e) {
+        } catch (std::exception &) {
             ;
         }
     } else {
@@ -3812,7 +3818,7 @@ void GUI_App::ShowOnlyFilament() {
 
             // BBS: remove SLA related message
         }
-    } catch (std::exception &e) {
+    } catch (std::exception &) {
         // wxMessageBox(e.what(), "", MB_OK);
     }
 }
@@ -4161,7 +4167,7 @@ std::string GUI_App::handle_web_request(std::string cmd)
             else if (command_str.compare("modelmall_model_advise_get") == 0) {
                 if (mainframe && this->app_config->get("staff_pick_switch") == "true") {
                     if (mainframe->m_webview) {
-                            mainframe->m_webview->SendDesignStaffpick(has_model_mall());                                      
+                            mainframe->m_webview->SendDesignStaffpick(has_model_mall());
                     }
                 }
             }
@@ -4272,21 +4278,21 @@ std::string GUI_App::handle_web_request(std::string cmd)
                 if (path.has_value()) {
                     wxLaunchDefaultBrowser(path.value());
                 }
-            } 
+            }
             else if (command_str.compare("homepage_leftmenu_clicked") == 0) {
-                if (root.get_child_optional("menu") != boost::none) { 
+                if (root.get_child_optional("menu") != boost::none) {
                     std::string strMenu = root.get_optional<std::string>("menu").value();
                     int         nRefresh = root.get_child_optional("refresh") == boost::none ? 0 : root.get_optional<int>("refresh").value();
-                     
+
                     CallAfter([this,strMenu, nRefresh] {
-                        if (mainframe && mainframe->m_webview) 
-                        { 
-                            mainframe->m_webview->SwitchWebContent(strMenu, nRefresh); 
+                        if (mainframe && mainframe->m_webview)
+                        {
+                            mainframe->m_webview->SwitchWebContent(strMenu, nRefresh);
                         }
                     }
                     );
                 }
-            } 
+            }
             else if (command_str.compare("homepage_leftmenu_switch") == 0) {
                 if (root.get_child_optional("menu") != boost::none) {
                     std::string strMenu = root.get_optional<std::string>("menu").value();
@@ -4331,8 +4337,8 @@ std::string GUI_App::handle_web_request(std::string cmd)
                 if (root.get_child_optional("model") != boost::none) {
                     pt::ptree                    data_node = root.get_child("model");
                     boost::optional<std::string> path      = data_node.get_optional<std::string>("url");
-                    if (path.has_value()) 
-                    { 
+                    if (path.has_value())
+                    {
                         wxString realurl = from_u8(url_decode(path.value()));
                         wxGetApp().request_model_download(realurl);
                     }
@@ -4467,7 +4473,7 @@ void GUI_App::on_http_error(wxCommandEvent &evt)
                 return;
             }
         }
-       
+
     }
 
     // request login
@@ -6588,9 +6594,9 @@ void GUI_App::run_script(wxString js)
         return mainframe->RunScript(js);
 }
 
-void GUI_App::run_script_left(wxString js) 
+void GUI_App::run_script_left(wxString js)
 {
-    if (mainframe) 
+    if (mainframe)
         return mainframe->RunScriptLeft(js);
 }
 
@@ -7004,8 +7010,6 @@ static bool del_win_registry(HKEY hkeyHive, const wchar_t *pszVar, const wchar_t
         return false;
 
     if (!bDidntExist) {
-        DWORD dwDisposition;
-        HKEY  hkey;
         iRC      = ::RegDeleteKeyExW(hkeyHive, pszVar, KEY_ALL_ACCESS, 0);
         if (iRC == ERROR_SUCCESS) {
             return true;
