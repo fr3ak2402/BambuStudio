@@ -8,8 +8,8 @@
 #include <objbase.h>
 #include <wrl/implements.h>
 
-#include "webview2.h"
-#define CORE_WEBVIEW_TARGET_PRODUCT_VERSION L"129.0.2792.45"
+#include "WebView2.h"
+#define CORE_WEBVIEW_TARGET_PRODUCT_VERSION L"130.0.2849.39"
 
 #define COREWEBVIEW2ENVIRONMENTOPTIONS_STRING_PROPERTY(p)     \
  public:                                                      \

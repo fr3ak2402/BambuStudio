@@ -2137,6 +2137,12 @@ static TriangleMesh create_mesh(const std::string& type_name, const BoundingBoxf
         mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/3DBenchy.stl").c_str(), true, nullptr);
     else if (type_name == "ksr FDMTest")
         mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/ksr_FDMTest.stl").c_str(), true, nullptr);
+    
+    //GalaxySlicerNeo: new primitive
+    else if (type_name == "Pyramid")
+        mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/pyramid.stl").c_str(), true, nullptr);
+    else if (type_name == "Square")
+        mesh.ReadSTLFile((Slic3r::resources_dir() + "/model/square.stl").c_str(), true, nullptr);
     return mesh;
 }
 

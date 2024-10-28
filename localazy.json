@@ -8,16 +8,6 @@
 				"type": "po",
 				"pattern": "bbl/i18n/en/GalaxySlicerNeo_en.po",
 				"lang": "en"
-			},
-			{
-				"type": "po",
-				"pattern": "bbl/i18n/de/GalaxySlicerNeo_de.po",
-				"lang": "de"
-			},
-			{
-				"type": "po",
-				"pattern": "bbl/i18n/nl/GalaxySlicerNeo_nl.po",
-				"lang": "nl"
 			}
 		]
 	},
