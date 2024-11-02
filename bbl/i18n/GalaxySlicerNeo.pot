@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-20 13:52+0200\n"
+"POT-Creation-Date: 2024-11-02 09:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1439,9 +1439,6 @@ msgstr ""
 msgid "Disc"
 msgstr ""
 
-msgid "Square"
-msgstr ""
-
 msgid "Torus"
 msgstr ""
 
@@ -2170,6 +2167,11 @@ msgid ""
 msgstr ""
 
 msgid "No arrangeable objects are selected."
+msgstr ""
+
+msgid ""
+"The following plates are skipped due to different arranging settings from "
+"global:"
 msgstr ""
 
 msgid ""
@@ -4721,6 +4723,21 @@ msgstr ""
 msgid "Step file import parameters"
 msgstr ""
 
+msgid "Rough"
+msgstr ""
+
+msgid "Reduce Linear"
+msgstr ""
+
+msgid "Reduce Angle"
+msgstr ""
+
+msgid "Fewer faces"
+msgstr ""
+
+msgid "More faces"
+msgstr ""
+
 msgid "Linear Deflection"
 msgstr ""
 
@@ -5049,6 +5066,9 @@ msgid " plate %1%: "
 msgstr ""
 
 msgid "Invalid name, the following characters are not allowed:"
+msgstr ""
+
+msgid "(Including its escape characters)"
 msgstr ""
 
 msgid "Sliced Info"
@@ -5770,16 +5790,16 @@ msgid "Auto sync user presets(Printer/Filament/Process)"
 msgstr ""
 
 msgid ""
-"If enabled, auto sync user presets with cloud after Bambu Studio startup or "
-"presets modified."
+"If enabled, auto sync user presets with cloud after GalaxySlicerNeo startup "
+"or presets modified."
 msgstr ""
 
 msgid "Auto check for system presets updates"
 msgstr ""
 
 msgid ""
-"If enabled, auto check whether there are system presets updates after Bambu "
-"Studio startup."
+"If enabled, auto check whether there are system presets updates after "
+"GalaxySlicerNeo startup."
 msgstr ""
 
 msgid "Clear my choice on the unsaved presets."
@@ -8769,6 +8789,18 @@ msgid ""
 "and should be accurate"
 msgstr ""
 
+msgid "Shrinkage"
+msgstr ""
+
+#, no-c-format, no-boost-format
+msgid ""
+"Enter the shrinkage percentage that the filament will get after cooling (94% "
+"if you measure 94mm instead of 100mm). The part will be scaled in xy to "
+"compensate. Only the filament used for the perimeter is taken into account.\n"
+"Be sure to allow enough space between objects, as this compensation is done "
+"after the checks."
+msgstr ""
+
 msgid "Density"
 msgstr ""
 
@@ -10078,7 +10110,7 @@ msgid ""
 "threshold."
 msgstr ""
 
-msgid "Tree support branch angle"
+msgid "Branch angle"
 msgstr ""
 
 msgid ""
@@ -10087,17 +10119,27 @@ msgid ""
 "printed more horizontally, allowing them to reach farther."
 msgstr ""
 
-msgid "Tree support branch distance"
+msgid "Branch distance"
 msgstr ""
 
 msgid ""
 "This setting determines the distance between neighboring tree support nodes."
 msgstr ""
 
-msgid "Tree support branch diameter"
+msgid "Branch diameter"
 msgstr ""
 
 msgid "This setting determines the initial diameter of support nodes."
+msgstr ""
+
+msgid "Branch diameter angle"
+msgstr ""
+
+msgid ""
+"The angle of the branches' diameter as they gradually become thicker towards "
+"the bottom. An angle of 0 will cause the branches to have uniform thickness "
+"over their length. A bit of an angle can increase stability of the tree "
+"support."
 msgstr ""
 
 msgid "Support wall loops"
