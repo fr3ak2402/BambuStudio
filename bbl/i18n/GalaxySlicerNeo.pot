@@ -1445,7 +1445,7 @@ msgstr ""
 msgid "Rounded Rectangle"
 msgstr ""
 
-msgid "Bambu Cube"
+msgid "Galaxy Cube"
 msgstr ""
 
 msgid "Bambu Cube V2"
