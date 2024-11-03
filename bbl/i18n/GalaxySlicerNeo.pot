@@ -1448,7 +1448,7 @@ msgstr ""
 msgid "Galaxy Cube"
 msgstr ""
 
-msgid "Bambu Cube V2"
+msgid "Galaxy Flower"
 msgstr ""
 
 msgid "3DBenchy"
