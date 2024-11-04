@@ -24,6 +24,10 @@ enum CUSTOM_ID
     ID_LOGO,
     ID_TOP_FILE_MENU,
     ID_TOP_DROPDOWN_MENU,
+
+    //GalaxySlicerNeo: add ID for view menu
+    ID_TOP_VIEW_MENU,
+
     ID_TITLE,
     ID_MODEL_STORE,
     ID_PUBLISH,
@@ -318,6 +322,7 @@ void BBLTopbar::Init(wxFrame* parent)
     this->Bind(wxEVT_MENU_CLOSE, &BBLTopbar::OnMenuClose, this);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFileToolItem, this, ID_TOP_FILE_MENU);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnDropdownToolItem, this, ID_TOP_DROPDOWN_MENU);
+    this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnViewToolItem, this, ID_TOP_VIEW_MENU);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnCalibToolItem, this, ID_CALIB);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnIconize, this, wxID_ICONIZE_FRAME);
     this->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &BBLTopbar::OnFullScreen, this, wxID_MAXIMIZE_FRAME);
@@ -509,6 +514,10 @@ void BBLTopbar::Rescale() {
 
     item = this->FindTool(wxID_SAVE);
     item->SetBitmap(create_scaled_bitmap("topbar_save", this, TOPBAR_ICON_SIZE));
+
+    //GalaxySlicerNeo: Set View Icon
+    item = this->FindTool(ID_TOP_VIEW_MENU);
+    item->SetBitmap(create_scaled_bitmap("topbar_view", this, TOPBAR_ICON_SIZE));
 
     item = this->FindTool(wxID_UNDO);
     item->SetBitmap(create_scaled_bitmap("topbar_undo", this, TOPBAR_ICON_SIZE));
