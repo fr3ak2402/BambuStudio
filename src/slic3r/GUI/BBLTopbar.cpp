@@ -198,6 +198,10 @@ void BBLTopbar::Init(wxFrame* parent)
     m_frame = parent;
     m_skip_popup_file_menu = false;
     m_skip_popup_dropdown_menu = false;
+
+    //GalaxySlicerNeo: add view topbar button
+    m_skip_popup_view_menu = false;
+
     m_skip_popup_calib_menu    = false;
 
     wxInitAllImageHandlers();
@@ -231,6 +235,12 @@ void BBLTopbar::Init(wxFrame* parent)
 
     wxBitmap save_bitmap = create_scaled_bitmap("topbar_save", nullptr, TOPBAR_ICON_SIZE);
     wxAuiToolBarItem* save_btn = this->AddTool(wxID_SAVE, "", save_bitmap);
+
+    this->AddSpacer(FromDIP(10));
+
+    //GalaxySlicerNeo: add view topbar button
+    wxBitmap view_bitmap = create_scaled_bitmap("topbar_view", nullptr, TOPBAR_ICON_SIZE);
+    m_view_menu_item = this->AddTool(ID_TOP_VIEW_MENU, "", view_bitmap, wxEmptyString, wxITEM_NORMAL);
 
     this->AddSpacer(FromDIP(10));
 
@@ -328,6 +338,10 @@ BBLTopbar::~BBLTopbar()
     m_file_menu_item = nullptr;
     m_dropdown_menu_item = nullptr;
     m_file_menu = nullptr;
+
+    //GalaxySlicerNeo: add view topbar button
+    m_view_menu_item = nullptr;
+    m_view_menu = nullptr;
 }
 
 void BBLTopbar::OnOpenProject(wxAuiToolBarEvent& event)
@@ -434,6 +448,12 @@ void BBLTopbar::AddDropDownSubMenu(wxMenu* sub_menu, const wxString& title)
 void BBLTopbar::AddDropDownMenuItem(wxMenuItem* menu_item)
 {
     m_top_menu.Append(menu_item);
+}
+
+//GalaxySlicerNeo: Sets the menu content of the view menu
+void BBLTopbar::SetViewMenu(wxMenu* view_menu)
+{
+    m_view_menu = view_menu;
 }
 
 wxMenu* BBLTopbar::GetTopMenu()
@@ -613,6 +633,24 @@ void BBLTopbar::OnDropdownToolItem(wxAuiToolBarEvent& evt)
     tb->SetToolSticky(evt.GetId(), false);
 }
 
+//GalaxySlicerNeo: Controls the behavior of the menu
+void BBLTopbar::OnViewToolItem(wxAuiToolBarEvent& evt)
+{
+    wxAuiToolBar* tb = static_cast<wxAuiToolBar*>(evt.GetEventObject());
+
+    tb->SetToolSticky(evt.GetId(), true);
+
+    if (!m_skip_popup_view_menu) {
+        GetParent()->PopupMenu(m_view_menu, wxPoint(FromDIP(1), this->GetSize().GetHeight() - 2));
+    }
+    else {
+        m_skip_popup_view_menu = false;
+    }
+
+    // make sure the button is "un-stuck"
+    tb->SetToolSticky(evt.GetId(), false);
+}
+
 void BBLTopbar::OnCalibToolItem(wxAuiToolBarEvent &evt)
 {
     wxAuiToolBar *tb = static_cast<wxAuiToolBar *>(evt.GetEventObject());
@@ -702,6 +740,9 @@ void BBLTopbar::OnMenuClose(wxMenuEvent& event)
     }
     else if (item == m_dropdown_menu_item) {
         m_skip_popup_dropdown_menu = true;
+    }
+    else if (item == m_view_menu_item) {
+        m_skip_popup_view_menu = true;
     }
 }
 

@@ -2855,7 +2855,11 @@ void MainFrame::init_menubar_as_editor()
     if (editMenu)
         m_topbar->AddDropDownSubMenu(editMenu, _L("Edit"));
     if (viewMenu)
-        m_topbar->AddDropDownSubMenu(viewMenu, _L("View"));
+        //m_topbar->AddDropDownSubMenu(viewMenu, _L("View"));
+        
+        //GalaxySlicerNeo: set view Menu
+        m_topbar->SetViewMenu(viewMenu);
+        
     //BBS add Preference
 
     append_menu_item(

@@ -23,6 +23,10 @@ public:
     void OnCloseFrame(wxAuiToolBarEvent& event);
     void OnFileToolItem(wxAuiToolBarEvent& evt);
     void OnDropdownToolItem(wxAuiToolBarEvent& evt);
+
+    //GalaxySlicerNeo: add method for topbar view button
+    void OnViewToolItem(wxAuiToolBarEvent& evt);
+
     void OnCalibToolItem(wxAuiToolBarEvent &evt);
     void OnMouseLeftDClock(wxMouseEvent& mouse);
     void OnMouseLeftDown(wxMouseEvent& event);
@@ -43,6 +47,10 @@ public:
     void SetFileMenu(wxMenu* file_menu);
     void AddDropDownSubMenu(wxMenu* sub_menu, const wxString& title);
     void AddDropDownMenuItem(wxMenuItem* menu_item);
+
+    //GalaxySlicerNeo: add method for view menu
+    void SetViewMenu(wxMenu* view_menu);
+
     wxMenu *GetTopMenu();
     wxMenu *GetCalibMenu();
     void SetTitle(wxString title);
@@ -60,10 +68,18 @@ private:
     wxFrame* m_frame;
     wxAuiToolBarItem* m_file_menu_item;
     wxAuiToolBarItem* m_dropdown_menu_item;
+
+    //GalaxySlicerNeo: add view topbar button
+    wxAuiToolBarItem* m_view_menu_item;
+
     wxRect m_normalRect;
     wxPoint m_delta;
     wxMenu m_top_menu;
     wxMenu* m_file_menu;
+
+    //GalaxySlicerNeo: add view menu
+    wxMenu* m_view_menu;
+
     wxMenu m_calib_menu;
     wxAuiToolBarItem* m_title_item;
     wxAuiToolBarItem* m_account_item;
@@ -84,5 +100,9 @@ private:
     int m_toolbar_h;
     bool m_skip_popup_file_menu;
     bool m_skip_popup_dropdown_menu;
+
+    //GalaxySlicerNeo: add view topbar button
+    bool m_skip_popup_view_menu;
+
     bool m_skip_popup_calib_menu;
 };
