@@ -552,7 +552,7 @@ wxMenu* MenuFactory::append_submenu_add_generic(wxMenu* menu, ModelVolumeType ty
     }
 
     std::vector<std::string> icons = {"Cube", "Cylinder", "Sphere", "Cone", "Pyramid", "double_tear_romboid_cylinder", "Disc", "Square", "Torus", "rounded_rectangle",
-        //GalaxySlicerNeo: add icons for the calibration models
+        //GalaxySlicerNeo: add icons in the menu for the calibration models
         "Galaxy_Cube", "Galaxy_Flower", "3DBenchy", "ksr_FDMTest"};
 
     size_t i = 0;
@@ -567,7 +567,7 @@ wxMenu* MenuFactory::append_submenu_add_generic(wxMenu* menu, ModelVolumeType ty
         sub_menu->AppendSeparator();
         for (auto &item : {L("Galaxy Cube"), L("Galaxy Flower"), L("3DBenchy"), L("ksr FDMTest")}) {
 
-            //GalaxySlicerNeo: add icons for the calibration models
+            //GalaxySlicerNeo: add icons in menu for the calibration models
             append_menu_item(sub_menu, wxID_ANY, _(item), "", 
                 [type, item](wxCommandEvent &) { obj_list()->load_generic_subobject(item, type); }, Slic3r::resources_dir() + "/model/" + icons[i++] + ".png", menu);
         }
