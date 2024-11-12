@@ -107,7 +107,15 @@ var LangText={
 		"t113": "You may change your choice in preference anytime.",
 		"t114": "Home",
 		"t115": "Batch",
-		"t116": "Retry"
+		"t116": "Retry",
+		"t117": "Print History",
+		"t118": "Printing",
+		"t119": "Success",
+		"t120": "Canceled",
+		"t121": "Search",
+		"t122": "Search online models",
+		"t123": "Plate",
+		"t124": ""
 	}
 };
 
@@ -149,4 +157,36 @@ function TranslatePage()
 			$(OneNode).html(LangText['en'][tid]);
 		}		
 	}
+}
+
+function GetCurrentTextByKey( key )
+{
+	let strLang=GetQueryString("lang");
+	if(strLang!=null)
+	{
+		//setCookie(LANG_COOKIE_NAME,strLang,LANG_COOKIE_EXPIRESECOND,'/');
+		localStorage.setItem(LANG_COOKIE_NAME,strLang);
+	}
+	else
+	{
+		//strLang=getCookie(LANG_COOKIE_NAME);
+		strLang=localStorage.getItem(LANG_COOKIE_NAME);
+	}
+	
+	//alert(strLang);
+	
+	if( !LangText.hasOwnProperty(strLang) )
+		strLang="en";
+
+	let strText='';
+	if( LangText[strLang].hasOwnProperty(key) )
+	{
+		strText=LangText[strLang][key];
+	}
+	else if(strLang!='en' && LangText['en'].hasOwnProperty(key) )
+	{
+		strText=LangText['en'][key];
+	}	
+	
+	return strText;
 }
