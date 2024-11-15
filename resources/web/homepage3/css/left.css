@@ -216,6 +216,12 @@ body
 	display: none;
 }
 
+.BtnItem[menu="printhistory"]
+{
+	display: none;
+}
+
+
 .JumpIcon
 {
 	display: none;
