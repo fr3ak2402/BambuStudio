@@ -387,6 +387,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     penel_text->Layout();
 
     m_staticText_finish_time = new wxStaticText(penel_finish_time, wxID_ANY, _L("Finish Time: N/A"));
+    m_staticText_finish_time->Wrap(-1);
     m_staticText_finish_time->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
     m_staticText_finish_time->SetForegroundColour(wxColour(146, 146, 146));
     m_staticText_finish_time->SetToolTip(_L("The estimated printing time for \nmulti-color models may be inaccurate."));
@@ -396,7 +397,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     bSizer_finish_time->Add(0, 0, 0, wxLEFT, FromDIP(20));
     bSizer_finish_time->Add(m_staticText_finish_time, 0, wxALIGN_CENTER | wxALL, 0);
     bSizer_finish_time->Add(m_staticText_finish_day, 0,wxLEFT | wxRIGHT , FromDIP(10));
-    bSizer_finish_time->Add(0, 0, 0, wxLEFT, FromDIP(20));
+    //bSizer_finish_time->Add(0, 0, 0, wxLEFT, FromDIP(20));
     bSizer_finish_time->Add(panel_button_block, 0, wxALIGN_CENTER | wxALL, 0);
     penel_finish_time->SetMaxSize(wxSize(FromDIP(600), -1));
     penel_finish_time->SetSizer(bSizer_finish_time);
@@ -414,7 +415,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     bSizer_subtask_info->Add(m_printing_stage_value, 0, wxEXPAND | wxTOP, FromDIP(5));
     bSizer_subtask_info->Add(penel_bottons, 0, wxEXPAND | wxTOP, FromDIP(10));
     bSizer_subtask_info->Add(m_panel_progress, 0, wxEXPAND|wxRIGHT, FromDIP(25));
-    bSizer_subtask_info->Add(penel_finish_time, 0, wxEXPAND, 0);
+    bSizer_subtask_info->Add(penel_finish_time, 0, wxEXPAND, FromDIP(10));
 
     m_printing_sizer = new wxBoxSizer(wxHORIZONTAL);
     m_printing_sizer->SetMinSize(wxSize(PAGE_MIN_WIDTH, -1));
@@ -1937,7 +1938,8 @@ void StatusPanel::on_subtask_abort(wxCommandEvent &event)
             }
         });
     }
-    abort_dlg->update_text(_L("Are you sure you want to cancel this print?"));
+    abort_dlg->update_text(_L("Are you sure to stop printing?"));
+    abort_dlg->update_btn_label(_L("Yes"), _L("No"));
 
     abort_dlg->m_button_cancel->SetBackgroundColor(abort_dlg->btn_bg_green);
     abort_dlg->m_button_cancel->SetBorderColor(*wxWHITE);
@@ -2154,7 +2156,7 @@ void StatusPanel::show_error_message(MachineObject *obj, bool is_exist, wxString
     if (is_exist && msg.IsEmpty()) {
         error_info_reset();
     } else {
-        if (msg.IsEmpty()) { msg = _L("Unknow error."); }
+        if (msg.IsEmpty()) { msg = _L("Unknown error."); }
         m_project_task_panel->show_error_msg(msg);
 
         if (!used_button.empty()) {
