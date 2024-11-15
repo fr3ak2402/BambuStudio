@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-02 09:39+0100\n"
+"POT-Creation-Date: 2024-11-15 20:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4041,9 +4041,6 @@ msgstr ""
 msgid "Preferences"
 msgstr ""
 
-msgid "View"
-msgstr ""
-
 msgid "Help"
 msgstr ""
 
@@ -4084,6 +4081,9 @@ msgid "Tutorial"
 msgstr ""
 
 msgid "Calibration help"
+msgstr ""
+
+msgid "View"
 msgstr ""
 
 msgid "More calibrations"
@@ -4567,6 +4567,9 @@ msgid "Cancel print"
 msgstr ""
 
 msgid "Are you sure you want to cancel this print?"
+msgstr ""
+
+msgid "Unknow error."
 msgstr ""
 
 msgid "Downloading..."
@@ -7586,7 +7589,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Step 2. If the IP and Access Code below are different from the actual values "
+"Step 2, if the IP and Access Code below are different from the actual values "
 "on your printer, please correct them."
 msgstr ""
 

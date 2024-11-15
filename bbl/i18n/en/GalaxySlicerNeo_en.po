@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-05 14:38+0200\n"
-"PO-Revision-Date: 2024-11-03 17:13+0100\n"
+"POT-Creation-Date: 2024-11-15 20:49+0100\n"
+"PO-Revision-Date: 2024-11-15 20:56+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -485,6 +485,9 @@ msgstr "Prizm"
 msgid "Frustum"
 msgstr "Frustum"
 
+msgid "Square"
+msgstr "Square"
+
 msgid "Hexagon"
 msgstr "Hexagon"
 
@@ -846,7 +849,7 @@ msgid "Warning:create text fail."
 msgstr "Warning:create text fail."
 
 msgid "Warning:text normal is error."
-msgstr ""
+msgstr "Warning:text normal is error."
 
 msgid "Surface"
 msgstr "Surface"
@@ -866,8 +869,8 @@ msgstr "Detection radius"
 msgid "Remove selected points"
 msgstr "Remove selected points"
 
-msgid "Remove all points"
-msgstr "Remove all points"
+msgid "Remove all"
+msgstr "Remove all"
 
 msgid "Auto-generate points"
 msgstr "Auto-generate points"
@@ -891,8 +894,8 @@ msgstr ""
 "Warning: The brim type is not set to \"painted\",the brim ears will not take "
 "effect !"
 
-msgid "(Set the brim type to \"painted\")"
-msgstr "(Set the brim type to \"painted\")"
+msgid "Set the brim type to \"painted\""
+msgstr "Set the brim type to \"painted\""
 
 msgid " invalid brim ears"
 msgstr " invalid brim ears"
@@ -1487,9 +1490,6 @@ msgstr "Double Tear Romboid Cylinder"
 
 msgid "Disc"
 msgstr "Disc"
-
-msgid "Square"
-msgstr "Square"
 
 msgid "Torus"
 msgstr "Torus"
@@ -2552,6 +2552,9 @@ msgstr ""
 #, c-format, boost-format
 msgid "About %s"
 msgstr "About %s"
+
+msgid "GalaxySlicerNeo is based on BambuStudio by Bambu Lab."
+msgstr "GalaxySlicerNeo is based on BambuStudio by Bambu Lab."
 
 msgid ""
 "BambuStudio is based on PrusaSlicer by PrusaResearch and SuperSlicer by "
@@ -3888,7 +3891,7 @@ msgstr ""
 
 #, c-format, boost-format
 msgid "filaments %s cannot be printed directly on the surface of this plate."
-msgstr ""
+msgstr "filaments %s cannot be printed directly on the surface of this plate."
 
 msgid "Calibration step selection"
 msgstr "Calibration step selection"
@@ -4284,9 +4287,6 @@ msgstr "Quit GalaxySlicer neo"
 msgid "Preferences"
 msgstr "Preferences"
 
-msgid "View"
-msgstr "View"
-
 msgid "Help"
 msgstr "Help"
 
@@ -4328,6 +4328,9 @@ msgstr "Tutorial"
 
 msgid "Calibration help"
 msgstr "Calibration help"
+
+msgid "View"
+msgstr "View"
 
 msgid "More calibrations"
 msgstr "More calibrations"
@@ -4847,6 +4850,9 @@ msgstr "Cancel print"
 msgid "Are you sure you want to cancel this print?"
 msgstr "Are you sure you want to cancel this print?"
 
+msgid "Unknow error."
+msgstr "Unknow error."
+
 msgid "Downloading..."
 msgstr "Downloading..."
 
@@ -5260,7 +5266,7 @@ msgid "Gcode path overlap"
 msgstr "Gcode path overlap"
 
 msgid "Click Wiki for help."
-msgstr ""
+msgstr "Click Wiki for help."
 
 msgid "Support painting"
 msgstr "Support painting"
@@ -6099,16 +6105,6 @@ msgstr ""
 "the same GalaxySlicer neo is already running, that instance will be "
 "reactivated instead."
 
-msgid "Zoom to mouse position"
-msgstr "Zoom to mouse position"
-
-msgid ""
-"Zoom in towards the mouse pointer's position in the 3D view, rather than the "
-"2D window center."
-msgstr ""
-"Zoom in towards the mouse pointer's position in the 3D view, rather than the "
-"2D window center."
-
 msgid "Auto plate type"
 msgstr "Auto plate type"
 
@@ -6144,11 +6140,12 @@ msgstr ""
 "same time and manage multiple devices."
 
 msgid "Show the step mesh parameter setting dialog."
-msgstr ""
+msgstr "Show the step mesh parameter setting dialog."
 
 msgid ""
 "If enabled,a parameter settings dialog will appear during STEP file import."
 msgstr ""
+"If enabled,a parameter settings dialog will appear during STEP file import."
 
 msgid "Support beta version update."
 msgstr "Support beta version update."
@@ -6158,6 +6155,16 @@ msgstr "With this option enabled, you can receive beta version updates."
 
 msgid "3D Settings"
 msgstr "3D Settings"
+
+msgid "Zoom to mouse position"
+msgstr "Zoom to mouse position"
+
+msgid ""
+"Zoom in towards the mouse pointer's position in the 3D view, rather than the "
+"2D window center."
+msgstr ""
+"Zoom in towards the mouse pointer's position in the 3D view, rather than the "
+"2D window center."
 
 msgid "Always show shells in preview"
 msgstr "Always show shells in preview"
@@ -6248,7 +6255,7 @@ msgid "Show online staff-picked models on the home page"
 msgstr "Show online staff-picked models on the home page"
 
 msgid "Show history on the home page"
-msgstr ""
+msgstr "Show history on the home page"
 
 msgid "Maximum recent projects"
 msgstr "Maximum recent projects"
@@ -6641,9 +6648,6 @@ msgstr "Offline"
 msgid "Busy"
 msgstr "Busy"
 
-msgid "Bambu Cool Plate SuperTack"
-msgstr "Bambu Cool Plate SuperTack"
-
 msgid "Bambu Cool Plate"
 msgstr "Bambu Cool Plate"
 
@@ -6660,7 +6664,7 @@ msgid "Bamabu Textured PEI Plate"
 msgstr "Bamabu Textured PEI Plate"
 
 msgid "Bambu Cool Plate SuperTack"
-msgstr ""
+msgstr "Bambu Cool Plate SuperTack"
 
 msgid "Send print job to"
 msgstr "Send print job to"
@@ -6838,6 +6842,8 @@ msgid ""
 "Printing high temperature material(%1 material) with %2 may cause nozzle "
 "damage"
 msgstr ""
+"Printing high temperature material(%1 material) with %2 may cause nozzle "
+"damage"
 
 msgid "Please fix the error above, otherwise printing cannot continue."
 msgstr "Please fix the error above, otherwise printing cannot continue."
@@ -7084,13 +7090,15 @@ msgid "Still print by object?"
 msgstr "Still print by object?"
 
 msgid ""
-"We have added an experimental style \"Tree Slim\" that features smaller "
-"support volume but weaker strength.\n"
-"We recommend using it with: 0 interface layers, 0 top distance, 2 walls."
+"When using support material for the support interface, We recommend the "
+"following settings:\n"
+"0 top z distance, 0 interface spacing, interlaced rectilinear pattern and "
+"disable independent support layer height"
 msgstr ""
-"We have added an experimental style \"Tree Slim\" that features smaller "
-"support volume but weaker strength.\n"
-"We recommend using it with: 0 interface layers, 0 top distance, 2 walls."
+"When using support material for the support interface, We recommend the "
+"following settings:\n"
+"0 top z distance, 0 interface spacing, interlaced rectilinear pattern and "
+"disable independent support layer height"
 
 msgid ""
 "Change these settings automatically? \n"
@@ -7102,24 +7110,11 @@ msgstr ""
 "No  - Do not change these settings for me"
 
 msgid ""
-"For \"Tree Strong\" and \"Tree Hybrid\" styles, we recommend the following "
-"settings: at least 2 interface layers, at least 0.1mm top z distance or "
-"using support materials on interface."
+"Layer height is too small.\n"
+"It will set to min_layer_height\n"
 msgstr ""
-"For \"Tree Strong\" and \"Tree Hybrid\" styles, we recommend the following "
-"settings: at least 2 interface layers, at least 0.1mm top z distance or "
-"using support materials on interface."
-
-msgid ""
-"When using support material for the support interface, We recommend the "
-"following settings:\n"
-"0 top z distance, 0 interface spacing, interlaced rectilinear pattern and "
-"disable independent support layer height"
-msgstr ""
-"When using support material for the support interface, We recommend the "
-"following settings:\n"
-"0 top z distance, 0 interface spacing, interlaced rectilinear pattern and "
-"disable independent support layer height"
+"Layer height is too small.\n"
+"It will set to min_layer_height\n"
 
 msgid ""
 "Layer height exceeds the limit in Printer Settings -> Extruder -> Layer "
@@ -8148,20 +8143,24 @@ msgstr ""
 "Step 1, please confirm GalaxySlicer neo and your printer are in the same LAN."
 
 msgid ""
-"Step 2. If the IP and Access Code below are different from the actual values "
+"Step 2, if the IP and Access Code below are different from the actual values "
 "on your printer, please correct them."
 msgstr ""
+"Step 2, if the IP and Access Code below are different from the actual values "
+"on your printer, please correct them."
 
 msgid ""
 "Step 3. Please obtain the device SN from the printer side; it is usually "
 "found in the device information on the printer screen."
 msgstr ""
+"Step 3. Please obtain the device SN from the printer side; it is usually "
+"found in the device information on the printer screen."
 
 msgid "Access Code"
 msgstr "Access Code"
 
 msgid "Printer model"
-msgstr ""
+msgstr "Printer model"
 
 msgid "Where to find your printer's IP and Access Code?"
 msgstr "Where to find your printer's IP and Access Code?"
@@ -8177,9 +8176,6 @@ msgstr "Failed to connect to printer."
 
 msgid "Failed to publish login request."
 msgstr "Failed to publish login request."
-
-msgid "The device does not support using IP and Access Code for connection."
-msgstr "The device does not support using IP and Access Code for connection."
 
 msgid "The printer has already been bound."
 msgstr "The printer has already been bound."
@@ -8359,18 +8355,20 @@ msgstr ""
 "\n"
 
 msgid "Please check the custom G-code or use the default custom G-code.\n"
-msgstr ""
+msgstr "Please check the custom G-code or use the default custom G-code.\n"
 
 msgid ""
 "You can find them from 'Printer settings' -> 'Machine G-code' and 'Filament "
 "settings' -> 'Advanced'."
 msgstr ""
+"You can find them from 'Printer settings' -> 'Machine G-code' and 'Filament "
+"settings' -> 'Advanced'."
 
 msgid "You can find it from 'Printer settings' -> 'Machine G-code'."
-msgstr ""
+msgstr "You can find it from 'Printer settings' -> 'Machine G-code'."
 
 msgid "You can find it from 'Filament settings' -> 'Advanced'."
-msgstr ""
+msgstr "You can find it from 'Filament settings' -> 'Advanced'."
 
 #, boost-format
 msgid "Generating G-code: layer %1%"
@@ -9401,12 +9399,14 @@ msgstr ""
 "object printing."
 
 msgid "Distance to rod"
-msgstr ""
+msgstr "Distance to rod"
 
 msgid ""
 "Horizontal distance of the nozzle tip to the rod's farther edge. Used for "
 "collision avoidance in by-object printing."
 msgstr ""
+"Horizontal distance of the nozzle tip to the rod's farther edge. Used for "
+"collision avoidance in by-object printing."
 
 msgid "Nozzle height"
 msgstr "Nozzle height"
@@ -10640,15 +10640,8 @@ msgstr ""
 "This amount as a percentage of the current extruder diameter. The default "
 "value for this parameter is 15"
 
-msgid "Scarf joint seam (experimental)"
-msgstr "Scarf joint seam (experimental)"
-
-msgid "Use scarf joint to minimize seam visibility and increase seam strength."
-msgstr ""
-"Use scarf joint to minimize seam visibility and increase seam strength."
-
-msgid "Conditional scarf joint"
-msgstr "Conditional scarf joint"
+msgid "Smart scarf seam application"
+msgstr "Smart scarf seam application"
 
 msgid ""
 "Apply scarf joints only to smooth perimeters where traditional seams do not "
@@ -10658,7 +10651,7 @@ msgstr ""
 "conceal the seams at sharp corners effectively."
 
 msgid "Scarf application angle threshold"
-msgstr ""
+msgstr "Scarf application angle threshold"
 
 msgid ""
 "This option sets the threshold angle for applying a conditional scarf joint "
@@ -10672,15 +10665,6 @@ msgstr ""
 "If the seam angle within the perimeter loop exceeds this value (indicating "
 "the absence of sharp corners), a scarf joint seam will be used. The default "
 "value is 155°."
-
-msgid ""
-"Start height of the scarf.\n"
-"This amount can be specified in millimeters or as a percentage of the "
-"current layer height. The default value for this parameter is 0."
-msgstr ""
-"Start height of the scarf.\n"
-"This amount can be specified in millimeters or as a percentage of the "
-"current layer height. The default value for this parameter is 0."
 
 msgid "Scarf around entire wall"
 msgstr "Scarf around entire wall"
@@ -10714,8 +10698,8 @@ msgstr ""
 "be calculated based on the travel speed setting above.The default value for "
 "this parameter is 80%"
 
-msgid "Role base wipe speed"
-msgstr "Role base wipe speed"
+msgid "Role-based wipe speed"
+msgstr "Role-based wipe speed"
 
 msgid ""
 "The wipe speed is determined by speed of current extrusion role. e.g if a "
@@ -12080,6 +12064,9 @@ msgid ""
 "probability of failure.\n"
 "If it fails, it is recommended to use manual calibration."
 msgstr ""
+"Tip: Using a %.1fmm nozzle for auto dynamic flow calibration may have a high "
+"probability of failure.\n"
+"If it fails, it is recommended to use manual calibration."
 
 #, c-format, boost-format
 msgid ""
@@ -12087,6 +12074,9 @@ msgid ""
 "accurate calibration results.\n"
 "It is recommended to use manual calibration."
 msgstr ""
+"Tip: Using a %.1fmm nozzle for auto dynamic flow calibration may not get "
+"accurate calibration results.\n"
+"It is recommended to use manual calibration."
 
 #, c-format, boost-format
 msgid "%s is not compatible with %s"
@@ -12103,6 +12093,11 @@ msgid ""
 "filaments, and there is a high risk of oozing when printing calibration "
 "lines."
 msgstr ""
+"Tip: Calibrating foam filaments(%s) in X series printers may not get "
+"accurate results\n"
+"because their dynamic response is much different from that of ordinary "
+"filaments, and there is a high risk of oozing when printing calibration "
+"lines."
 
 #, c-format, boost-format
 msgid ""
@@ -12110,6 +12105,9 @@ msgid ""
 "filaments(%s),\n"
 "as the results may be unstable and affect print quality."
 msgstr ""
+"Tip: When using the A1/A1 mini printer, we do not recommend calibrating foam "
+"filaments(%s),\n"
+"as the results may be unstable and affect print quality."
 
 msgid "Connecting to printer"
 msgstr "Connecting to printer"
@@ -12362,15 +12360,15 @@ msgstr ""
 msgid "Mesh Boolean"
 msgstr "Mesh Boolean"
 
-msgid "Please right click to assembly these objects."
-msgstr "Please right click to assembly these objects."
-
 msgid ""
 "Please add at least one more object and select them together,\n"
 "then right click to assembly these objects."
 msgstr ""
 "Please add at least one more object and select them together,\n"
 "then right click to assembly these objects."
+
+msgid "Please right click to assembly these objects."
+msgstr "Please right click to assembly these objects."
 
 msgid "Union"
 msgstr "Union"
@@ -13663,3 +13661,54 @@ msgstr "Print Failed"
 
 msgid "Removed"
 msgstr "Removed"
+
+#~ msgid "Remove all points"
+#~ msgstr "Remove all points"
+
+#~ msgid "(Set the brim type to \"painted\")"
+#~ msgstr "(Set the brim type to \"painted\")"
+
+#~ msgid ""
+#~ "We have added an experimental style \"Tree Slim\" that features smaller "
+#~ "support volume but weaker strength.\n"
+#~ "We recommend using it with: 0 interface layers, 0 top distance, 2 walls."
+#~ msgstr ""
+#~ "We have added an experimental style \"Tree Slim\" that features smaller "
+#~ "support volume but weaker strength.\n"
+#~ "We recommend using it with: 0 interface layers, 0 top distance, 2 walls."
+
+#~ msgid ""
+#~ "For \"Tree Strong\" and \"Tree Hybrid\" styles, we recommend the "
+#~ "following settings: at least 2 interface layers, at least 0.1mm top z "
+#~ "distance or using support materials on interface."
+#~ msgstr ""
+#~ "For \"Tree Strong\" and \"Tree Hybrid\" styles, we recommend the "
+#~ "following settings: at least 2 interface layers, at least 0.1mm top z "
+#~ "distance or using support materials on interface."
+
+#~ msgid "The device does not support using IP and Access Code for connection."
+#~ msgstr ""
+#~ "The device does not support using IP and Access Code for connection."
+
+#~ msgid "Scarf joint seam (experimental)"
+#~ msgstr "Scarf joint seam (experimental)"
+
+#~ msgid ""
+#~ "Use scarf joint to minimize seam visibility and increase seam strength."
+#~ msgstr ""
+#~ "Use scarf joint to minimize seam visibility and increase seam strength."
+
+#~ msgid "Conditional scarf joint"
+#~ msgstr "Conditional scarf joint"
+
+#~ msgid ""
+#~ "Start height of the scarf.\n"
+#~ "This amount can be specified in millimeters or as a percentage of the "
+#~ "current layer height. The default value for this parameter is 0."
+#~ msgstr ""
+#~ "Start height of the scarf.\n"
+#~ "This amount can be specified in millimeters or as a percentage of the "
+#~ "current layer height. The default value for this parameter is 0."
+
+#~ msgid "Role base wipe speed"
+#~ msgstr "Role base wipe speed"
