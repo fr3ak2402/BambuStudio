@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-15 20:49+0100\n"
-"PO-Revision-Date: 2024-11-15 20:56+0100\n"
+"POT-Creation-Date: 2024-11-15 22:31+0100\n"
+"PO-Revision-Date: 2024-11-15 22:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -4848,10 +4848,10 @@ msgid "Cancel print"
 msgstr "Cancel print"
 
 msgid "Are you sure to stop printing?"
-msgstr ""
+msgstr "Are you sure to stop printing?"
 
-msgid "Unknow error."
-msgstr "Unknow error."
+msgid "Unknown error."
+msgstr "Unknown error."
 
 msgid "Downloading..."
 msgstr "Downloading..."
@@ -5028,20 +5028,15 @@ msgstr ""
 msgid "Step file import parameters"
 msgstr "Step file import parameters"
 
-msgid "Rough"
-msgstr "Rough"
+msgid ""
+"Smaller linear and angular deflections result in higher-quality "
+"transformations but increase the processing time."
+msgstr ""
+"Smaller linear and angular deflections result in higher-quality "
+"transformations but increase the processing time."
 
-msgid "Reduce Linear"
-msgstr "Reduce Linear"
-
-msgid "Reduce Angle"
-msgstr "Reduce Angle"
-
-msgid "Fewer faces"
-msgstr "Fewer faces"
-
-msgid "More faces"
-msgstr "More faces"
+msgid "See BambuLab Wiki"
+msgstr "See BambuLab Wiki"
 
 msgid "Linear Deflection"
 msgstr "Linear Deflection"
@@ -6049,10 +6044,10 @@ msgid "Enable LOD"
 msgstr "Enable LOD"
 
 msgid "Change opengl multi instance rendering requires application restart."
-msgstr ""
+msgstr "Change opengl multi instance rendering requires application restart."
 
 msgid "Enable opengl multi instance rendering"
-msgstr ""
+msgstr "Enable opengl multi instance rendering"
 
 msgid "Browse"
 msgstr "Browse"
@@ -6193,12 +6188,14 @@ msgstr ""
 "models."
 
 msgid "enable multi instance rendering by opengl"
-msgstr ""
+msgstr "enable multi instance rendering by opengl"
 
 msgid ""
 "If enabled, it can improve certain rendering performance. But for some "
 "graphics cards, it may not be applicable, please turn it off."
 msgstr ""
+"If enabled, it can improve certain rendering performance. But for some "
+"graphics cards, it may not be applicable, please turn it off."
 
 msgid "Grabber scale"
 msgstr "Grabber scale"
@@ -6855,8 +6852,8 @@ msgstr ""
 #, c-format, boost-format
 msgid "Printing %1s material with %2s nozzle may cause nozzle damage."
 msgstr ""
-"Printing high temperature material(%1 material) with %2 may cause nozzle "
-"damage"
+"Printing high temperature material(%1s material) with %2s may cause nozzle "
+"damage."
 
 msgid "Please fix the error above, otherwise printing cannot continue."
 msgstr "Please fix the error above, otherwise printing cannot continue."
@@ -11625,7 +11622,7 @@ msgid "Auto-Calibration"
 msgstr "Auto-Calibration"
 
 msgid "The printer will automatically read the calibration results."
-msgstr ""
+msgstr "The printer will automatically read the calibration results."
 
 msgid "Prev"
 msgstr "Prev"
@@ -13674,6 +13671,24 @@ msgstr "Print Failed"
 
 msgid "Removed"
 msgstr "Removed"
+
+#~ msgid "Unknow error."
+#~ msgstr "Unknow error."
+
+#~ msgid "Rough"
+#~ msgstr "Rough"
+
+#~ msgid "Reduce Linear"
+#~ msgstr "Reduce Linear"
+
+#~ msgid "Reduce Angle"
+#~ msgstr "Reduce Angle"
+
+#~ msgid "Fewer faces"
+#~ msgstr "Fewer faces"
+
+#~ msgid "More faces"
+#~ msgstr "More faces"
 
 #~ msgid "Remove all points"
 #~ msgstr "Remove all points"
