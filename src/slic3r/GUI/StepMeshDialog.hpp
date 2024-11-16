@@ -12,20 +12,14 @@ class Button;
 class StepMeshDialog : public Slic3r::GUI::DPIDialog
 {
 public:
-    StepMeshDialog(wxWindow* parent, Slic3r::Step& file);
+    StepMeshDialog(wxWindow* parent, Slic3r::Step& file, double linear_init, double angle_init);
     void on_dpi_changed(const wxRect& suggested_rect) override;
-    inline double get_linear_init() {
-        return std::stod(Slic3r::GUI::wxGetApp().app_config->get("linear_defletion"));
-    }
-    inline double get_angle_init() {
-        return std::stod(Slic3r::GUI::wxGetApp().app_config->get("angle_defletion"));
-    }
     inline double get_linear_defletion() {
         double value;
         if (m_linear_last.ToDouble(&value)) {
             return value;
         }else {
-            return get_linear_init();
+            return m_last_linear;
         }
     }
     inline double get_angle_defletion() {
@@ -33,7 +27,7 @@ public:
         if (m_angle_last.ToDouble(&value)) {
             return value;
         } else {
-            return get_angle_init();
+            return m_last_angle;
         }
     }
 private:
@@ -41,11 +35,11 @@ private:
     Button* m_button_ok = nullptr;
     Button* m_button_cancel = nullptr;
     wxCheckBox* m_checkbox = nullptr;
-    wxString m_linear_last = wxString::Format("%.3f", get_linear_init());
-    wxString m_angle_last = wxString::Format("%.2f", get_angle_init());
+    wxString m_linear_last;
+    wxString m_angle_last;
     wxStaticText* mesh_face_number_text;
-    double m_last_linear;
-    double m_last_angle;
+    double m_last_linear = 0.003;
+    double m_last_angle = 0.5;
     std::future<unsigned int> task;
     bool validate_number_range(const wxString& value, double min, double max);
     void update_mesh_number_text();
