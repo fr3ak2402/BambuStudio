@@ -245,7 +245,7 @@ AboutDialog::AboutDialog()
     build_sizer_verti->Add( 0, 0, 0, wxTOP, FromDIP(5));
     build_sizer_horiz->Add(build_sizer_verti, 0, wxLEFT, FromDIP(20));
 
-    auto build_string = "Build: " + std::string(GSN_BUILD);
+    auto build_string = "Slicer version: " + std::string(SLIC3R_VERSION) + " (Build: " + std::string(GSN_BUILD) + ")";
     wxStaticText *build_text = new wxStaticText(this, wxID_ANY, build_string.c_str(), wxDefaultPosition, wxDefaultSize);
     
     build_text->SetForegroundColour(wxColour("#6B6B6B"));
