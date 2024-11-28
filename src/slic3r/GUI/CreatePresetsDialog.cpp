@@ -16,6 +16,9 @@
 #include "Tab.hpp"
 #include "MainFrame.hpp"
 
+//GalaxySlicerNeo: include for sorting a list 
+#include <algorithm>  // for std::sort
+
 #define NAME_OPTION_COMBOBOX_SIZE wxSize(FromDIP(200), FromDIP(24))
 #define FILAMENT_PRESET_COMBOBOX_SIZE wxSize(FromDIP(300), FromDIP(24))
 #define OPTION_SIZE wxSize(FromDIP(100), FromDIP(24))
@@ -38,7 +41,11 @@ namespace GUI {
 
 static const std::vector<std::string> filament_vendors = {"Polymaker", "OVERTURE", "Kexcelled", "HATCHBOX",  "eSUN",       "SUNLU",    "Prusament", "Creality", "Protopasta",
                                                           "Anycubic",  "Basf",     "ELEGOO",    "INLAND",    "FLASHFORGE", "AMOLEN",   "MIKA3D",    "3DXTECH",  "Duramic",
-                                                          "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect"};
+                                                          "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect",
+
+                                                          //GalaxySlicerNeo: add more filament vendors
+                                                          "Extrudr", "Princore", "3DJAKE", "Fillamentum", "FormFutura", "add:north", "Fiberlogy", "Spectrum", "Vision Miner",
+                                                          "Prografen", "Nobufil", "Avistron", "colorFabb", "GEEETECH", "Recreus", "AzureFilm", "R3D", "Verbatim", "BASF"};
 
 static const std::vector<std::string> filament_types = {"PLA",    "PLA+",  "PLA Tough", "PETG",  "ABS",    "ASA",    "FLEX",        "HIPS",   "PA",     "PACF",
                                                         "NYLON",  "PVA",   "PC",        "PCABS", "PCTG",   "PCCF",   "PP",          "PEI",    "PET",    "PETG",
@@ -680,6 +687,10 @@ wxBoxSizer *CreateFilamentPresetDialog::create_vendor_item()
     horizontal_sizer->Add(optionSizer, 0, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5)); 
 
     wxArrayString choices;
+
+    //GalaxySlicerNeo: sort the filament manufacturers by A-Z to have a better overview of the dropdown list
+    std::sort(filament_vendors.begin(), filament_vendors.end());
+
     for (const wxString &vendor : filament_vendors) {
         choices.push_back(vendor);
     }
