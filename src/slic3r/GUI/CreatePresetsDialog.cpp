@@ -120,6 +120,19 @@ static std::string remove_special_key(const std::string &str)
     return res_str;
 }
 
+//GalaxySlicerNeo: Extension of the filament manufacturer sorting so that lower and upper case letters are also sorted
+static bool caseInsensitiveCompare(const std::string& a, const std::string& b) {
+    // both strings are converted to lowercase letters before they are compared
+    std::string lowerA = a;
+    std::string lowerB = b;
+
+    // convert all characters to lower case
+    std::transform(lowerA.begin(), lowerA.end(), lowerA.begin(), [](unsigned char c) { return std::tolower(c); });
+    std::transform(lowerB.begin(), lowerB.end(), lowerB.begin(), [](unsigned char c) { return std::tolower(c); });
+
+    return lowerA < lowerB; // Vergleiche die Kleinbuchstaben-Versionen
+}
+
 static bool str_is_all_digit(const std::string &str) {
     for (const char &c : str) {
         if (!std::isdigit(c)) return false;
@@ -690,7 +703,7 @@ wxBoxSizer *CreateFilamentPresetDialog::create_vendor_item()
     wxArrayString choices;
 
     //GalaxySlicerNeo: sort the filament manufacturers by A-Z to have a better overview of the dropdown list
-    std::sort(filament_vendors.begin(), filament_vendors.end());
+    std::sort(filament_vendors.begin(), filament_vendors.end(), caseInsensitiveCompare);
 
     for (const wxString &vendor : filament_vendors) {
         choices.push_back(vendor);
