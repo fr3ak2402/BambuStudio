@@ -55,7 +55,7 @@ cd python
 echo Downloading Python...
 
 :: download python zip
-curl -o D:/work/Projects/GalaxySlicerNeo_deps/python/python_embed.zip https://www.python.org/ftp/python/3.13.0/python-3.13.0-embed-amd64.zip
+curl -o D:/work/Projects/GalaxySlicerNeo_deps/python/python_embed.zip https://www.python.org/ftp/python/3.13.1/python-3.13.1-embed-amd64.zip
 
 :: expand python zip
 powershell -command "Expand-Archive -Path 'D:/work/Projects/GalaxySlicerNeo_deps/python/python_embed.zip' -DestinationPath 'D:/work/Projects/GalaxySlicerNeo_deps/python'"
