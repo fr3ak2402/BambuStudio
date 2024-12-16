@@ -11,30 +11,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: setup dev on Windows
-        uses: microsoft/setup-msbuild@v2
+      #- name: setup dev on Windows
+      #  uses: microsoft/setup-msbuild@v2
 
-      - name: Build on Windows
-        working-directory: ${{ github.workspace }}
-        run: |
-            choco install strawberryperl
-            choco install pkgconfiglite
-            mkdir ${{ github.workspace }}\deps\build
-            mkdir ${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep
-            cd "${{ github.workspace }}\deps\build"
-            cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="./GalaxySlicerNeo_dep" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF
-            msbuild /m ALL_BUILD.vcxproj
+      #- name: Build on Windows
+      #  working-directory: ${{ github.workspace }}
+      #  run: |
+      #     choco install strawberryperl
+      #      choco install pkgconfiglite
+      #      mkdir ${{ github.workspace }}\deps\build
+      #      mkdir ${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep
+      #      cd "${{ github.workspace }}\deps\build"
+      #      cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="./GalaxySlicerNeo_dep" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF
+      #      msbuild /m ALL_BUILD.vcxproj
 
-      - name: pack deps on Windows
-        working-directory: ${{ github.workspace }}
-        run: Compress-Archive -Path "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep\*" -DestinationPath "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip"
-        shell: pwsh
+      #- name: pack deps on Windows
+      #  working-directory: ${{ github.workspace }}
+      #  run: Compress-Archive -Path "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep\*" -DestinationPath "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip"
+      #  shell: pwsh
 
-      - name: Upload windows deps
-        uses: actions/upload-artifact@v4
-        with:
-          name: GalaxySlicerNeo_dep_win64_vs2022.zip
-          path: ${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip
+      #- name: Upload windows deps
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: GalaxySlicerNeo_dep_win64_vs2022.zip
+      #    path: ${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip
 
   prepare_pkg_config:
     name: pkg-config
@@ -55,3 +55,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Restore pkg-config
+        uses: actions/cache/restore@v4
+        id: cache-pkgconfig
+        with:
+          path: ${{ github.workspace }}/download/pkg-config.zip
+          key: ${{ runner.os }}-pkgconfig
+      
+      - name: Upload pkg-config (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkg-config.zip
+          path: ${{ github.workspace }}/download/pkg-config.zip
