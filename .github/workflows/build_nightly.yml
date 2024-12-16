@@ -8,11 +8,11 @@ on:
 jobs:
   # Windows nightly build      
   build-deps-windows:
-    name: Build deps (windows)
+    name: Deps (Windows)
     uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
 
   build-slicer-windows:
-    name: Build slicer (windows)
+    name: Slicer (Windows)
     runs-on: windows-latest
     needs: build-deps-windows
     if: success()
@@ -22,7 +22,7 @@ jobs:
         
   # macOS nightly build
   build-deps-macos:
-    name: Build deps (macOS)
+    name: Deps (macOS)
     runs-on: macos-latest
     if: success()
     steps:
@@ -43,7 +43,7 @@ jobs:
           path: build/macOS/slicer-artifact.txt
 
   build-slicer-macos:
-    name: Build slicer (macOS)
+    name: Slicer (macOS)
     runs-on: macos-latest
     needs: build-deps-macos
     if: success()
