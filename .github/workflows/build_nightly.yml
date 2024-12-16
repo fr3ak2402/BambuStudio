@@ -51,8 +51,8 @@ jobs:
     runs-on: windows-latest
     needs: 
       - build-slicer-windows
-      - build-slicer-macos  # The release will only be created if both slicer builds succeed
-    if: success()  # Ensures the release is only created if both build jobs are successful
+      - build-slicer-macos
+    if: success('build-slicer-windows') || success('build-slicer-macos')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
