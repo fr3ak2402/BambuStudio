@@ -6,10 +6,13 @@ on:
       - master
       
 jobs:
-  create-release:
+  build-deps:
+    runs-on: windows-latest
+    
+  create-nightly-release:
     runs-on: windows-latest
     steps:
-      - name: Checkout current repository
+      - name: Checkout
         uses: actions/checkout@v4
         
       - name: Create nightly release
