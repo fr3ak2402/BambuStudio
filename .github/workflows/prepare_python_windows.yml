@@ -22,4 +22,4 @@ jobs:
         id: cache-python
         with:
           path: ${{ github.workspace }}/download/python.zip
-          key: ${{ runner.os }}-python
+          key: ${{ github.sha }}-python
