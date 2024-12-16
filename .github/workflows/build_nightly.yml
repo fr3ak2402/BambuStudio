@@ -6,9 +6,19 @@ on:
       - master
 
 jobs:
+  # Windows nightly build
+  setup-enviroment-windows:
+    name: Setup enviroment (windows)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
   build-deps-windows:
     name: Build deps (windows)
     runs-on: windows-latest
+    needs: setup-enviroment-windows
+    if: success()
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,10 +35,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+        
+  # macOS nightly build
+  setup-enviroment-macos:
+    name: Setup enviroment (macOS)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
   build-deps-macos:
-    name: Build deps (macos)
+    name: Build deps (macOS)
     runs-on: macos-latest
+    needs: setup-enviroment-macos
+    if: success()
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +58,7 @@ jobs:
           echo "Installing dependencies..."
 
   build-slicer-macos:
-    name: Build slicer (macos)
+    name: Build slicer (macOS)
     runs-on: macos-latest
     needs: build-deps-macos
     if: success()
