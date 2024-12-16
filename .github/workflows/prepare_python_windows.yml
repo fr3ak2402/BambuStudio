@@ -15,8 +15,8 @@ jobs:
         run: |
             mkdir ${{ github.workspace }}/download
             echo Downloading Python...
-            curl -o {{ github.workspace }}/download/python.zip https://www.python.org/ftp/python/3.13.1/python-3.13.1-embed-amd64.zip
-
+            powershell -Command "Invoke-WebRequest https://www.python.org/ftp/python/3.13.1/python-3.13.1-embed-amd64.zip -OutFile ${{ github.workspace }}/download/python.zip"
+            
       - name: Upload python (Windows)
         uses: actions/upload-artifact@v4
         with:
