@@ -13,7 +13,7 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v4
 
-      - name: Release
+      - name: Create nightly release
         uses: softprops/action-gh-release@v2
         with:
           repository: ${{ secrets.OWNER }}/${{ secrets.REPOSITORY }}
