@@ -13,24 +13,12 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v4
 
-      - name: Create a release in another repository
-        env:
-          GITHUB_TOKEN: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}  # Das Token des anderen Repositories
-        run: |
-          REPO_OWNER="fr3ak2402"               # GitHub-Benutzername oder Organisation des Ziel-Repositories
-          REPO_NAME="GalaxySlicerNeo"    # Der Name des Ziel-Repositories
-          TAG_NAME="nightly"  # Der Tag, der gepusht wurde (z. B. v1.0.0)
-          RELEASE_NAME="Release $TAG_NAME"
-          BODY="Release notes for $TAG_NAME"
-          
-          curl -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -d '{
-                  "tag_name": "'"$TAG_NAME"'",
-                  "target_commitish": "main",
-                  "name": "'"$RELEASE_NAME"'",
-                  "body": "'"$BODY"'",
-                  "draft": false,
-                  "prerelease": false
-                }' \
-            https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: ${{ secrets.OWNER }}/${{ secrets.REPOSITORY }}
+          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          name: "Nightly release"
+          tag_name: "nightly"
+          prerelease: true
+          draft: false
