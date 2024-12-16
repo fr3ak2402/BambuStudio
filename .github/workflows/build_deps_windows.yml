@@ -1,0 +1,13 @@
+name: Build windows deps
+
+on:
+  workflow_call:
+
+jobs:
+  build_deps:
+    name: Build deps
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+    
