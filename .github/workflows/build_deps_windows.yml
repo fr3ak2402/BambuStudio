@@ -23,3 +23,17 @@ jobs:
         with:
           name: windows-build-artifacts
           path: build/windows/slicer-artifact.txt
+
+  install_pkg_config:
+    name: Install pkg-config
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+  install_python:
+    name: Install Python
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
