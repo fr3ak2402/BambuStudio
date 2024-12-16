@@ -20,8 +20,6 @@ jobs:
           # Your condition to determine if this job should continue.
           # For example, if you have custom logic here to decide whether to run the next job.
           echo "should_run=true" >> $GITHUB_ENV
-        outputs:
-          should_run: ${{ steps.should_run.outputs.should_run }}  # Sets the output based on logic
 
   create-nightly-release:
     name: Create nightly release
