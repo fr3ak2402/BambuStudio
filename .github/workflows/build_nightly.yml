@@ -1,0 +1,28 @@
+name: Build Nightly
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+
+      - name: Create release in another repository
+        uses: octokit/request-action@v2
+        with:
+          route: POST /repos/{owner}/{repo}/releases
+          owner: 'fr3ak2402'    # Ersetze durch den Besitzer des Ziel-Repositories
+          repo: 'GalaxySlicerNeo'      # Ersetze durch den Namen des Ziel-Repositories
+          tag_name: ${{ github.sha }}  # Verwende den Commit-Hash als Tag
+          name: 'Release ${{ github.sha }}'  # Der Name des Releases
+          body: 'Automated release created from ${{ github.repository }}'  # Beschreibung des Releases
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
