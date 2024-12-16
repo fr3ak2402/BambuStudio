@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build-deps:
+  build-deps-windows:
     name: Build deps (windows)
     runs-on: windows-latest
     steps:
@@ -16,11 +16,20 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Installing dependencies..."
-          
+  
+  build-slicer-windows:
+    name: Build slicer (windows)
+    runs-on: windows-latest
+    needs: build-deps-windows
+    if: success()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
   create-nightly-release:
     name: Create nightly release
     runs-on: windows-latest
-    needs: build-deps
+    needs: build-slicer-windows
     if: success()
     steps:
       - name: Checkout
