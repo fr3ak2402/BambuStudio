@@ -7,9 +7,14 @@ on:
       
 jobs:
   build-deps:
+    name: Build deps (windows)
     runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
     
   create-nightly-release:
+    name: Create nightly release
     runs-on: windows-latest
     steps:
       - name: Checkout
