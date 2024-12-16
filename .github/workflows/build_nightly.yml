@@ -9,15 +9,7 @@ jobs:
   # Windows nightly build      
   build-deps-windows:
     name: Build deps (windows)
-    runs-on: windows-latest
-    if: success()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          echo "Installing dependencies..."
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
 
   build-slicer-windows:
     name: Build slicer (windows)
