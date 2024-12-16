@@ -16,6 +16,9 @@
 #include "Tab.hpp"
 #include "MainFrame.hpp"
 
+//GalaxySlicerNeo: include for sorting a list 
+#include <algorithm>  // for std::sort
+
 #define NAME_OPTION_COMBOBOX_SIZE wxSize(FromDIP(200), FromDIP(24))
 #define FILAMENT_PRESET_COMBOBOX_SIZE wxSize(FromDIP(300), FromDIP(24))
 #define OPTION_SIZE wxSize(FromDIP(100), FromDIP(24))
@@ -38,7 +41,12 @@ namespace GUI {
 
 static const std::vector<std::string> filament_vendors = {"Polymaker", "OVERTURE", "Kexcelled", "HATCHBOX",  "eSUN",       "SUNLU",    "Prusament", "Creality", "Protopasta",
                                                           "Anycubic",  "Basf",     "ELEGOO",    "INLAND",    "FLASHFORGE", "AMOLEN",   "MIKA3D",    "3DXTECH",  "Duramic",
-                                                          "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect"};
+                                                          "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect", "LDO"};
+
+                                                    //GalaxySlicerNeo: add more filament vendors
+                                                    "Extrudr", "Princore", "3DJAKE", "Fillamentum", "FormFutura", "add:north", "Fiberlogy", "Spectrum", "Vision Miner",
+                                                    "Prografen", "Nobufil", "Avistron", "colorFabb", "GEEETECH", "Recreus", "AzureFilm", "R3D", "Verbatim", "Copper3D",
+                                                    "Dremel", "Innofil", "Francofil", "Fiberthree", "NinjaTek", "DSM", "Siddament", "Z-Polymers", "FusRock", "Xioneer"};
 
 static const std::vector<std::string> filament_types = {"PLA",    "PLA+",  "PLA Tough", "PETG",  "ABS",    "ASA",    "FLEX",        "HIPS",   "PA",     "PACF",
                                                         "NYLON",  "PVA",   "PC",        "PCABS", "PCTG",   "PCCF",   "PP",          "PEI",    "PET",    "PETG",
@@ -110,6 +118,19 @@ static std::string remove_special_key(const std::string &str)
         }
     }
     return res_str;
+}
+
+//GalaxySlicerNeo: Extension of the filament manufacturer sorting so that lower and upper case letters are also sorted
+static bool caseInsensitiveCompare(const std::string& a, const std::string& b) {
+    // both strings are converted to lowercase letters before they are compared
+    std::string lowerA = a;
+    std::string lowerB = b;
+
+    // convert all characters to lower case
+    std::transform(lowerA.begin(), lowerA.end(), lowerA.begin(), [](unsigned char c) { return std::tolower(c); });
+    std::transform(lowerB.begin(), lowerB.end(), lowerB.begin(), [](unsigned char c) { return std::tolower(c); });
+
+    return lowerA < lowerB; // Vergleiche die Kleinbuchstaben-Versionen
 }
 
 static bool str_is_all_digit(const std::string &str) {
@@ -680,6 +701,10 @@ wxBoxSizer *CreateFilamentPresetDialog::create_vendor_item()
     horizontal_sizer->Add(optionSizer, 0, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5)); 
 
     wxArrayString choices;
+
+    //GalaxySlicerNeo: sort the filament manufacturers by A-Z to have a better overview of the dropdown list
+    std::sort(filament_vendors.begin(), filament_vendors.end(), caseInsensitiveCompare);
+
     for (const wxString &vendor : filament_vendors) {
         choices.push_back(vendor);
     }

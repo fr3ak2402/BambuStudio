@@ -6187,8 +6187,8 @@ msgstr ""
 "Improved rendering performance under the scene of multiple plates and many "
 "models."
 
-msgid "enable multi instance rendering by opengl"
-msgstr "enable multi instance rendering by opengl"
+msgid "Enable multi instance rendering by opengl"
+msgstr "Enable multi instance rendering by opengl"
 
 msgid ""
 "If enabled, it can improve certain rendering performance. But for some "
