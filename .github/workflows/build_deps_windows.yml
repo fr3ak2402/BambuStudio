@@ -25,6 +25,17 @@ jobs:
             cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="./GalaxySlicerNeo_dep" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF
             msbuild /m ALL_BUILD.vcxproj
 
+      - name: pack deps on Windows
+        working-directory: ${{ github.workspace }}
+        run: Compress-Archive -Path "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep\*" -DestinationPath "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip"
+        shell: pwsh
+
+      - name: Upload windows deps
+        uses: actions/upload-artifact@v4
+        with:
+          name: GalaxySlicerNeo_dep_win64_vs2022.zip
+          path: ${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip
+
   prepare_pkg_config:
     name: pkg-config
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_pkgconfig_windows.yml@master
@@ -44,9 +55,3 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      #- name: Upload windows deps
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: windows-build-artifacts
-      #    path: build/windows/slicer-artifact.txt
