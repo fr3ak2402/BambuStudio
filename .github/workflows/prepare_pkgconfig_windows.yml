@@ -20,5 +20,5 @@ jobs:
       - name: Upload pkg-config (Windows)
         uses: actions/upload-artifact@v4
         with:
-          name: windows-build-artifacts
+          name: pkg-config.zip
           path: ${{ github.workspace }}/download/pkg-config.zip
