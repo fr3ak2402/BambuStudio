@@ -55,8 +55,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Installing dependencies..."
+          echo "Building slicer for macOS"
+          # Example: Save some macOS-specific files or build artifacts
+          mkdir -p build/macOS
+          echo "macOS build artifacts" > build/macOS/slicer-artifact.txt
+          
+  upload-deps-macos:
+    name: Upload deps (macOS)
+    runs-on: macos-latest
+    needs: build-deps-macos
+    if: success()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      - name: Upload macOS deps
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-build-artifacts
+          path: build/macOS/slicer-artifact.txt
+        
   build-slicer-macos:
     name: Build slicer (macOS)
     runs-on: macos-latest
@@ -65,19 +83,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Build slicer on macOS
-        run: |
-          echo "Building slicer for macOS"
-          # Example: Save some macOS-specific files or build artifacts
-          mkdir -p build/macOS
-          echo "macOS build artifacts" > build/macOS/slicer-artifact.txt
-
-      - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: macOS-build-artifacts
-          path: build/macOS/slicer-artifact.txt
 
   create-nightly-release:
     name: Create nightly release
