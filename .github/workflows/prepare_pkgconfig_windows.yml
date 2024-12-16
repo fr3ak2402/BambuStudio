@@ -17,8 +17,14 @@ jobs:
             echo Start downloading pkg-config files...
             powershell -Command "Invoke-WebRequest https://github.com/fr3ak2402/GalaxySlicer_deps/releases/download/September_23/pkg-config-lite-0.28.1.zip -OutFile ${{ github.workspace }}/download/pkg-config.zip"
 
-      - name: Upload pkg-config (Windows)
-        uses: actions/upload-artifact@v4
+      - name: Unzip
+        run: |
+            mkdir ${{ github.workspace }}/download/pkg-config
+            powershell -command "Expand-Archive -Path '${{ github.workspace }}/download/pkg-config.zip' -DestinationPath ${{ github.workspace }}/download/pkg-config'"
+
+      - name: Cache pkg-config
+        uses: actions/cache/save@v4
+        id: cache-pkgconfig
         with:
-          name: pkg-config.zip
           path: ${{ github.workspace }}/download/pkg-config.zip
+          key: ${{ runner.os }}-pkgconfig
