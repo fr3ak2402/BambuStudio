@@ -5,8 +5,20 @@ on:
 
 jobs:
   prepare:
-    name: Prepare
+    name: Prepare python
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Download
+        run: |
+            mkdir ${{ github.workspace }}/download
+            echo Downloading Python...
+            curl -o {{ github.workspace }}/download/python.zip https://www.python.org/ftp/python/3.13.1/python-3.13.1-embed-amd64.zip
+
+      - name: Upload python (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkg-config.zip
+          path: ${{ github.workspace }}/download/python.zip
