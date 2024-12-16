@@ -20,7 +20,7 @@ jobs:
       - name: Unzip
         run: |
             mkdir ${{ github.workspace }}/download/pkg-config
-            powershell -command "Expand-Archive -Path '${{ github.workspace }}/download/pkg-config.zip' -DestinationPath ${{ github.workspace }}/download/pkg-config'"
+            powershell -command "Expand-Archive -Path '${{ github.workspace }}/download/pkg-config.zip' -DestinationPath '${{ github.workspace }}/download/pkg-config'"
 
       - name: Cache pkg-config
         uses: actions/cache/save@v4
