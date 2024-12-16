@@ -17,9 +17,14 @@ jobs:
             echo Downloading Python...
             powershell -Command "Invoke-WebRequest https://www.python.org/ftp/python/3.13.1/python-3.13.1-embed-amd64.zip -OutFile ${{ github.workspace }}/download/python.zip"
 
+      - name: Unzip
+        run: |
+            mkdir ${{ github.workspace }}/download/python
+            powershell -command "Expand-Archive -Path '${{ github.workspace }}/download/python.zip' -DestinationPath '${{ github.workspace }}/download/python'"
+            
       - name: Cache python
         uses: actions/cache/save@v4
         id: cache-python
         with:
-          path: ${{ github.workspace }}/download/python.zip
+          path: ${{ github.workspace }}/download/python
           key: ${{ github.sha }}-python
