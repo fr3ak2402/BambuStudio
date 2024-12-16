@@ -1,4 +1,4 @@
-name: Prepare pkg-config (Windows)
+name: Prepare python (Windows)
 
 on:
   workflow_call:
