@@ -38,28 +38,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-  install_pkg_config:
-    name: Install pkg-config
-    runs-on: windows-latest
-    needs: build_deps
-    if: success()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-  install_python:
-    name: Install Python
-    runs-on: windows-latest
-    needs: install_pkg_config
-    if: success()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
   upload_deps:
     name: Upload deps
     runs-on: windows-latest
-    needs: install_python
     if: success()
     steps:
       - name: Checkout
