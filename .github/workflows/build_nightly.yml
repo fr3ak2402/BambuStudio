@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v4
-
+        
       - name: Create nightly release
         uses: softprops/action-gh-release@v2
         with:
