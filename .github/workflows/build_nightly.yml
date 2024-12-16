@@ -7,17 +7,17 @@ on:
 
 jobs:
   # Windows nightly build
-  setup-enviroment-windows:
-    name: Setup enviroment (windows)
+  setup-environment-windows:
+    name: Setup environment (Windows)
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
   build-deps-windows:
-    name: Build deps (windows)
+    name: Build deps (Windows)
     runs-on: windows-latest
-    needs: setup-enviroment-windows
+    needs: setup-environment-windows
     if: success()
     steps:
       - name: Checkout
@@ -25,29 +25,29 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Installing dependencies..."
+          echo "Installing dependencies on Windows"
 
   build-slicer-windows:
-    name: Build slicer (windows)
+    name: Build slicer (Windows)
     runs-on: windows-latest
     needs: build-deps-windows
     if: success()
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
   # macOS nightly build
-  setup-enviroment-macos:
-    name: Setup enviroment (macOS)
-    runs-on: windows-latest
+  setup-environment-macos:
+    name: Setup environment (macOS)
+    runs-on: macos-latest  # Fixed from 'windows-latest' to 'macos-latest'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
   build-deps-macos:
     name: Build deps (macOS)
     runs-on: macos-latest
-    needs: setup-enviroment-macos
+    needs: setup-environment-macos
     if: success()
     steps:
       - name: Checkout
@@ -55,26 +55,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Building slicer for macOS"
-          # Example: Save some macOS-specific files or build artifacts
-          mkdir -p build/macOS
-          echo "macOS build artifacts" > build/macOS/slicer-artifact.txt
-          
-  upload-deps-macos:
-    name: Upload deps (macOS)
-    runs-on: macos-latest
-    needs: build-deps-macos
-    if: success()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+          echo "Installing dependencies on macOS"
 
-      - name: Upload macOS deps
-        uses: actions/upload-artifact@v4
-        with:
-          name: macOS-build-artifacts
-          path: build/macOS/slicer-artifact.txt
-        
   build-slicer-macos:
     name: Build slicer (macOS)
     runs-on: macos-latest
@@ -84,19 +66,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build slicer on macOS
+        run: |
+          echo "Building slicer for macOS"
+          # Example: Save macOS-specific files or build artifacts
+          mkdir -p build/macOS
+          echo "macOS build artifacts" > build/macOS/slicer-artifact.txt
+
+  upload-deps-macos:
+    name: Upload macOS build artifacts
+    runs-on: macos-latest
+    needs: build-slicer-macos
+    if: success()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload macOS build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: macOS-build-artifacts
+          path: build/macOS/slicer-artifact.txt
+
   create-nightly-release:
     name: Create nightly release
     runs-on: windows-latest
     needs:
       - build-slicer-windows
       - build-slicer-macos
-    if: success() || failure()  # Run if any of the slicer jobs succeed
+    if: success() || failure()  # Will run if either of the build jobs succeed
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download macOS artifacts
-        uses: actions/download-artifact@v4
+      - name: Download macOS build artifact
+        uses: actions/download-artifact@v3
         with:
           name: macOS-build-artifacts
           path: build/macOS
