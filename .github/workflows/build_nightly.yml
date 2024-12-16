@@ -3,39 +3,35 @@ name: Nightly build
 on:
   push:
     branches:
-      - master  # Triggers the workflow when changes are pushed to the master branch.
+      - master
 
 jobs:
   build-deps:
-    name: Build deps (windows)  # Name of the job
-    runs-on: windows-latest  # Job runs on the latest Windows environment
-    outputs:
-      should_run: ${{ steps.should_run.outputs.should_run }}  # Output for conditional workflow logic
+    name: Build deps (windows)
+    runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4  # Check out the code to the workflow's runner
+        uses: actions/checkout@v4
 
-      - id: should_run
+      - name: Install dependencies
         run: |
-          # Your condition to determine if this job should continue.
-          # For example, if you have custom logic here to decide whether to run the next job.
-          echo "should_run=true" >> $GITHUB_ENV
-
+          echo "Installing dependencies..."
+          
   create-nightly-release:
     name: Create nightly release
-    runs-on: windows-latest  # This job also runs on Windows
-    needs: build-deps  # This ensures that create-nightly-release runs after build-deps
-    if: ${{ needs.build-deps.outputs.should_run == 'true' }}  # This job only runs if should_run from the previous job is true
+    runs-on: windows-latest
+    needs: build-deps
+    if: success()
     steps:
       - name: Checkout
-        uses: actions/checkout@v4  # Again, checkout code to the runner
+        uses: actions/checkout@v4
 
       - name: Create nightly release
-        uses: softprops/action-gh-release@v2  # This action creates a GitHub release
+        uses: softprops/action-gh-release@v2
         with:
-          repository: ${{ secrets.OWNER }}/${{ secrets.REPOSITORY }}  # Repository in the form of OWNER/REPOSITORY
-          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}  # GitHub token to authenticate the release
-          name: "Nightly release"  # Name of the release
-          tag_name: "nightly"  # Tag name for the nightly release
-          prerelease: true  # Marks the release as a pre-release
-          draft: false  # If true, the release will not be published automatically (set to false to publish)
+          repository: ${{ secrets.OWNER }}/${{ secrets.REPOSITORY }}
+          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          name: "Nightly release"
+          tag_name: "nightly-${{ github.sha }}"
+          prerelease: true
+          draft: false
