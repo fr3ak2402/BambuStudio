@@ -63,6 +63,6 @@ jobs:
           repository: ${{ secrets.OWNER }}/${{ secrets.REPOSITORY }}
           token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
           name: "Nightly release"
-          tag_name: "nightly-${{ github.sha }}"
+          tag_name: "nightly"
           prerelease: true
           draft: false
