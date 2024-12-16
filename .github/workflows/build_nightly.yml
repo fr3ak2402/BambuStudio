@@ -46,6 +46,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Build slicer on macOS
+        run: |
+          echo "Building slicer for macOS"
+          # Example: Save some macOS-specific files or build artifacts
+          mkdir -p build/macOS
+          echo "macOS build artifacts" > build/macOS/slicer-artifact.txt
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: macOS-build-artifacts
+          path: build/macOS/slicer-artifact.txt
+
   create-nightly-release:
     name: Create nightly release
     runs-on: windows-latest
