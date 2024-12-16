@@ -61,14 +61,14 @@ jobs:
         id: cache-pkgconfig
         with:
           path: ${{ github.workspace }}/download/pkg-config.zip
-          key: ${{ runner.os }}-pkgconfig
+          key: ${{ github.sha }}-pkgconfig
 
       - name: Restore python
         uses: actions/cache/restore@v4
         id: cache-python
         with:
           path: ${{ github.workspace }}/download/python.zip
-          key: ${{ runner.os }}-python
+          key: ${{ github.sha }}-python
         
       - name: Upload pkg-config (Windows)
         uses: actions/upload-artifact@v4
