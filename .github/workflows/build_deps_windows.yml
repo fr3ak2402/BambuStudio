@@ -38,9 +38,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-  upload_deps:
-    name: Upload deps
+  prepare_deps:
+    name: Prepare deps
     runs-on: windows-latest
+    needs:
+      - build_deps
+      - prepare_pkg_config
+      - prepare_python
     if: success()
     steps:
       - name: Checkout
