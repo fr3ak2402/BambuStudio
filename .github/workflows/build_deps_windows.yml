@@ -25,11 +25,11 @@ jobs:
           path: build/windows/slicer-artifact.txt
 
   prepare_pkg_config:
-    name: Prepare pkg-config
+    name: pkg-config
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_pkgconfig_windows.yml@master
 
   prepare_python:
-    name: Prepare python
+    name: Python
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_python_windows.yml@master
 
   prepare_deps:
