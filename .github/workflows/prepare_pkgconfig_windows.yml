@@ -27,4 +27,4 @@ jobs:
         id: cache-pkgconfig
         with:
           path: ${{ github.workspace }}/download/pkg-config.zip
-          key: ${{ runner.os }}-pkgconfig
+          key: ${{ github.sha }}-pkgconfig
