@@ -10,6 +10,7 @@ jobs:
   build-deps-windows:
     name: Deps (Windows)
     uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
+    secrets: inherit
 
   build-slicer-windows:
     name: Slicer (Windows)
