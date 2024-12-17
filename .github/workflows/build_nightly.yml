@@ -13,6 +13,8 @@ jobs:
 
   build-slicer-windows:
     name: Slicer (Windows)
+    needs: build-deps-windows
+    if: success()
     uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@master
         
   # macOS nightly build
