@@ -21,7 +21,7 @@ jobs:
            choco install pkgconfiglite
            mkdir ${{ github.workspace }}\deps\build
            cd "${{ github.workspace }}\deps\build"
-           cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF
+           cmake ../ -G "Visual Studio 16 2019" -A x64 -DDESTDIR="${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps" -DCMAKE_BUILD_TYPE=Release
            msbuild /m ALL_BUILD.vcxproj
            cd ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
            
