@@ -30,7 +30,7 @@ jobs:
         run: |
             powershell -command "Remove-Item '${{ github.workspace }}/deps/build' -Recurse -Force"
 
-      - name: Upload deps
+      - name: Cache deps
         uses: actions/cache/save@v4
         id: cache-deps
         with:
@@ -89,20 +89,19 @@ jobs:
           path: ${{ github.workspace }}/download/python
           key: ${{ github.sha }}-python
 
+      - name: Copy pkg-config into deps
+        working-directory: ${{ github.workspace }}
+        run: |
+            powershell -command "Copy-Item '${{ github.workspace }}\download\pkg-config\bin\pkg-config.exe' -Destination '${{ github.workspace }}\work\Projects\GalaxySlicerNeo_deps\usr\local\bin'"
+            powershell -command "Copy-Item -Path '${{ github.workspace }}\download\pkg-config\share\aclocal' -Destination '${{ github.workspace }}\work\Projects\GalaxySlicerNeo_deps\usr\local\share' -Recurse"
+
+      - name: Copy python into deps
+        working-directory: ${{ github.workspace }}
+        run: |
+            powershell -command "Copy-Item -Path '${{ github.workspace }}/download/python' -Destination '${{ github.workspace }}\work\Projects\GalaxySlicerNeo_deps' -Recurse"
+
       - name: Upload deps (Windows)
         uses: actions/upload-artifact@v4
         with:
           name: deps.zip
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-        
-      - name: Upload pkg-config (Windows)
-        uses: actions/upload-artifact@v4
-        with:
-          name: pkg-config.zip
-          path: ${{ github.workspace }}/download/pkg-config
-
-      - name: Upload python (Windows)
-        uses: actions/upload-artifact@v4
-        with:
-          name: python.zip
-          path: ${{ github.workspace }}/download/python
