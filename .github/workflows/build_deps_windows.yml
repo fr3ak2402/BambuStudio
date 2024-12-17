@@ -102,5 +102,5 @@ jobs:
       - name: Upload deps (Windows)
         uses: actions/upload-artifact@v4
         with:
-          name: deps.zip
+          name: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly.zip
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
