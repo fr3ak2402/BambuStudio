@@ -73,7 +73,7 @@ jobs:
      #   with:
      #     repository: ${{ secrets.OWNER }}/${{ secrets.REPOSITORY }}
      #     token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
-     #     name: "Nightly release"
-     #     tag_name: "nightly-${{ github.sha }}"
+     #     name: "GalaxySlicerNeo V${{ secrets.GSN_VERSION }} Nightly build"
+     #     tag_name: "V${{ secrets.GSN_VERSION }}-nightly"
      #     prerelease: true
      #     draft: false
