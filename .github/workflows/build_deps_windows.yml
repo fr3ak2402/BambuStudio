@@ -6,7 +6,7 @@ on:
 jobs:
   build_deps:
     name: Build deps
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,7 +18,6 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
            choco install strawberryperl
-           choco install pkgconfiglite
            mkdir ${{ github.workspace }}\deps\build
            cd "${{ github.workspace }}\deps\build"
            cmake ../ -G "Visual Studio 16 2019" -A x64 -DDESTDIR="${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps" -DCMAKE_BUILD_TYPE=Release
