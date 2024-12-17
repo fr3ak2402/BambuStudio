@@ -87,7 +87,7 @@ jobs:
         id: cache-python
         with:
           path: ${{ github.workspace }}/download/python
-          key: ${{ github.sha }}-python
+          key: python-${{ secrets.PYTHON_VERSION }}
 
       - name: Copy pkg-config into deps
         working-directory: ${{ github.workspace }}
