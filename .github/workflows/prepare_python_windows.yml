@@ -27,4 +27,4 @@ jobs:
         id: cache-python
         with:
           path: ${{ github.workspace }}/download/python
-          key: "python-${{ secrets.PYTHON_VERSION }}"
+          key: ${{ github.sha }}-python
