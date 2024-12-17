@@ -34,7 +34,7 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: ${{ github.sha }}-deps
+          key: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly
             
       #- name: pack deps on Windows
       #  working-directory: ${{ github.workspace }}
@@ -73,7 +73,7 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: ${{ github.sha }}-deps
+          key: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly
 
       - name: Restore pkg-config
         uses: actions/cache/restore@v4
