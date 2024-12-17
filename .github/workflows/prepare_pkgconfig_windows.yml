@@ -26,5 +26,5 @@ jobs:
         uses: actions/cache/save@v4
         id: cache-pkgconfig
         with:
-          path: ${{ github.workspace }}/download/pkg-config.zip
+          path: ${{ github.workspace }}/download/pkg-config
           key: ${{ github.sha }}-pkgconfig
