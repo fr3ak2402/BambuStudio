@@ -67,8 +67,8 @@ jobs:
         uses: actions/cache/restore@v4
         id: cache-python
         with:
-          path: ${{ github.workspace }}/download/python.zip
-          key: ${{ github.sha }}-python
+          path: ${{ github.workspace }}/download/python
+          key: python-${{ secrets.PYTHON_VERSION }}
         
       - name: Upload pkg-config (Windows)
         uses: actions/upload-artifact@v4
