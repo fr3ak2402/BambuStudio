@@ -6,7 +6,7 @@ on:
 jobs:
   build_slicer:
     name: Build slicer
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,8 +31,8 @@ jobs:
         run: |
             mkdir build
             cd build
-            cmake .. -G "Visual Studio 17 2022" -A X64 -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="${{ github.workspace }}\work\Projects\GalaxySlicerNeo_deps\usr\local" -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\work\Projects\GalaxySlicerNeo" -DCMAKE_BUILD_TYPE=Release -DWIN10SDK_PATH="C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0"
-            cmake --build . --target install --config Release -- -m
+            cmake .. -G "Visual Studio 16 2019" -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="${{ github.workspace }}\work\Projects\GalaxySlicerNeo_deps\usr\local" -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\work\Projects\GalaxySlicerNeo" -DCMAKE_BUILD_TYPE=Release -DWIN10SDK_PATH="C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0"
+            cmake --build . --target install --config Release
 
       - name: Clean up
         working-directory: ${{ github.workspace }}
