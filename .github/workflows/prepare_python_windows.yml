@@ -14,7 +14,7 @@ jobs:
       - name: Download
         run: |
             mkdir ${{ github.workspace }}/download
-            echo "Downloading Python ${{ secrets.PYTHON_VERSION }}..."
+            echo Downloading Python...
             powershell -Command "Invoke-WebRequest https://www.python.org/ftp/python/${{ secrets.PYTHON_VERSION }}/python-${{ secrets.PYTHON_VERSION }}-embed-amd64.zip -OutFile '${{ github.workspace }}\download\python.zip'"
 
       - name: Unzip
@@ -27,5 +27,5 @@ jobs:
         id: cache-python
         with:
           path: ${{ github.workspace }}/download/python
-          key: ${{ github.sha }}-python
+          key: python-${{ secrets.PYTHON_VERSION }}
           
