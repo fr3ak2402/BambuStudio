@@ -1,0 +1,21 @@
+name: Build windows slicer
+
+on:
+  workflow_call:
+
+jobs:
+  build_slicer:
+    name: Build slicer
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: setup dev on Windows
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Download deps
+        uses: actions/download-artifact@v4
+        with:
+          name: deps.zip
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
