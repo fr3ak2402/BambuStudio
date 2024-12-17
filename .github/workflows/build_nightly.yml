@@ -13,12 +13,7 @@ jobs:
 
   build-slicer-windows:
     name: Slicer (Windows)
-    runs-on: windows-latest
-    needs: build-deps-windows
-    if: success()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@master
         
   # macOS nightly build
   build-deps-macos:
