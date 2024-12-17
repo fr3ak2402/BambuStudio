@@ -11,20 +11,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      #- name: setup dev on Windows
-      #  uses: microsoft/setup-msbuild@v2
+      - name: setup dev on Windows
+        uses: microsoft/setup-msbuild@v2
 
-      #- name: Build on Windows
-      #  working-directory: ${{ github.workspace }}
-      #  run: |
-      #     choco install strawberryperl
-      #      choco install pkgconfiglite
-      #      mkdir ${{ github.workspace }}\deps\build
-      #      mkdir ${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep
-      #      cd "${{ github.workspace }}\deps\build"
-      #      cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="./GalaxySlicerNeo_dep" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF
-      #      msbuild /m ALL_BUILD.vcxproj
+      - name: Build on Windows
+        working-directory: ${{ github.workspace }}
+        run: |
+           choco install strawberryperl
+           choco install pkgconfiglite
+           mkdir ${{ github.workspace }}\deps\build
+           cd "${{ github.workspace }}\deps\build"
+           cmake ../ -G "Visual Studio 17 2022" -A x64 -DDESTDIR="${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps" -DCMAKE_BUILD_TYPE=Release -DDEP_DEBUG=OFF
+           msbuild /m ALL_BUILD.vcxproj
+           cd ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
+           
+      - name: Clean up
+        working-directory: ${{ github.workspace }}
+        run: |
+            powershell -command "Remove-Item '${{ github.workspace }}/deps/build' -Recurse -Force"
 
+      - name: Upload deps
+        uses: actions/cache/save@v4
+        id: cache-deps
+        with:
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
+          key: ${{ github.sha }}-deps
+            
       #- name: pack deps on Windows
       #  working-directory: ${{ github.workspace }}
       #  run: Compress-Archive -Path "${{ github.workspace }}\deps\build\*" -DestinationPath "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip"
@@ -56,6 +68,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore deps
+        uses: actions/cache/restore@v4
+        id: cache-deps
+        with:
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
+          key: ${{ github.sha }}-deps
+
       - name: Restore pkg-config
         uses: actions/cache/restore@v4
         id: cache-pkgconfig
@@ -69,6 +88,12 @@ jobs:
         with:
           path: ${{ github.workspace }}/download/python
           key: ${{ github.sha }}-python
+
+      - name: Upload deps (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+          name: deps.zip
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
         
       - name: Upload pkg-config (Windows)
         uses: actions/upload-artifact@v4
