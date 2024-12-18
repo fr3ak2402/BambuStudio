@@ -1,0 +1,53 @@
+name: Build windows slicer
+
+on:
+  workflow_call:
+
+jobs:
+  build_slicer:
+    name: Build slicer
+    runs-on: windows-2019
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: setup dev on Windows
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install nsis and pkgconfig
+        run: |
+          dir "C:/Program Files (x86)/Windows Kits/10/Include"
+          choco install nsis
+          choco install pkgconfiglite
+
+      - name: Download deps
+        uses: actions/download-artifact@v4
+        with:
+          name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
+
+      - name: Build slicer on Windows
+        working-directory: ${{ github.workspace }}
+        run: |
+            mkdir build
+            cd build
+            cmake .. -G "Visual Studio 16 2019" -DBBL_RELEASE_TO_PUBLIC=1 -DCMAKE_PREFIX_PATH="${{ github.workspace }}\work\Projects\GalaxySlicerNeo_deps\usr\local" -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}\work\Projects\GalaxySlicerNeo" -DCMAKE_BUILD_TYPE=Release -DWIN10SDK_PATH="C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0"
+            cmake --build . --target install --config Release
+
+      - name: Clean up
+        working-directory: ${{ github.workspace }}
+        run: |
+            powershell -command "Remove-Item '${{ github.workspace }}/build' -Recurse -Force"
+        
+      - name: Copy Python
+        working-directory: ${{ github.workspace }}
+        run: |
+            cd ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
+            mkdir python
+            powershell -command "Copy-Item -Path ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps/python/* -Destination ${{ github.workspace }}/work/Projects/GalaxySlicerNeo/python -Recurse"
+
+      - name: Upload slicer (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+          name: slicer.zip
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo

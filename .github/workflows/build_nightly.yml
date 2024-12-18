@@ -1,0 +1,92 @@
+name: Nightly build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  check-recent-commit:
+    name: Configure
+    runs-on: ubuntu-latest
+    outputs:
+      is_recent: ${{ steps.state.outputs.is_recent }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Latest Commit Time
+        id: commit_time
+        run: |
+          # Fetch the commit time of the latest commit
+          LATEST_COMMIT_TIME=$(git log -1 --format="%ct")
+          echo "latest_commit_time=${LATEST_COMMIT_TIME}" >> $GITHUB_ENV
+
+      - name: Compare Commit Time with Current Time
+        id: state
+        run: |
+          CURRENT_TIME=$(date +%s)
+          COMMIT_TIME=${{ env.latest_commit_time }}
+          DIFFERENCE=$((CURRENT_TIME - COMMIT_TIME))
+
+          # Check if the commit is within 86400 seconds (1 day)
+          if [ "$DIFFERENCE" -lt 86400 ]; then
+            echo "✅ Commit is less than a day old."
+            echo "is_recent=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Commit is older than a day."
+            echo "is_recent=false" >> $GITHUB_OUTPUT
+          fi
+          
+  # Windows nightly build      
+  build-deps-windows:
+    name: Deps (Windows)
+    needs: check-recent-commit
+    if: needs.check-recent-commit.outputs.is_recent == 'true'
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
+
+  build-slicer-windows:
+    name: Slicer (Windows)
+    needs: build-deps-windows
+    if: success()
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@master
+        
+  # macOS nightly build
+  build-deps-macos:
+    name: Deps (macOS)
+    needs: check-recent-commit
+    if: needs.check-recent-commit.outputs.is_recent == 'true'
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+  build-slicer-macos:
+    name: Slicer (macOS)
+    runs-on: macos-latest
+    needs: build-deps-macos
+    if: success()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+  create-nightly-release:
+    name: Create nightly release
+    runs-on: windows-latest
+    needs:
+      - build-slicer-windows
+      - build-slicer-macos
+    if: success() || failure()  # Run if any of the slicer jobs succeed
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+     # - name: Create nightly release
+     #   uses: softprops/action-gh-release@v2
+     #   with:
+     #     repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
+     #     token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+     #     name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly build"
+     #     tag_name: "V${{ vars.GSN_VERSION }}-nightly"
+     #     prerelease: true
+     #     draft: false

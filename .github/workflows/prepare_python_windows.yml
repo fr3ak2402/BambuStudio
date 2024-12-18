@@ -1,0 +1,41 @@
+name: Prepare python (Windows)
+
+on:
+  workflow_call:
+
+jobs:
+  prepare:
+    name: Prepare python
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check cache
+        id: check-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/download/python
+          key: python-${{ vars.PYTHON_VERSION }}
+
+      - name: Download
+        if: steps.check-cache.outputs.cache-hit != 'true'
+        run: |
+            mkdir ${{ github.workspace }}/download
+            echo "Downloading Python ${{ vars.PYTHON_VERSION }}..."
+            powershell -Command "Invoke-WebRequest https://www.python.org/ftp/python/${{ vars.PYTHON_VERSION }}/python-${{ vars.PYTHON_VERSION }}-embed-amd64.zip -OutFile '${{ github.workspace }}\download\python.zip'"
+
+      - name: Unzip
+        if: steps.check-cache.outputs.cache-hit != 'true'
+        run: |
+            mkdir ${{ github.workspace }}/download/python
+            powershell -command "Expand-Archive -Path '${{ github.workspace }}/download/python.zip' -DestinationPath '${{ github.workspace }}/download/python'"
+            
+      - name: Cache python
+        if: steps.check-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        id: cache-python
+        with:
+          path: ${{ github.workspace }}/download/python
+          key: python-${{ vars.PYTHON_VERSION }}
+          
