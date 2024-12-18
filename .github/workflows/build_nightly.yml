@@ -6,27 +6,37 @@ on:
       - master
 
 jobs:
-  check-commit:
+  check-recent-commit:
     runs-on: ubuntu-latest
-    name: Check latest commit
-    outputs:
-      should_run: ${{ steps.should_run.outputs.should_run }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: print latest_commit
-        run: echo ${{ github.sha }}
 
-      - id: should_run
-        continue-on-error: true
-        name: check latest commit is less than a day
-        if: ${{ github.event_name == 'push' }}
-        run: test -z $(git rev-list  --after="24 hours" ${{ github.sha }}) && echo "should_run=false" >> $GITHUB_OUTPUT
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Latest Commit Time
+        id: commit_time
+        run: |
+          # Fetch the commit time of the latest commit
+          LATEST_COMMIT_TIME=$(git log -1 --format="%ct")
+          echo "latest_commit_time=${LATEST_COMMIT_TIME}" >> $GITHUB_ENV
+
+      - name: Compare Commit Time with Current Time
+        run: |
+          CURRENT_TIME=$(date +%s)
+          COMMIT_TIME=${{ env.latest_commit_time }}
+          DIFFERENCE=$((CURRENT_TIME - COMMIT_TIME))
+
+          # Check if the commit is within 86400 seconds (1 day)
+          if [ "$DIFFERENCE" -lt 86400 ]; then
+            echo "✅ Commit is less than a day old."
+          else
+            echo "❌ Commit is older than a day."
+            exit 1
+          fi
           
   # Windows nightly build      
   build-deps-windows:
     name: Deps (Windows)
-    needs: check-commit
-    if: ${{ needs.check_date.outputs.should_run != 'false' }}
     uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
 
   build-slicer-windows:
@@ -38,8 +48,6 @@ jobs:
   # macOS nightly build
   build-deps-macos:
     name: Deps (macOS)
-    needs: check-commit
-    if: ${{ needs.check_date.outputs.should_run != 'false' }}
     runs-on: macos-latest
     steps:
       - name: Checkout
