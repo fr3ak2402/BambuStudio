@@ -11,18 +11,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check cache
+        id: check-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/download/pkg-config
+          key: pkgconfig-0.28.1
+
       - name: Download
+        if: steps.check-cache.outputs.cache-hit != 'true'
         run: |
             mkdir ${{ github.workspace }}/download
             echo Start downloading pkg-config files...
             powershell -Command "Invoke-WebRequest https://github.com/fr3ak2402/GalaxySlicer_deps/releases/download/September_23/pkg-config-lite-0.28.1.zip -OutFile ${{ github.workspace }}/download/pkg-config.zip"
 
       - name: Unzip
+        if: steps.check-cache.outputs.cache-hit != 'true'
         run: |
             mkdir ${{ github.workspace }}/download/pkg-config
             powershell -command "Expand-Archive -Path '${{ github.workspace }}/download/pkg-config.zip' -DestinationPath '${{ github.workspace }}/download/pkg-config'"
 
       - name: Cache pkg-config
+        if: steps.check-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         id: cache-pkgconfig
         with:
