@@ -26,19 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          echo "Building slicer for macOS"
-          # Example: Save some macOS-specific files or build artifacts
-          mkdir -p build/macOS
-          echo "macOS build artifacts" > build/macOS/slicer-artifact.txt
-
-      - name: Upload macOS deps
-        uses: actions/upload-artifact@v4
-        with:
-          name: macOS-build-artifacts
-          path: build/macOS/slicer-artifact.txt
-
   build-slicer-macos:
     name: Slicer (macOS)
     runs-on: macos-latest
