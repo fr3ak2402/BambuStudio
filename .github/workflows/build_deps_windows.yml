@@ -16,7 +16,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ vars.GSN_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly
 
       - name: setup dev on Windows
         if: steps.check-cache.outputs.cache-hit != 'true'
@@ -45,19 +45,8 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ vars.GSN_VERSION }}-nightly
-            
-      #- name: pack deps on Windows
-      #  working-directory: ${{ github.workspace }}
-      #  run: Compress-Archive -Path "${{ github.workspace }}\deps\build\*" -DestinationPath "${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip"
-      #  shell: pwsh
-
-      #- name: Upload windows deps
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: GalaxySlicerNeo_dep_win64_vs2022.zip
-      #    path: ${{ github.workspace }}\deps\build\GalaxySlicerNeo_dep_win64_vs2022.zip
-
+          key: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly
+      
   prepare_pkg_config:
     name: pkg-config
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_pkgconfig_windows.yml@master
@@ -65,7 +54,6 @@ jobs:
   prepare_python:
     name: Python
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_python_windows.yml@master
-    secrets: inherit
 
   prepare_deps:
     name: Prepare deps
@@ -84,7 +72,7 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ vars.GSN_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly
 
       - name: Restore pkg-config
         uses: actions/cache/restore@v4
@@ -114,5 +102,5 @@ jobs:
       - name: Upload deps (Windows)
         uses: actions/upload-artifact@v4
         with:
-          name: GalaxySlicerNeo_deps_win64_v${{ vars.GSN_VERSION }}-nightly.zip
+          name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
