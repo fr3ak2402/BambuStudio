@@ -39,9 +39,9 @@
 namespace Slic3r { 
 namespace GUI {
 
-static const std::vector<std::string> filament_vendors = {"Polymaker", "OVERTURE", "Kexcelled", "HATCHBOX",  "eSUN",       "SUNLU",    "Prusament", "Creality", "Protopasta",
-                                                          "Anycubic",  "Basf",     "ELEGOO",    "INLAND",    "FLASHFORGE", "AMOLEN",   "MIKA3D",    "3DXTECH",  "Duramic",
-                                                          "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect", "LDO",
+static std::vector<std::string> filament_vendors = {"Polymaker", "OVERTURE", "Kexcelled", "HATCHBOX",  "eSUN",       "SUNLU",    "Prusament", "Creality", "Protopasta",
+                                                    "Anycubic",  "Basf",     "ELEGOO",    "INLAND",    "FLASHFORGE", "AMOLEN",   "MIKA3D",    "3DXTECH",  "Duramic",
+                                                    "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect", "LDO",
 
                                                     //GalaxySlicerNeo: add more filament vendors
                                                     "Extrudr", "Princore", "3DJAKE", "Fillamentum", "FormFutura", "add:north", "Fiberlogy", "Spectrum", "Vision Miner",
