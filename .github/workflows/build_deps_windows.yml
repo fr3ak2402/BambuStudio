@@ -11,10 +11,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check cache
+        id: check-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
+          key: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly
+
       - name: setup dev on Windows
+        if: steps.check-cache.outputs.cache-hit != 'true'
         uses: microsoft/setup-msbuild@v2
 
       - name: Build on Windows
+        if: steps.check-cache.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}
         run: |
            choco install strawberryperl
@@ -25,11 +34,13 @@ jobs:
            cd ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
            
       - name: Clean up
+        if: steps.check-cache.outputs.cache-hit != 'true'
         working-directory: ${{ github.workspace }}
         run: |
             powershell -command "Remove-Item '${{ github.workspace }}/deps/build' -Recurse -Force"
 
       - name: Cache deps
+        if: steps.check-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         id: cache-deps
         with:
