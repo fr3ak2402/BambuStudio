@@ -36,7 +36,20 @@ jobs:
             echo "❌ Commit is older than a day."
             echo "is_recent=false" >> $GITHUB_OUTPUT
           fi
-  
+
+  use-commit-check:
+    needs: check-recent-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output Commit Check Result
+        run: |
+          if [ "${{ needs.check-recent-commit.outputs.is_recent }}" == "true" ]; then
+            echo "✅ Der Commit ist frisch. Führe den Job aus."
+          else
+            echo "❌ Der Commit ist zu alt. Job wird nicht ausgeführt."
+            exit 1
+          fi
+          
   # Windows nightly build      
   build-deps-windows:
     name: Deps (Windows)
