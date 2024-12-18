@@ -23,7 +23,7 @@ jobs:
       - name: Download deps
         uses: actions/download-artifact@v4
         with:
-          name: deps.zip
+          name: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly.zip
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
 
       - name: Build slicer on Windows
