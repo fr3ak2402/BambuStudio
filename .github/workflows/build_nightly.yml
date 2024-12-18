@@ -8,7 +8,8 @@ on:
 jobs:
   check-recent-commit:
     runs-on: ubuntu-latest
-
+    outputs:
+      is_recent: ${{ steps.check.outputs.is_recent }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,11 +30,25 @@ jobs:
           # Check if the commit is within 86400 seconds (1 day)
           if [ "$DIFFERENCE" -lt 86400 ]; then
             echo "✅ Commit is less than a day old."
+            echo "is_recent=true" >> $GITHUB_OUTPUT
           else
             echo "❌ Commit is older than a day."
-            exit 1
+            echo "is_recent=false" >> $GITHUB_OUTPUT
           fi
           
+  use-commit-check:
+    needs: check-recent-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output Commit Check Result
+        run: |
+          if [ "${{ needs.check-recent-commit.outputs.is_recent }}" == "true" ]; then
+            echo "✅ Der Commit ist frisch. Führe den Job aus."
+          else
+            echo "❌ Der Commit ist zu alt. Job wird nicht ausgeführt."
+            exit 1
+          fi
+  
   # Windows nightly build      
   build-deps-windows:
     name: Deps (Windows)
