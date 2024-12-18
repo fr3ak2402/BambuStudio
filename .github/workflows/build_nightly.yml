@@ -70,9 +70,9 @@ jobs:
      # - name: Create nightly release
      #   uses: softprops/action-gh-release@v2
      #   with:
-     #     repository: ${{ secrets.OWNER }}/${{ secrets.REPOSITORY }}
+     #     repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
      #     token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
-     #     name: "GalaxySlicerNeo V${{ secrets.GSN_VERSION }} Nightly build"
-     #     tag_name: "V${{ secrets.GSN_VERSION }}-nightly"
+     #     name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly build"
+     #     tag_name: "V${{ vars.GSN_VERSION }}-nightly"
      #     prerelease: true
      #     draft: false
