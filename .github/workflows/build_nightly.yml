@@ -38,8 +38,9 @@ jobs:
   # macOS nightly build
   build-deps-macos:
     name: Deps (macOS)
+    needs: check-commit
+    if: ${{ needs.check_date.outputs.should_run != 'false' }}
     runs-on: macos-latest
-    if: success()
     steps:
       - name: Checkout
         uses: actions/checkout@v4
