@@ -16,7 +16,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win64_v${{ vars.GSN_VERSION }}-nightly
 
       - name: setup dev on Windows
         if: steps.check-cache.outputs.cache-hit != 'true'
@@ -45,7 +45,7 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win64_v${{ vars.GSN_VERSION }}-nightly
             
       #- name: pack deps on Windows
       #  working-directory: ${{ github.workspace }}
@@ -84,7 +84,7 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ secrets.GSN_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win64_v${{ vars.GSN_VERSION }}-nightly
 
       - name: Restore pkg-config
         uses: actions/cache/restore@v4
@@ -98,7 +98,7 @@ jobs:
         id: cache-python
         with:
           path: ${{ github.workspace }}/download/python
-          key: python-${{ secrets.PYTHON_VERSION }}
+          key: python-${{ vars.PYTHON_VERSION }}
 
       - name: Copy pkg-config into deps
         working-directory: ${{ github.workspace }}
