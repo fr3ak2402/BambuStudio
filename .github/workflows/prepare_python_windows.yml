@@ -22,7 +22,7 @@ jobs:
         if: steps.check-cache.outputs.cache-hit != 'true'
         run: |
             mkdir ${{ github.workspace }}/download
-            echo Downloading Python...
+            echo "Downloading Python ${{ vars.PYTHON_VERSION }}..."
             powershell -Command "Invoke-WebRequest https://www.python.org/ftp/python/${{ vars.PYTHON_VERSION }}/python-${{ vars.PYTHON_VERSION }}-embed-amd64.zip -OutFile '${{ github.workspace }}\download\python.zip'"
 
       - name: Unzip
