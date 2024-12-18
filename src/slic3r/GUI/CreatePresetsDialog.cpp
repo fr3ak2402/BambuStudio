@@ -41,12 +41,12 @@ namespace GUI {
 
 static const std::vector<std::string> filament_vendors = {"Polymaker", "OVERTURE", "Kexcelled", "HATCHBOX",  "eSUN",       "SUNLU",    "Prusament", "Creality", "Protopasta",
                                                           "Anycubic",  "Basf",     "ELEGOO",    "INLAND",    "FLASHFORGE", "AMOLEN",   "MIKA3D",    "3DXTECH",  "Duramic",
-                                                          "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect", "LDO"};
+                                                          "Priline",   "Eryone",   "3Dgunius",  "Novamaker", "Justmaker",  "Giantarm", "iProspect", "LDO",
 
-                                                    //GalaxySlicerNeo: add more filament vendors
-                                                    "Extrudr", "Princore", "3DJAKE", "Fillamentum", "FormFutura", "add:north", "Fiberlogy", "Spectrum", "Vision Miner",
-                                                    "Prografen", "Nobufil", "Avistron", "colorFabb", "GEEETECH", "Recreus", "AzureFilm", "R3D", "Verbatim", "Copper3D",
-                                                    "Dremel", "Innofil", "Francofil", "Fiberthree", "NinjaTek", "DSM", "Siddament", "Z-Polymers", "FusRock", "Xioneer"};
+                                                    	  //GalaxySlicerNeo: add more filament vendors
+                                                    	  "Extrudr", "Princore", "3DJAKE", "Fillamentum", "FormFutura", "add:north", "Fiberlogy", "Spectrum", "Vision Miner",
+                                                    	  "Prografen", "Nobufil", "Avistron", "colorFabb", "GEEETECH", "Recreus", "AzureFilm", "R3D", "Verbatim", "Copper3D",
+                                                    	  "Dremel", "Innofil", "Francofil", "Fiberthree", "NinjaTek", "DSM", "Siddament", "Z-Polymers", "FusRock", "Xioneer"};
 
 static const std::vector<std::string> filament_types = {"PLA",    "PLA+",  "PLA Tough", "PETG",  "ABS",    "ASA",    "FLEX",        "HIPS",   "PA",     "PACF",
                                                         "NYLON",  "PVA",   "PC",        "PCABS", "PCTG",   "PCCF",   "PP",          "PEI",    "PET",    "PETG",
