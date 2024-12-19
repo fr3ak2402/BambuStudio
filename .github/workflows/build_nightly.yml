@@ -172,6 +172,7 @@ jobs:
           $source = "${{ github.workspace }}\download\Slicer\windows\content"
           $destination = "${{ github.workspace }}\download\Slicer\windows\GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip"
           Compress-Archive -Path $source -DestinationPath $destination
+          Remove-Item -Path $source -Recurse -Force
           
       - name: List contents of the workspace
         run: |
