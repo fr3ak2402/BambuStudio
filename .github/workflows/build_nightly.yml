@@ -70,13 +70,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+  check-nightly-release:
+    name: Check release
+    runs-on: ubuntu-latest
+    #needs:
+    #  - build-slicer-windows
+    #  - build-slicer-macos
+    #if: success() || failure()  # Run if any of the slicer jobs succeed
+    outputs:
+      release_exists: ${{ steps.check_release.outputs.release_exists }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          TAG_NAME="${GITHUB_REF##*/}"  # Extract the tag from the Git reference
+          RESPONSE=$(curl -s -o response.json -w "%{http_code}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tags/V${{ vars.GSN_VERSION }}-nightly")
+          
+          HTTP_STATUS=$(jq -r '.status' <<< "$RESPONSE")
+          if [[ "$HTTP_STATUS" == "404" ]]; then
+            echo "❌ Release not found, creating a new one."
+            echo "release_exists=false" >> $GITHUB_ENV
+          elif [[ "$HTTP_STATUS" == "200" ]]; then
+            echo "✅ Release found, updating the release."
+            echo "release_exists=true" >> $GITHUB_ENV
+          else
+            echo "Failed to check release status."
+            exit 1
+          fi
+
   create-nightly-release:
     name: Create nightly release
     runs-on: windows-latest
-    needs:
-      - build-slicer-windows
-      - build-slicer-macos
-    if: success() || failure()  # Run if any of the slicer jobs succeed
+    needs: check-nightly-release
+    if: needs.check-nightly-release.outputs.is_recent == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,3 +121,12 @@ jobs:
      #     tag_name: "V${{ vars.GSN_VERSION }}-nightly"
      #     prerelease: true
      #     draft: false
+
+  update-nightly-release:
+    name: Create nightly release
+    runs-on: windows-latest
+    needs: check-nightly-release
+    if: needs.check-nightly-release.outputs.is_recent == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
