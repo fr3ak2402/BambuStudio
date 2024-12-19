@@ -164,9 +164,9 @@ jobs:
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         with:
           name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/download/Slicer/windows
 
       - name: List contents of the workspace
         run: |
             echo "Workspace contents:"
-            dir ${{ github.workspace }}
+            dir ${{ github.workspace }}/download/Slicer/windows
