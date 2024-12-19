@@ -133,6 +133,11 @@ jobs:
           Compress-Archive -Path $source -DestinationPath $destination
           Remove-Item -Path $source -Recurse -Force
 
+          $path = "${{ github.workspace }}\download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          $path = $path -replace '\\', '/'
+
+          echo "WINDOWS_RELEASE_PATH=$path" >> $GITHUB_ENV
+
       - name: Create nightly release
         uses: softprops/action-gh-release@v2
         with:
@@ -143,7 +148,7 @@ jobs:
           prerelease: true
           draft: false
           files: |
-            ${{ github.workspace }}/download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ env.GSN_VERSION }}-nightly.zip
+            ${{ env.WINDOWS_RELEASE_PATH }}
             Release.txt
 
   update-nightly-release:
