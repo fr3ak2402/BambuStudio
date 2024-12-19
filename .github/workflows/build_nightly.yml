@@ -90,7 +90,8 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tags/V${{ vars.GSN_VERSION }}-nightly")
           
-          HTTP_STATUS=$(jq -r '.status' <<< "$RESPONSE")
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+          
           if [[ "$HTTP_STATUS" == "404" ]]; then
             echo "❌ Release not found, creating a new one."
             echo "release_exists=false" >> $GITHUB_ENV
