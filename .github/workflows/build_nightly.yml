@@ -45,11 +45,11 @@ jobs:
     if: needs.check-recent-commit.outputs.is_recent == 'true'
     uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@nightly
 
-  #build-slicer-windows:
-  #  name: Slicer (Windows)
-  #  needs: build-deps-windows
-  #  if: success()
-  #  uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@nightly
+  build-slicer-windows:
+    name: Slicer (Windows)
+    needs: build-deps-windows
+    if: success()
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@nightly
         
   # macOS nightly build
   build-deps-macos:
@@ -74,9 +74,8 @@ jobs:
     name: Check nightly release
     runs-on: ubuntu-latest
     needs:
-      - build-deps-windows
-    #  - build-slicer-windows
-    #  - build-slicer-macos
+      - build-slicer-windows
+      - build-slicer-macos
     if: success() || failure()  # Run if any of the slicer jobs succeed
     outputs:
       release_exists: ${{ steps.check_release.outputs.release_exists }}
@@ -117,32 +116,35 @@ jobs:
         uses: LIT-Protocol/artifact-exists-action@v0
         id: "windows-artifact-state"
         with:
-          name: "GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip"
+          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
 
       - name: Download slicer (windows)
         uses: actions/download-artifact@v4
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         with:
-          name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
-          path: ${{ github.workspace }}
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+          path: ${{ github.workspace }}/download/Slicer/windows/content
 
-      - name: List contents of the workspace
+      - name: Prepare Release (windows)
+        shell: pwsh
         run: |
-            echo "Workspace contents:"
-            dir ${{ github.workspace }}
+          $source = "${{ github.workspace }}\download\Slicer\windows\content"
+          $destination = "${{ github.workspace }}\download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          Compress-Archive -Path $source -DestinationPath $destination
+          Remove-Item -Path $source -Recurse -Force
 
-      #- name: Create nightly release
-      #  uses: softprops/action-gh-release@v2
-      #  with:
-      #    repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
-      #    token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
-      #    name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
-      #    tag_name: "V${{ vars.GSN_VERSION }}-nightly"
-      #    prerelease: true
-      #    draft: false
-      #    files: |
-      #      ${{ github.workspace }}/GalaxySlicerNeo_win_x64_v${{ env.GSN_VERSION }}-nightly.zip
-      #      Release.txt
+      - name: Create nightly release
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
+          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
+          tag_name: "V${{ vars.GSN_VERSION }}-nightly"
+          prerelease: true
+          draft: false
+          files: |
+            ${{ github.workspace }}/download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ env.GSN_VERSION }}-nightly.zip
+            Release.txt
 
   update-nightly-release:
     name: Update nightly release
@@ -152,29 +154,3 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Check release artifact (windows)
-        uses: LIT-Protocol/artifact-exists-action@v0
-        id: "windows-artifact-state"
-        with:
-          name: "GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip"
-
-      - name: Download slicer (windows)
-        uses: actions/download-artifact@v4
-        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
-        with:
-          name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
-          path: ${{ github.workspace }}/download/Slicer/windows/content
-
-      - name: Prepare Release (windows)
-        shell: pwsh
-        run: |
-          $source = "${{ github.workspace }}\download\Slicer\windows\content"
-          $destination = "${{ github.workspace }}\download\Slicer\windows\GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip"
-          Compress-Archive -Path $source -DestinationPath $destination
-          Remove-Item -Path $source -Recurse -Force
-          
-      - name: List contents of the workspace
-        run: |
-            echo "Workspace contents:"
-            dir ${{ github.workspace }}/download/Slicer/windows
