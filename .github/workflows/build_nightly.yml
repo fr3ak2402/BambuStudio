@@ -73,10 +73,10 @@ jobs:
   check-nightly-release:
     name: Check nightly release
     runs-on: ubuntu-latest
-    needs:
-      - build-slicer-windows
-      - build-slicer-macos
-    if: success() || failure()  # Run if any of the slicer jobs succeed
+    #needs:
+    #  - build-slicer-windows
+    #  - build-slicer-macos
+    #if: success() || failure()  # Run if any of the slicer jobs succeed
     outputs:
       release_exists: ${{ steps.check_release.outputs.release_exists }}
     steps:
@@ -116,27 +116,32 @@ jobs:
         uses: LIT-Protocol/artifact-exists-action@v0
         id: "windows-artifact-state"
         with:
-          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          name: "GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip"
 
       - name: Download slicer (windows)
         uses: actions/download-artifact@v4
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         with:
-          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+          name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
           path: ${{ github.workspace }}
 
-      - name: Create nightly release
-        uses: softprops/action-gh-release@v2
-        with:
-          repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
-          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
-          name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
-          tag_name: "V${{ vars.GSN_VERSION }}-nightly"
-          prerelease: true
-          draft: false
-          files: |
-            ${{ github.workspace }}/GalaxySlicerNeo_win_x64_v${{ env.GSN_VERSION }}-nightly.zip
-            Release.txt
+      - name: List contents of the workspace
+        run: |
+            echo "Workspace contents:"
+            dir ${{ github.workspace }}
+
+      #- name: Create nightly release
+      #  uses: softprops/action-gh-release@v2
+      #  with:
+      #    repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
+      #    token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+      #    name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
+      #    tag_name: "V${{ vars.GSN_VERSION }}-nightly"
+      #    prerelease: true
+      #    draft: false
+      #    files: |
+      #      ${{ github.workspace }}/GalaxySlicerNeo_win_x64_v${{ env.GSN_VERSION }}-nightly.zip
+      #      Release.txt
 
   update-nightly-release:
     name: Update nightly release
