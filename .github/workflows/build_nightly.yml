@@ -127,6 +127,7 @@ jobs:
 
       - name: Prepare Release (windows)
         shell: pwsh
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         run: |
           $source = "download\Slicer\windows\content"
           $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
@@ -140,11 +141,12 @@ jobs:
           token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
           name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
           tag_name: "V${{ vars.GSN_VERSION }}-nightly"
+          generate_release_notes: false
+          make_latest: true
           prerelease: true
           draft: false
           files: |
             download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
-            Release.txt
 
   update-nightly-release:
     name: Update nightly release
@@ -154,3 +156,46 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Check release artifact (windows)
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: "windows-artifact-state"
+        with:
+          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+      - name: Download slicer (windows)
+        uses: actions/download-artifact@v4
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+          path: download/Slicer/windows/content
+
+      - name: Prepare Release (windows)
+        shell: pwsh
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        run: |
+          $source = "download\Slicer\windows\content"
+          $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          Compress-Archive -Path $source -DestinationPath $destination
+          Remove-Item -Path $source -Recurse -Force
+      
+      - name: Update nightly release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          owner: ${{ vars.OWNER }}
+          repo: ${{ vars.REPOSITORY }}
+          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
+          tag: "V${{ vars.GSN_VERSION }}-nightly"
+          allowUpdates: true
+          generateReleaseNotes: false
+          makeLatest: true
+          prerelease: true
+          draft: false
+          replacesArtifacts: true
+          artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+
+
+
+
