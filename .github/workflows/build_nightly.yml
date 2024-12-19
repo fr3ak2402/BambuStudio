@@ -91,7 +91,7 @@ jobs:
             "https://api.github.com/repos/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tags/V${{ vars.GSN_VERSION }}-nightly")
           
           HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
-          
+
           if [[ "$HTTP_STATUS" == "404" ]]; then
             echo "❌ Release not found, creating a new one."
             echo "release_exists=false" >> $GITHUB_ENV
@@ -107,7 +107,7 @@ jobs:
     name: Create nightly release
     runs-on: windows-latest
     needs: check-nightly-release
-    if: needs.check-nightly-release.outputs.is_recent == 'false'
+    if: needs.check-nightly-release.outputs.release_exists == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -126,7 +126,7 @@ jobs:
     name: Update nightly release
     runs-on: windows-latest
     needs: check-nightly-release
-    if: needs.check-nightly-release.outputs.is_recent == 'true'
+    if: needs.check-nightly-release.outputs.release_exists == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
