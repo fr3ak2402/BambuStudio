@@ -128,6 +128,9 @@ jobs:
       - name: Test
         run: echo ${{ github.sha }} > Release.txt
 
+      - name: Pack Release.txt
+        run: zip Release.zip Release.txt
+
       - name: Create nightly release
         uses: softprops/action-gh-release@v2
         with:
@@ -138,7 +141,7 @@ jobs:
           prerelease: true
           draft: false
           files: |
-            Release.txt
+            Release.zip
 
   update-nightly-release:
     name: Update nightly release
