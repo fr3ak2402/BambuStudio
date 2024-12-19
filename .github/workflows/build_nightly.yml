@@ -94,10 +94,10 @@ jobs:
 
           if [[ "$HTTP_STATUS" == "404" ]]; then
             echo "❌ Release not found, creating a new one."
-            echo "release_exists=false" >> $GITHUB_ENV
+            echo "release_exists=false" >> $GITHUB_OUTPUT
           elif [[ "$HTTP_STATUS" == "200" ]]; then
             echo "✅ Release found, updating the release."
-            echo "release_exists=true" >> $GITHUB_ENV
+            echo "release_exists=true" >> $GITHUB_OUTPUT
           else
             echo "Failed to check release status."
             exit 1
