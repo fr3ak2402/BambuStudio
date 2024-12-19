@@ -106,7 +106,7 @@ jobs:
   create-nightly-release:
     name: Create nightly release
     runs-on: windows-latest
-    needs: check-nightly-release
+    # needs: check-nightly-release
     if: needs.check-nightly-release.outputs.release_exists == 'false'
     steps:
       - name: Checkout
