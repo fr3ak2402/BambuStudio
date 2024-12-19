@@ -3,7 +3,7 @@ name: Nightly build
 on:
   push:
     branches:
-      - master
+      - nightly
 
 jobs:
   check-recent-commit:

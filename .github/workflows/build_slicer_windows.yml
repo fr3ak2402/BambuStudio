@@ -49,5 +49,5 @@ jobs:
       - name: Upload slicer (Windows)
         uses: actions/upload-artifact@v4
         with:
-          name: slicer.zip
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
