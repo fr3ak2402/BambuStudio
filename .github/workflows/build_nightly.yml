@@ -12,7 +12,7 @@ jobs:
   check-recent-commit:
     name: Configure
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/' + secrets.TARGET_BRANCH }}
+    if: ${{ github.ref == format('refs/heads/{0}', secrets.TARGET_BRANCH) }}
     outputs:
       is_recent: ${{ steps.state.outputs.is_recent }}
     steps:
