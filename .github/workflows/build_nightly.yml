@@ -123,17 +123,17 @@ jobs:
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         with:
           name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
-          path: ${{ github.workspace }}/download/Slicer/windows/content
+          path: download/Slicer/windows/content
 
       - name: Prepare Release (windows)
         shell: pwsh
         run: |
-          $source = "${{ github.workspace }}\download\Slicer\windows\content"
-          $destination = "${{ github.workspace }}\download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          $source = "download\Slicer\windows\content"
+          $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
           Compress-Archive -Path $source -DestinationPath $destination
           Remove-Item -Path $source -Recurse -Force
 
-          $path = "${{ github.workspace }}\download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          $path = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
           $path = $path -replace '\\', '/'
 
           echo "WINDOWS_RELEASE_PATH=$path" >> $GITHUB_ENV
