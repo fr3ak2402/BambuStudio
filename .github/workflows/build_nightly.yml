@@ -12,6 +12,7 @@ jobs:
   check-recent-commit:
     name: Configure
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/master' }}
     outputs:
       is_recent: ${{ steps.state.outputs.is_recent }}
     steps:
