@@ -112,11 +112,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      #- name: Download slicer (windows)
-      #  uses: actions/download-artifact@v4
-      #  with:
-      #    name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
-      #    path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
+      - name: Check release artifact (windows)
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: "windows-artifact-state"
+        with:
+          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+      - name: Download slicer (windows)
+        uses: actions/download-artifact@v4
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
 
       - name: Create nightly release
         uses: softprops/action-gh-release@v2
@@ -127,6 +134,8 @@ jobs:
           tag_name: "V${{ vars.GSN_VERSION }}-nightly"
           prerelease: true
           draft: false
+          files: |
+                ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
 
   update-nightly-release:
     name: Update nightly release
