@@ -151,3 +151,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Check release artifact (windows)
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: "windows-artifact-state"
+        with:
+          name: "GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip"
+
+      - name: Download slicer (windows)
+        uses: actions/download-artifact@v4
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        with:
+          name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
+          path: ${{ github.workspace }}
+
+      - name: List contents of the workspace
+        run: |
+            echo "Workspace contents:"
+            dir ${{ github.workspace }}
