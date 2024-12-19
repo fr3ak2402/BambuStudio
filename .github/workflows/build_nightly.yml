@@ -47,7 +47,7 @@ jobs:
     name: Deps (Windows)
     needs: check-recent-commit
     if: needs.check-recent-commit.outputs.is_recent == 'true'
-    uses: ${{ format('fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@{0}', vars.TARGET_BRANCH) }}
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@nightly
 
   build-slicer-windows:
     name: Slicer (Windows)
