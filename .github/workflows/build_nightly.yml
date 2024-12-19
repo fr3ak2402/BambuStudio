@@ -12,7 +12,7 @@ jobs:
   check-recent-commit:
     name: Configure
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/nightly' }}
+    if: ${{ github.ref == 'refs/heads/' + secrets.TARGET_BRANCH }}
     outputs:
       is_recent: ${{ steps.state.outputs.is_recent }}
     steps:
@@ -47,13 +47,13 @@ jobs:
     name: Deps (Windows)
     needs: check-recent-commit
     if: needs.check-recent-commit.outputs.is_recent == 'true'
-    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@nightly
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@${{ vars.TARGET_BRANCH }}
 
   build-slicer-windows:
     name: Slicer (Windows)
     needs: build-deps-windows
     if: success()
-    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@nightly
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@${{ vars.TARGET_BRANCH }}
         
   # macOS nightly build
   build-deps-macos:
