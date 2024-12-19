@@ -136,6 +136,7 @@ jobs:
           draft: false
           files: |
             ${{ github.workspace }}/GalaxySlicerNeo_win_x64_v${{ env.GSN_VERSION }}-nightly.zip
+            Release.txt
 
   update-nightly-release:
     name: Update nightly release
