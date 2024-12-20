@@ -2,10 +2,10 @@ name: Nightly build
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Every day at 00:00 UTC (UK)
-  #push:
-  #  branches:
-  #    - cron
+    - cron: '0 0 * * *'  # Every day at 00:00 UTC (UK)
+  push:
+    branches:
+      - nightly
   workflow_dispatch:
 
 jobs:
@@ -148,6 +148,9 @@ jobs:
           make_latest: true
           prerelease: true
           draft: false
+          body: |
+            ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
+            -----------------------------------------
           files: |
             download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
 
@@ -196,6 +199,9 @@ jobs:
           prerelease: true
           draft: false
           replacesArtifacts: true
+          #body: |
+          #  ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
+          #  -----------------------------------------
           artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
 
 
