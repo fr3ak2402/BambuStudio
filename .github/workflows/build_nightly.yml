@@ -126,13 +126,13 @@ jobs:
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         with:
           name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
-          path: download/Slicer/windows/content
+          path: download/Slicer/windows/GalaxySlicerNeo
 
       - name: Prepare Release (windows)
         shell: pwsh
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         run: |
-          $source = "download\Slicer\windows\content"
+          $source = "download\Slicer\windows\GalaxySlicerNeo"
           $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
           Compress-Archive -Path $source -DestinationPath $destination
           Remove-Item -Path $source -Recurse -Force
