@@ -16,7 +16,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win_x64_v${{ vars.DEPS_VERSION }}-nightly
 
       - name: setup dev on Windows
         if: steps.check-cache.outputs.cache-hit != 'true'
@@ -49,7 +49,7 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win_x64_v${{ vars.DEPS_VERSION }}-nightly
       
   prepare_pkg_config:
     name: pkg-config
@@ -76,7 +76,7 @@ jobs:
         id: cache-deps
         with:
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
-          key: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly
+          key: GalaxySlicerNeo_deps_win_x64_v${{ vars.DEPS_VERSION }}-nightly
 
       - name: Restore pkg-config
         uses: actions/cache/restore@v4
@@ -106,5 +106,5 @@ jobs:
       - name: Upload deps (Windows)
         uses: actions/upload-artifact@v4
         with:
-          name: GalaxySlicerNeo_deps_win64_v${{ vars.DEPS_VERSION }}-nightly.zip
+          name: GalaxySlicerNeo_deps_win_x64_v${{ vars.DEPS_VERSION }}-nightly.zip
           path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps
