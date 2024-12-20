@@ -2,7 +2,7 @@ name: Nightly build
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Every day at 00:00 UTC (UK)
+    - cron: '45 0 * * *'  # Every day at 00:00 UTC (UK)
   push:
     branches:
       - nightly
@@ -12,7 +12,6 @@ jobs:
   check-recent-commit:
     name: Configure
     runs-on: ubuntu-latest
-    if: ${{ github.ref == format('refs/heads/{0}', vars.TARGET_BRANCH) }}
     outputs:
       is_recent: ${{ steps.state.outputs.is_recent }}
     steps:
@@ -47,13 +46,13 @@ jobs:
     name: Deps (Windows)
     needs: check-recent-commit
     if: needs.check-recent-commit.outputs.is_recent == 'true'
-    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@nightly
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
 
   build-slicer-windows:
     name: Slicer (Windows)
     needs: build-deps-windows
     if: success()
-    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@nightly
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@master
         
   # macOS nightly build
   build-deps-macos:
