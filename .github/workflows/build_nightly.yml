@@ -22,7 +22,7 @@ jobs:
         id: commit_time
         run: |
           # Fetch the commit time of the latest commit
-          LATEST_COMMIT_TIME=$(git master log -1 --format="%ct")
+          LATEST_COMMIT_TIME=$(git log origin/master -1 --format="%ct")
           echo "latest_commit_time=${LATEST_COMMIT_TIME}" >> $GITHUB_ENV
 
       - name: Compare Commit Time with Current Time
