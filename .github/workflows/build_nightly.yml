@@ -1,9 +1,12 @@
 name: Nightly build
 
 on:
+  schedule:
+    - cron: '45 0 * * *'  # Every day at 00:00 UTC (UK)
   push:
     branches:
-      - master
+      - nightly
+  workflow_dispatch:
 
 jobs:
   check-recent-commit:
@@ -70,23 +73,132 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-  create-nightly-release:
-    name: Create nightly release
-    runs-on: windows-latest
+  check-nightly-release:
+    name: Check nightly release
+    runs-on: ubuntu-latest
     needs:
       - build-slicer-windows
       - build-slicer-macos
     if: success() || failure()  # Run if any of the slicer jobs succeed
+    outputs:
+      release_exists: ${{ steps.check_release.outputs.release_exists }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-     # - name: Create nightly release
-     #   uses: softprops/action-gh-release@v2
-     #   with:
-     #     repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
-     #     token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
-     #     name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly build"
-     #     tag_name: "V${{ vars.GSN_VERSION }}-nightly"
-     #     prerelease: true
-     #     draft: false
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          RESPONSE=$(curl -s -o response.json -w "%{http_code}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tags/V${{ vars.GSN_VERSION }}-nightly")
+          
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+
+          if [[ "$HTTP_STATUS" == "404" ]]; then
+            echo "❌ Release not found, creating a new one."
+            echo "release_exists=false" >> $GITHUB_OUTPUT
+          elif [[ "$HTTP_STATUS" == "200" ]]; then
+            echo "✅ Release found, updating the release."
+            echo "release_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Failed to check release status."
+            exit 1
+          fi
+
+  create-nightly-release:
+    name: Create nightly release
+    runs-on: windows-latest
+    needs: check-nightly-release
+    if: needs.check-nightly-release.outputs.release_exists == 'false'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check release artifact (windows)
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: "windows-artifact-state"
+        with:
+          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+      - name: Download slicer (windows)
+        uses: actions/download-artifact@v4
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+          path: download/Slicer/windows/content
+
+      - name: Prepare Release (windows)
+        shell: pwsh
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        run: |
+          $source = "download\Slicer\windows\content"
+          $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          Compress-Archive -Path $source -DestinationPath $destination
+          Remove-Item -Path $source -Recurse -Force
+
+      - name: Create nightly release
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
+          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
+          tag_name: "V${{ vars.GSN_VERSION }}-nightly"
+          generate_release_notes: false
+          make_latest: true
+          prerelease: true
+          draft: false
+          files: |
+            download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+
+  update-nightly-release:
+    name: Update nightly release
+    runs-on: windows-latest
+    needs: check-nightly-release
+    if: needs.check-nightly-release.outputs.release_exists == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check release artifact (windows)
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: "windows-artifact-state"
+        with:
+          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+      - name: Download slicer (windows)
+        uses: actions/download-artifact@v4
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+          path: download/Slicer/windows/content
+
+      - name: Prepare Release (windows)
+        shell: pwsh
+        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        run: |
+          $source = "download\Slicer\windows\content"
+          $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          Compress-Archive -Path $source -DestinationPath $destination
+          Remove-Item -Path $source -Recurse -Force
+      
+      - name: Update nightly release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          owner: ${{ vars.OWNER }}
+          repo: ${{ vars.REPOSITORY }}
+          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
+          tag: "V${{ vars.GSN_VERSION }}-nightly"
+          allowUpdates: true
+          generateReleaseNotes: false
+          makeLatest: true
+          prerelease: true
+          draft: false
+          replacesArtifacts: true
+          artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+
+
+
+
