@@ -2,10 +2,7 @@ name: Nightly build
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Every day at 00:00 UTC (UK)
-  #push:
-  #  branches:
-  #    - cron
+    - cron: '0 0 * * *'  # Every day at 00:00 UTC (UK)
   workflow_dispatch:
 
 jobs:
@@ -18,11 +15,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: List remote branches
+        run: |
+          git fetch --all
+          git branch -r
+
       - name: Get Latest Commit Time
         id: commit_time
         run: |
           # Fetch the commit time of the latest commit
-          LATEST_COMMIT_TIME=$(git log -1 --format="%ct")
+          LATEST_COMMIT_TIME=$(git log origin/master -1 --format="%ct")
           echo "latest_commit_time=${LATEST_COMMIT_TIME}" >> $GITHUB_ENV
 
       - name: Compare Commit Time with Current Time
@@ -126,13 +128,13 @@ jobs:
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         with:
           name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
-          path: download/Slicer/windows/content
+          path: download/Slicer/windows/GalaxySlicerNeo
 
       - name: Prepare Release (windows)
         shell: pwsh
         if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
         run: |
-          $source = "download\Slicer\windows\content"
+          $source = "download\Slicer\windows\GalaxySlicerNeo"
           $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
           Compress-Archive -Path $source -DestinationPath $destination
           Remove-Item -Path $source -Recurse -Force
@@ -148,6 +150,9 @@ jobs:
           make_latest: true
           prerelease: true
           draft: false
+          body: |
+            ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
+            -----------------------------------------
           files: |
             download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
 
@@ -196,6 +201,9 @@ jobs:
           prerelease: true
           draft: false
           replacesArtifacts: true
+          body: |
+            ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
+            -----------------------------------------
           artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
 
 
