@@ -18,6 +18,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: List remote branches
+        run: |
+          git fetch --all
+          git branch -r
+
       - name: Get Latest Commit Time
         id: commit_time
         run: |
