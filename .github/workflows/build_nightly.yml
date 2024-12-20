@@ -3,9 +3,6 @@ name: Nightly build
 on:
   schedule:
     - cron: '0 0 * * *'  # Every day at 00:00 UTC (UK)
-  push:
-    branches:
-      - nightly
   workflow_dispatch:
 
 jobs:
@@ -38,7 +35,7 @@ jobs:
           DIFFERENCE=$((CURRENT_TIME - COMMIT_TIME))
 
           # Check if the commit is within 86400 seconds (1 day)
-          if [ "$DIFFERENCE" -lt 400 ]; then
+          if [ "$DIFFERENCE" -lt 86400 ]; then
             echo "✅ Commit is less than a day old."
             echo "is_recent=true" >> $GITHUB_OUTPUT
           else
