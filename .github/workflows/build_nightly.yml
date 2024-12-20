@@ -2,10 +2,10 @@ name: Nightly build
 
 on:
   schedule:
-    - cron: '45 0 * * *'  # Every day at 00:00 UTC (UK)
-  push:
-    branches:
-      - nightly
+    - cron: '0 2 * * *'  # Every day at 00:00 UTC (UK)
+  #push:
+  #  branches:
+  #    - cron
   workflow_dispatch:
 
 jobs:
