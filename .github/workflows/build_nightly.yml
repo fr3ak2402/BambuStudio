@@ -171,7 +171,7 @@ jobs:
       
       - name: Clone Repository
         run: |
-          git clone https://github.com/${{ vars.REPOSITORY }} repo
+          git clone https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }} repo
           cd repo
           git config user.name "GitHub Actions"
           git config user.email "github-actions[bot]@users.noreply.github.com"
