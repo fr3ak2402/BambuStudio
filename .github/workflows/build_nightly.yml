@@ -188,7 +188,7 @@ jobs:
           cd repo
           git add README.md
           git commit -m "Update README.md with new release link"
-          git push https://x-access-token:${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}@github.com/${{ vars.REPOSITORY }}.git HEAD:main
+          git push https://x-access-token:${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}@github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}.git HEAD:main
           
   update-nightly-release:
     name: Update nightly release
