@@ -260,15 +260,13 @@ jobs:
           artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
 
   check-python:
-  name: Check python
-  runs-on: ubuntu-latest
-  steps:
-    - name: Get latest Python release from python.org
-      run: |
-        # Verwenden der Python.org Seite, um die neueste Version herauszufinden
-        latest_version=$(curl -s https://www.python.org/downloads/ | grep -oP 'Latest Python \K[0-9\.]+(?=\s*<)' | head -n 1)
+    name: Check python
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest Python release from python.org
+        run: |
+          latest_version=$(curl -s https://www.python.org/downloads/ | grep -oP 'Latest Python \K[0-9\.]+(?=\s*<)' | head -n 1)
           
-        echo "Neuestes Python Release von python.org: $latest_version"
+          echo "Neuestes Python Release von python.org: $latest_version"
 
-        # Speichern der Version in einer Umgebungsvariablen, falls gewünscht
-        echo "latest_version=$latest_version" >> $GITHUB_ENV
+          echo "latest_version=$latest_version" >> $GITHUB_ENV
