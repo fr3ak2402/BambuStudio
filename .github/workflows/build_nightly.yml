@@ -163,7 +163,7 @@ jobs:
   update-readme:
     name: Update README.md
     runs-on: ubuntu-latest
-    #needs: create-nightly-release
+    needs: create-nightly-release
     if: success()
     steps:
       - name: Checkout
@@ -181,7 +181,7 @@ jobs:
           RELEASE_URL="https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tag/V${{ vars.GSN_VERSION }}-nightly"
 
           cd repo
-          sed -i 's|https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tag/V${{ vars.NIGHTLY_VERSION }}-nightly|$RELEASE_URL|g' README.md
+          sed -i 's|https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tag/V${{ vars.NIGHTLY_VERSION }}-nightly|https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tag/V${{ vars.GSN_VERSION }}-nightly|g' README.md
 
       - name: Commit and push README.md
         run: |
