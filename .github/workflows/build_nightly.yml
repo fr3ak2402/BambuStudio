@@ -265,5 +265,5 @@ jobs:
     steps:
       - name: Get latest Python release from python.org
         run: |
-          latest_release=$(curl -s https://www.python.org | grep -oP 'Latest Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+          latest_release=$(curl -s https://www.python.org/doc/versions/ | grep -oP 'Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
           echo "Latest Python release is: $latest_release"
