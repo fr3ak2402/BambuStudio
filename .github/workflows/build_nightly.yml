@@ -200,7 +200,7 @@ jobs:
       - name: Update Repository Variable
         run: |
           curl -X PATCH \
-            https://api.github.com/repos/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/actions/variables/NIGHTLY_VERSION \
+            https://api.github.com/repos/${{ vars.OWNER }}/${{ github.repository }}/actions/variables/NIGHTLY_VERSION \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"value": "${{ vars.GSN_VERSION }}"}'
