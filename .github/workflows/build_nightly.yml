@@ -189,7 +189,22 @@ jobs:
           git add README.md
           git commit -m "Update README.md with new release link"
           git push https://x-access-token:${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}@github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}.git HEAD:main
-          
+
+  update-variable:
+    name: Update variable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update Repository Variable
+        run: |
+          curl -X PATCH \
+            https://api.github.com/repos/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/actions/variables/NIGHTLY_VERSION \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"value": "${{ vars.GSN_VERSION }}"}'
+
   update-nightly-release:
     name: Update nightly release
     runs-on: windows-latest
