@@ -267,3 +267,12 @@ jobs:
         run: |
           latest_release=$(curl -s https://www.python.org/doc/versions/ | grep -oP 'Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
           echo "Latest Python release is: $latest_release"
+
+          repo_python_version="${{ vars.PYTHON_VERSION }}"
+
+          if [ "$latest_release" == "$repo_python_version" ]; then
+            echo "The Python version in the repository matches the latest release!"
+          else
+            echo "The Python version in the repository ($repo_python_version) does not match the latest release ($latest_release)."
+          fi
+
