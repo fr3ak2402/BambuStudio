@@ -66,6 +66,7 @@ jobs:
     name: Python
     needs: check-for-updates
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_python_windows.yml@python
+    secrets: inherit
 
   prepare_deps:
     name: Prepare deps

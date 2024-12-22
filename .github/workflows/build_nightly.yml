@@ -12,20 +12,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Test
+  fetch:
+    name: Fetch repository variable
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: mmoyaferrer/set-github-variable@v1.0.0
-        with:
-          name: 'NIGHTLY_VERSION'
-          value: 'Vx.x.x'
-          repository: ${{ github.repository }}
-          token: ${{ secrets.DEV_ACCESS_TOKEN }}
+      - name: Fetch repository variable using GitHub API
+        id: fetch_variable
+        run: |
+          # GitHub API Request to fetch the variable
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables/PYTHON_VERSION")
+          
+          # Extrahiere den Wert der Variable
+          VALUE=$(echo $RESPONSE | jq -r '.value')
 
+          # Setze den Wert als GitHub Action Umgebungsvariable
+          echo "MY_VARIABLE=$VALUE" >> $GITHUB_ENV
+
+      - name: Use the fetched variable
+        run: |
+          echo "The value of MY_VARIABLE is $MY_VARIABLE"
 
   check-recent-commit:
     name: Configure
@@ -219,14 +228,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update Repository Variable
-        run: |
-          curl -L \
-            -X PATCH \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.DEV_ACCESS_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository }}/actions/variables/NIGHTLY_VERSION \
-            -d '{"name":"NIGHTLY_VERSION", "value": "${{ vars.GSN_VERSION }}"}'
+        uses: mmoyaferrer/set-github-variable@v1.0.0
+        with:
+          name: 'NIGHTLY_VERSION'
+          value: '${{ vars.GSN_VERSION }}'
+          repository: ${{ github.repository }}
+          token: ${{ secrets.DEV_ACCESS_TOKEN }}
 
   update-nightly-release:
     name: Update nightly release
