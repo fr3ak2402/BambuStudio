@@ -267,12 +267,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         
-      - name: Get latest Python release
-        id: get-python-version
-        uses: MDAnalysis/get-latest-python-version@main
+      - uses: snok/latest-python-versions@v1
+        id: get-python-versions
         with:
-          last-n-minor-release: 4
+          min-version: 3.12
+          include-prereleases: true  # not required - defaults to false
       
       - name: show python release
         run: |
-          echo "Using Python version: ${{ steps.get-python-version.outputs.python-version }}"
+          echo "Using Python version: ${{ steps.get-python-versions.outputs.latest-python-versions }}"
