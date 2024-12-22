@@ -271,7 +271,6 @@ jobs:
         id: get-python-versions
         with:
           min-version: 3.12
-          include-prereleases: true  # not required - defaults to false
       
       - name: show python release
         run: |
