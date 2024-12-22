@@ -82,6 +82,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+  # Nightly release
   check-nightly-release:
     name: Check nightly release
     runs-on: ubuntu-latest
@@ -261,3 +262,11 @@ jobs:
             ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
             -----------------------------------------
           artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+  test:
+    - uses: mmoyaferrer/set-github-variable@v1.0.0
+      with:
+        name: 'NIGHTLY_VERSION'
+        value: 'Vx.x.x'
+        repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
+        token: ${{ secrets.DEV_ACCESS_TOKEN }}
