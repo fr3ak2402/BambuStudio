@@ -260,3 +260,18 @@ jobs:
             ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
             -----------------------------------------
           artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+
+      - name: Get latest stable Python version
+        id: get_version
+        run: |
+          # Verwenden der Python Release-API von python.org, um die neueste stabile Version zu bekommen
+          VERSION=$(curl -s https://www.python.org/downloads/ | grep -oP 'Latest Python 3 Release - Python \K[0-9\.]+')
+            
+          echo "Latest stable Python version: $VERSION"
+            
+          # Setzen der Version als Output der Action
+          echo "python_version=$VERSION" >> $GITHUB_ENV
+  
+      - name: Use the Python version
+        run: |
+          echo "Using Python version: ${{ env.python_version }}"
