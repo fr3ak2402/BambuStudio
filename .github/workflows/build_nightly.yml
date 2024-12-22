@@ -274,59 +274,32 @@ jobs:
           response=$(curl -s https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json)
           
           # Extract the latest stable version
-          version=$(echo "$response" | jq -r '.[] | select(.stable == true) | .version' | head -n 1)
+          python_version=$(echo "$response" | jq -r '.[] | select(.stable == true) | .version' | head -n 1)
           
-          echo "Latest stable Python version: $version"
+          echo "Latest stable Python version: $python_version"
 
           # Set the extracted version as an environment variable
-          echo "python_version=$version" >> $GITHUB_ENV
+          echo "latest_version=$python_version" >> $GITHUB_ENV
 
-      - name: Compare Python version
+      - name: Compare Python versions
         run: |
           cache_python_version="${{ vars.PYTHON_VERSION }}"
           echo "Cache Python release is: $cache_python_version"
 
-          if [ "${{ env.python_version }}" == "$cache_python_version" ]; then
+          if [ "${{ env.latest_version }}" == "$cache_python_version" ]; then
             echo "The Python version is up to date!"
           else
             echo "The Python version ($cache_python_version) is outdated!"
           fi
 
-  #check-python:
-  #  name: Check python
-  #  runs-on: ubuntu-latest
-  #  outputs:
-  #    is_outdated: ${{ steps.compare_release.outputs.is_outdated }}
-  #    latest_version: ${{ steps.latest_release.outputs.latest_version }}
-  #  steps:
-  #    - name: Checkout
-  #      uses: actions/checkout@v4
+  update-python-version:
+    runs-on: ubuntu-latest
+    needs: get-python-version
+    steps:
+      - name: Output the latest stable Python version
+        run: |
+          echo "The latest stable Python version is: ${{ env.latest_version }}"
 
-  #    - name: Get latest Python release from python.org
-  #      id: latest_release
-  #      run: |
-  #        # Fetch the JSON file with the version information
-  #        latest_release=$(curl -s https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json)
-
-  #       # Extract the latest stable version
-  #        latest_release=$(echo "$response" | jq -r '.[] | select(.stable == true) | .version' | head -n 1)
-  #        echo "Latest Python release is: $latest_release"
-  #        echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
-      
-  #    - name: Compare Python version
-  #      id: compare_release
-  #      run: |
-  #        cache_python_version="${{ vars.PYTHON_VERSION }}"
-  #        echo "Cache Python release is: $cache_python_version"
-
-  #        if [ "$latest_release" == "$cache_python_version" ]; then
-  #          echo "The Python version is up to date!"
-  #          echo "is_outdated=false" >> $GITHUB_OUTPUT
-  #        else
-  #          echo "The Python version ($cache_python_version) is outdated!"
-  #          echo "is_outdated=true" >> $GITHUB_OUTPUT
-  #        fi
-  
   #update-python:
   #  name: Update python variable
   #  runs-on: ubuntu-latest
