@@ -293,11 +293,13 @@ jobs:
           latest_release="${{ env.latest_release }}"
 
           if [ "latest_release" == "$cache_python_version" ]; then
-            echo "The Python version is up to date!"
+            echo "✅ The Python version is up to date!"
+
             echo "is_outdated=false" >> $GITHUB_OUTPUT
             echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
           else
-            echo "The Python version ($cache_python_version) is outdated!"
+            echo "❌ The Python version ($cache_python_version) is outdated!"
+            
             echo "is_outdated=true" >> $GITHUB_OUTPUT
             echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
           fi
@@ -305,26 +307,17 @@ jobs:
   update-python-version:
     runs-on: ubuntu-latest
     needs: check-python-version
+    if: needs.check-python-version.outputs.is_outdated == 'true'
     steps:
-      - name: Output the latest stable Python version
-        run: |
-          echo "The latest stable Python version is: ${{ needs.check-python-version.outputs.latest_version }}"
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  #update-python:
-  #  name: Update python variable
-  #  runs-on: ubuntu-latest
-  #  needs: check-python
-  #  if: success() && needs.check-python.outputs.is_outdated == 'true'
-  #  steps:
-  #    - name: Checkout
-  #      uses: actions/checkout@v4
-      
-  #    - name: Update Repository Variable
-  #      run: |
-  #        curl -L \
-  #          -X PATCH \
-  #          -H "Accept: application/vnd.github+json" \
-  #          -H "Authorization: Bearer ${{ secrets.GALAXYSLICER_ACCESS_TOKEN }}" \
-  #          -H "X-GitHub-Api-Version: 2022-11-28" \
-  #          https://api.github.com/repos/${{ github.repository }}/actions/variables/PYTHON_VERSION \
-  #          -d '{"name":"PYTHON_VERSION", "value": "${{ needs.check-python.outputs.latest_version }}"}'
+      - name: Update Repository Variable
+        run: |
+          curl -L \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GALAXYSLICER_ACCESS_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/actions/variables/PYTHON_VERSION \
+            -d '{"name":"PYTHON_VERSION", "value": "${{ needs.check-python-version.outputs.latest_version }}"}' 
