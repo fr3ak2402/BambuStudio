@@ -23,7 +23,7 @@ jobs:
         with:
           name: 'NIGHTLY_VERSION'
           value: 'Vx.x.x'
-          repository: ${{ vars.OWNER }}/${{ github.repository }}
+          repository: ${{ github.repository }}
           token: ${{ secrets.DEV_ACCESS_TOKEN }}
 
 
