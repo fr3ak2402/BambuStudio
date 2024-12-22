@@ -1,8 +1,14 @@
 name: Nightly build
 
 on:
+  push:
+    branches:
+     - workflow
+
   schedule:
-    - cron: '0 0 * * *'  # Every day at 00:00 UTC (UK)
+    # Every day at 00:00 UTC (UK)
+    - cron: '0 0 * 1-3,11-12 *'   # From November to March (GMT — Greenwich Mean Time)
+    - cron: '0 23 * 4-10 *'   # From April to October (BST — British Summer Time)
   workflow_dispatch:
 
 jobs:
@@ -143,7 +149,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
-          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          token: ${{ secrets.DEV_ACCESS_TOKEN }}
           name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
           tag_name: "V${{ vars.GSN_VERSION }}-nightly"
           generate_release_notes: false
@@ -155,6 +161,55 @@ jobs:
             -----------------------------------------
           files: |
             download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+
+  update-readme:
+    name: Update README.md
+    runs-on: ubuntu-latest
+    needs: create-nightly-release
+    if: success()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Clone Repository
+        run: |
+          git clone https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }} repo
+          cd repo
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update README.md
+        run: |
+          RELEASE_URL="https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tag/V${{ vars.GSN_VERSION }}-nightly"
+
+          cd repo
+          sed -i 's|https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tag/V${{ vars.NIGHTLY_VERSION }}-nightly|https://github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}/releases/tag/V${{ vars.GSN_VERSION }}-nightly|g' README.md
+
+      - name: Commit and push README.md
+        run: |
+          cd repo
+          git add README.md
+          git commit -m "Update README.md with new release link"
+          git push https://x-access-token:${{ secrets.DEV_ACCESS_TOKEN }}@github.com/${{ vars.OWNER }}/${{ vars.REPOSITORY }}.git HEAD:main
+
+  update-variable:
+    name: Update variable
+    runs-on: ubuntu-latest
+    needs: update-readme
+    if: success()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update Repository Variable
+        run: |
+          curl -L \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.DEV_ACCESS_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/actions/variables/NIGHTLY_VERSION \
+            -d '{"name":"NIGHTLY_VERSION", "value": "${{ vars.GSN_VERSION }}"}'
 
   update-nightly-release:
     name: Update nightly release
@@ -192,7 +247,7 @@ jobs:
         with:
           owner: ${{ vars.OWNER }}
           repo: ${{ vars.REPOSITORY }}
-          token: ${{ secrets.GALAXYSLICERNEO_ACCESS_TOKEN }}
+          token: ${{ secrets.DEV_ACCESS_TOKEN }}
           name: "GalaxySlicerNeo V${{ vars.GSN_VERSION }} Nightly"
           tag: "V${{ vars.GSN_VERSION }}-nightly"
           allowUpdates: true
@@ -205,8 +260,3 @@ jobs:
             ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
             -----------------------------------------
           artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
-
-
-
-
-
