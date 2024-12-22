@@ -59,8 +59,7 @@ jobs:
   # Windows nightly build      
   build-deps-windows:
     name: Deps (Windows)
-    needs: check-recent-commit
-    if: needs.check-recent-commit.outputs.is_recent == 'true'
+    needs: check-for-updates
     uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
 
   build-slicer-windows:
