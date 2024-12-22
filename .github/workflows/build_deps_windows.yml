@@ -12,6 +12,7 @@ jobs:
   build_deps:
     name: Build deps
     runs-on: windows-2019
+    needs: check-for-updates
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,6 +59,7 @@ jobs:
       
   prepare_pkg_config:
     name: pkg-config
+    needs: check-for-updates
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_pkgconfig_windows.yml@master
 
   prepare_python:
