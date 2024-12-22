@@ -267,11 +267,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         
-      - uses: snok/latest-python-versions@v1
-        id: get-python-versions
-        with:
-          min-version: ${{ vars.PYTHON_VERSION }}
-      
-      - name: show python release
+      - name: Get latest stable Python version
+        id: get_version
         run: |
-          echo "Using Python version: ${{ steps.get-python-versions.outputs.latest-python-versions }}"
+          # Lade die JSON-Datei mit den Versionsinformationen herunter
+          response=$(curl -s https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json)
+          
+          # Extrahiere die neueste stabile Version
+          version=$(echo "$response" | jq -r '.[] | select(.stable == true) | .version' | head -n 1)
+          
+          echo "Latest stable Python version: $version"
