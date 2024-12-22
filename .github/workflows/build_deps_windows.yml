@@ -4,10 +4,10 @@ on:
   workflow_call:
 
 jobs:
-  # Check deps versions
   check-for-updates:
     name: Check for updates
     uses: fr3ak2402/BambuStudio/.github/workflows/update_deps_windows.yml@python
+    secrets: inherit
 
   build_deps:
     name: Build deps

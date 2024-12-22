@@ -55,6 +55,7 @@ jobs:
     needs: check-recent-commit
     if: needs.check-recent-commit.outputs.is_recent == 'true'
     uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@python
+    secrets: inherit
 
   build-slicer-windows:
     name: Slicer (Windows)
