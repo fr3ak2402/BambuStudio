@@ -14,12 +14,14 @@ on:
 jobs:
 
   test:
-    uses: mmoyaferrer/set-github-variable@v1.0.0
-    with:
-      name: 'NIGHTLY_VERSION'
-      value: 'Vx.x.x'
-      repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
-      token: ${{ secrets.DEV_ACCESS_TOKEN }}
+    steps:   
+      - name: Checkout code
+        uses: mmoyaferrer/set-github-variable@v1.0.0
+        with:
+          name: 'NIGHTLY_VERSION'
+          value: 'Vx.x.x'
+          repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
+          token: ${{ secrets.DEV_ACCESS_TOKEN }}
 
   check-recent-commit:
     name: Configure
