@@ -271,7 +271,7 @@ jobs:
         id: get-python-version
         uses: MDAnalysis/get-latest-python-version@main
         with:
-          last-n-minor-release: 0
+          last-n-minor-release: 4
       
       - name: show python release
         run: |
