@@ -270,7 +270,7 @@ jobs:
       - uses: snok/latest-python-versions@v1
         id: get-python-versions
         with:
-          min-version: 3.12
+          min-version: ${{ vars.PYTHON_VERSION }}
       
       - name: show python release
         run: |
