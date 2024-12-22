@@ -281,9 +281,16 @@ jobs:
           # Set the extracted version as an environment variable
           echo "python_version=$version" >> $GITHUB_ENV
 
-      - name: Use the Python version
+      - name: Compare Python version
         run: |
-          echo "Using Python version: ${{ env.python_version }}"
+          cache_python_version="${{ vars.PYTHON_VERSION }}"
+          echo "Cache Python release is: $cache_python_version"
+
+          if [ "${{ env.python_version }}" == "$cache_python_version" ]; then
+            echo "The Python version is up to date!"
+          else
+            echo "The Python version ($cache_python_version) is outdated!"
+          fi
 
   #check-python:
   #  name: Check python
