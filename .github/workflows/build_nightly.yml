@@ -8,7 +8,7 @@ on:
   schedule:
     # Every day at 00:00 UTC (UK)
     - cron: '0 0 * * *'   # From November to March (GMT — Greenwich Mean Time)
-    - cron: '0 23 * * *'   # From April to October (BST — British Summer Time)
+    - cron: '0 23 * 4-10 *'   # From April to October (BST — British Summer Time)
   workflow_dispatch:
 
 jobs:
