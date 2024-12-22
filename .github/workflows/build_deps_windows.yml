@@ -121,6 +121,7 @@ jobs:
   prepare_python:
     name: Python
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_python_windows.yml@python
+    needs: check-python
 
   prepare_deps:
     name: Prepare deps
