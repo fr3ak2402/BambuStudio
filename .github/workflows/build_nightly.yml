@@ -19,10 +19,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install jq (optional)
-        run: |
-          # Download und Installiere jq für Windows
-          Invoke-WebRequest -Uri "https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe" -OutFile "$env:USERPROFILE\jq.exe"
+      #- name: Install jq (optional)
+      #  run: |
+      #    # Download und Installiere jq für Windows
+      #    Invoke-WebRequest -Uri "https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe" -OutFile "$env:USERPROFILE\jq.exe"
 
       - name: Fetch repository variable using GitHub API
         id: fetch_variable
