@@ -271,7 +271,7 @@ jobs:
         id: get_version
         run: |
           # Verwenden der Python Release-API von python.org, um die neueste stabile Version zu bekommen
-          ERSION=$(curl -s https://www.python.org/downloads/ | grep -oP 'Latest Python 3 Release - Python \K[0-9\.]+')
+          VERSION=$(curl -s https://www.python.org/downloads/ | grep -oP 'Latest Python 3 Release - Python \K[0-9\.]+')
                   
           echo "Latest stable Python version: $VERSION"
                   
