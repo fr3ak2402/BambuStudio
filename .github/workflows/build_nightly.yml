@@ -295,11 +295,11 @@ jobs:
           if [ "latest_release" == "$cache_python_version" ]; then
             echo "The Python version is up to date!"
             echo "is_outdated=false" >> $GITHUB_OUTPUT
-            echo "latest_version=latest_release" >> $GITHUB_OUTPUT
+            echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
           else
             echo "The Python version ($cache_python_version) is outdated!"
             echo "is_outdated=true" >> $GITHUB_OUTPUT
-            echo "latest_version=latest_release" >> $GITHUB_OUTPUT
+            echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
           fi
 
   update-python-version:
