@@ -267,7 +267,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         
-      - name: Get latest Python release from python.org
+      - name: Get latest Python release
+        id: get-python-version
+        uses: MDAnalysis/get-latest-python-version@main
+        with:
+          last-n-minor-release: 1
+      
+      - name: show python release
         run: |
-          latest_release=$(curl -s https://www.python.org/doc/versions/ | grep -oP 'Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
-          echo "Latest Python release is: $latest_release"
+          echo "Using Python version: ${{ steps.get-python-version.outputs.python-version }}"
