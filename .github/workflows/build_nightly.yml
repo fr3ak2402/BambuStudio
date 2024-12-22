@@ -278,7 +278,7 @@ jobs:
           
           echo "Latest stable Python version: $version"
 
-check-python:
+  check-python:
     name: Check python
     runs-on: ubuntu-latest
     outputs:
@@ -312,8 +312,7 @@ check-python:
             echo "The Python version ($cache_python_version) is outdated!"
             echo "is_outdated=true" >> $GITHUB_OUTPUT
           fi
-
-          
+  
   update-python:
     name: Update python variable
     runs-on: ubuntu-latest
