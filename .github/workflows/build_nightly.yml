@@ -278,56 +278,63 @@ jobs:
           
           echo "Latest stable Python version: $version"
 
-  check-python:
-    name: Check python
-    runs-on: ubuntu-latest
-    outputs:
-      is_outdated: ${{ steps.compare_release.outputs.is_outdated }}
-      latest_version: ${{ steps.latest_release.outputs.latest_version }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+          # Set the extracted version as an environment variable
+          echo "python_version=$version" >> $GITHUB_ENV
 
-      - name: Get latest Python release from python.org
-        id: latest_release
+      - name: Use the Python version
         run: |
-          # Fetch the JSON file with the version information
-          latest_release=$(curl -s https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json)
+          echo "Using Python version: ${{ env.python_version }}"
 
-          # Extract the latest stable version
-          latest_release=$(echo "$response" | jq -r '.[] | select(.stable == true) | .version' | head -n 1)
-          echo "Latest Python release is: $latest_release"
-          echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
+  #check-python:
+  #  name: Check python
+  #  runs-on: ubuntu-latest
+  #  outputs:
+  #    is_outdated: ${{ steps.compare_release.outputs.is_outdated }}
+  #    latest_version: ${{ steps.latest_release.outputs.latest_version }}
+  #  steps:
+  #    - name: Checkout
+  #      uses: actions/checkout@v4
+
+  #    - name: Get latest Python release from python.org
+  #      id: latest_release
+  #      run: |
+  #        # Fetch the JSON file with the version information
+  #        latest_release=$(curl -s https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json)
+
+  #       # Extract the latest stable version
+  #        latest_release=$(echo "$response" | jq -r '.[] | select(.stable == true) | .version' | head -n 1)
+  #        echo "Latest Python release is: $latest_release"
+  #        echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
       
-      - name: Compare Python version
-        id: compare_release
-        run: |
-          cache_python_version="${{ vars.PYTHON_VERSION }}"
-          echo "Cache Python release is: $cache_python_version"
+  #    - name: Compare Python version
+  #      id: compare_release
+  #      run: |
+  #        cache_python_version="${{ vars.PYTHON_VERSION }}"
+  #        echo "Cache Python release is: $cache_python_version"
 
-          if [ "$latest_release" == "$cache_python_version" ]; then
-            echo "The Python version is up to date!"
-            echo "is_outdated=false" >> $GITHUB_OUTPUT
-          else
-            echo "The Python version ($cache_python_version) is outdated!"
-            echo "is_outdated=true" >> $GITHUB_OUTPUT
-          fi
+  #        if [ "$latest_release" == "$cache_python_version" ]; then
+  #          echo "The Python version is up to date!"
+  #          echo "is_outdated=false" >> $GITHUB_OUTPUT
+  #        else
+  #          echo "The Python version ($cache_python_version) is outdated!"
+  #          echo "is_outdated=true" >> $GITHUB_OUTPUT
+  #        fi
   
-  update-python:
-    name: Update python variable
-    runs-on: ubuntu-latest
-    needs: check-python
-    if: success() && needs.check-python.outputs.is_outdated == 'true'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #update-python:
+  #  name: Update python variable
+  #  runs-on: ubuntu-latest
+  #  needs: check-python
+  #  if: success() && needs.check-python.outputs.is_outdated == 'true'
+  #  steps:
+  #    - name: Checkout
+  #      uses: actions/checkout@v4
       
-      - name: Update Repository Variable
-        run: |
-          curl -L \
-            -X PATCH \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GALAXYSLICER_ACCESS_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/${{ github.repository }}/actions/variables/PYTHON_VERSION \
-            -d '{"name":"PYTHON_VERSION", "value": "${{ needs.check-python.outputs.latest_version }}"}'
+  #    - name: Update Repository Variable
+  #      run: |
+  #        curl -L \
+  #          -X PATCH \
+  #          -H "Accept: application/vnd.github+json" \
+  #          -H "Authorization: Bearer ${{ secrets.GALAXYSLICER_ACCESS_TOKEN }}" \
+  #          -H "X-GitHub-Api-Version: 2022-11-28" \
+  #          https://api.github.com/repos/${{ github.repository }}/actions/variables/PYTHON_VERSION \
+  #          -d '{"name":"PYTHON_VERSION", "value": "${{ needs.check-python.outputs.latest_version }}"}'
