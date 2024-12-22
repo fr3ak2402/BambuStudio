@@ -292,7 +292,7 @@ jobs:
 
           latest_release="${{ env.latest_release }}"
 
-          if [ "latest_release" == "$cache_python_version" ]; then
+          if [ "$latest_release" == "$cache_python_version" ]; then
             echo "✅ The Python version is up to date!"
 
             echo "is_outdated=false" >> $GITHUB_OUTPUT
