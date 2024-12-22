@@ -121,7 +121,10 @@ jobs:
   prepare_python:
     name: Python
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_python_windows.yml@python
-    needs: check-python
+    needs: 
+      - check-python
+      - update-python
+    if: success("check-python") || (success("update-python") && needs.check-python.outputs.is_outdated == 'true')
 
   prepare_deps:
     name: Prepare deps
