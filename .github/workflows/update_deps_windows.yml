@@ -1,0 +1,53 @@
+name: Check deps updates
+
+on:
+  workflow_call:
+
+jobs:
+  check-python-version:
+    name: Check latest python version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get latest stable Python version
+        id: get_version
+        run: |
+          # Fetch the JSON file with the version information
+          response=$(curl -s https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json)
+          
+          # Extract the latest stable version
+          python_version=$(echo "$response" | jq -r '.[] | select(.stable == true) | .version' | head -n 1)
+          
+          echo "Latest stable Python version: $python_version"
+
+          # Set the extracted version as an environment variable
+          echo "latest_release=$python_version" >> $GITHUB_ENV
+
+      - name: Compare Python versions
+        id: compare_python
+        run: |
+          cache_python_version="${{ vars.PYTHON_VERSION }}"
+          echo "Cache Python release is: $cache_python_version"
+
+          latest_release="${{ env.latest_release }}"
+
+          if [ "$latest_release" == "$cache_python_version" ]; then
+            echo "✅ The Python version is up to date!"
+
+            echo "is_outdated=false" >> $GITHUB_ENV
+          else
+            echo "❌ The Python version ($cache_python_version) is outdated!"
+            
+            echo "is_outdated=true" >> $GITHUB_ENV
+          fi
+
+      - name: Update Repository Variable
+        if: ${{ env.is_outdated == 'true' }}
+        uses: mmoyaferrer/set-github-variable@v1.0.0
+        with:
+          name: 'PYTHON_VERSION'
+          value: '${{ env.latest_release }}'
+          repository: ${{ github.repository }}
+          token: ${{ secrets.DEV_ACCESS_TOKEN }}
