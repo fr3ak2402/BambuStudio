@@ -4,6 +4,11 @@ on:
   workflow_call:
 
 jobs:
+  # Check deps versions
+  check-for-updates:
+    name: Check for updates
+    uses: fr3ak2402/BambuStudio/.github/workflows/update_deps_windows.yml@python
+
   build_deps:
     name: Build deps
     runs-on: windows-2019
@@ -57,6 +62,7 @@ jobs:
 
   prepare_python:
     name: Python
+    needs: check-for-updates
     uses: fr3ak2402/BambuStudio/.github/workflows/prepare_python_windows.yml@python
 
   prepare_deps:

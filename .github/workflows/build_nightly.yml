@@ -48,18 +48,12 @@ jobs:
             echo "❌ Commit is older than a day."
             echo "is_recent=false" >> $GITHUB_OUTPUT
           fi
-
-  # Check deps versions
-  check-for-updates:
-    name: Deps (Check for updates)
-    needs: check-recent-commit
-    if: needs.check-recent-commit.outputs.is_recent == 'true'
-    uses: fr3ak2402/BambuStudio/.github/workflows/check_deps_updates.yml@python
   
   # Windows nightly build      
   build-deps-windows:
     name: Deps (Windows)
-    needs: check-for-updates
+    needs: check-recent-commit
+    if: needs.check-recent-commit.outputs.is_recent == 'true'
     uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_windows.yml@master
 
   build-slicer-windows:
