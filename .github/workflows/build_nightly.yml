@@ -13,7 +13,7 @@ on:
 
 jobs:
   test:
-    name: Configure
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -23,7 +23,7 @@ jobs:
         with:
           name: 'NIGHTLY_VERSION'
           value: 'Vx.x.x'
-          repository: ${{ vars.OWNER }}/${{ vars.REPOSITORY }}
+          repository: ${{ vars.OWNER }}/${{ github.repository }}
           token: ${{ secrets.DEV_ACCESS_TOKEN }}
 
 
