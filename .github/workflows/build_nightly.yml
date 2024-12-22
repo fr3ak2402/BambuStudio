@@ -262,9 +262,6 @@ jobs:
   check-python:
     name: Check python
     runs-on: ubuntu-latest
-    #outputs:
-    #  is_outdated: ${{ steps.compare_release.outputs.is_outdated }}
-    #  latest_version: ${{ steps.latest_release.outputs.latest_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -274,7 +271,6 @@ jobs:
         run: |
           latest_release=$(curl -s https://www.python.org/doc/versions/ | grep -oP 'Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
           echo "Latest Python release is: $latest_release"
-      #    echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
       
       - name: Compare Python version
         id: compare_release
@@ -284,10 +280,8 @@ jobs:
 
           if [ "$latest_release" == "$cache_python_version" ]; then
             echo "The Python version is up to date!"
-      #      echo "is_outdated=false" >> $GITHUB_OUTPUT
           else
             echo "The Python version ($cache_python_version) is outdated!"
-      #      echo "is_outdated=true" >> $GITHUB_OUTPUT
           fi
 
           
