@@ -267,23 +267,3 @@ jobs:
         run: |
           latest_release=$(curl -s https://www.python.org/doc/versions/ | grep -oP 'Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
           echo "Latest Python release is: $latest_release"
-
-          
-  #update-python:
-  #  name: Update python variable
-  #  runs-on: ubuntu-latest
-  #  needs: check-python
-  #  if: success() && needs.check-python.outputs.is_outdated == 'true'
-  #  steps:
-  #    - name: Checkout
-  #      uses: actions/checkout@v4
-  #    
-  #    - name: Update Repository Variable
-  #      run: |
-  #        curl -L \
-  #          -X PATCH \
-  #          -H "Accept: application/vnd.github+json" \
-  #          -H "Authorization: Bearer ${{ secrets.GALAXYSLICER_ACCESS_TOKEN }}" \
-  #          -H "X-GitHub-Api-Version: 2022-11-28" \
-  #          https://api.github.com/repos/${{ github.repository }}/actions/variables/PYTHON_VERSION \
-  #          -d '{"name":"PYTHON_VERSION", "value": "${{ needs.check-python.outputs.latest_version }}"}'
