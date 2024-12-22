@@ -272,9 +272,9 @@ jobs:
       - name: Get latest Python release from python.org
         id: latest_release
         run: |
-          latest_release=$(curl -s https://www.python.org/doc/versions/ | grep -oP 'Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
-          echo "Latest Python release is: $latest_release"
-        #echo "latest_version=$latest_release" >> $GITHUB_OUTPUT
+          release=$(curl -s https://www.python.org/doc/versions/ | grep -oP 'Python \K[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+          echo "Latest Python release is: $release"
+          echo "latest_version=$release" >> $GITHUB_OUTPUT
       
       - name: Compare Python version
         id: compare_release
@@ -282,7 +282,7 @@ jobs:
           cache_python_version="${{ vars.PYTHON_VERSION }}"
           echo "Cache Python release is: $cache_python_version"
 
-          if [ "$latest_release" == "$cache_python_version" ]; then
+          if [ "$release" == "$cache_python_version" ]; then
             echo "The Python version is up to date!"
             echo "is_outdated=false" >> $GITHUB_OUTPUT
           else
