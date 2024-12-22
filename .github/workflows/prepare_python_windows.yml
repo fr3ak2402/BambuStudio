@@ -70,7 +70,9 @@ jobs:
   prepare:
     name: Prepare python
     runs-on: windows-latest
-    needs: check
+    needs: 
+      - check
+      - update
     steps:
       - name: Checkout
         uses: actions/checkout@v4
