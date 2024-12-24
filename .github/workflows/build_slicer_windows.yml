@@ -47,7 +47,7 @@ jobs:
             powershell -command "Copy-Item -Path ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps/python/* -Destination ${{ github.workspace }}/work/Projects/GalaxySlicerNeo/python -Recurse"
 
       - name: Sign Slicer
-        uses: dlemstra/code-sign-action@v3
+        uses: neoz-technologies/code-sign-action@v3
         with:
           certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
           folder: '${{ github.workspace }}/work/Projects/GalaxySlicerNeo'
