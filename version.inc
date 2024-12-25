@@ -24,5 +24,3 @@ set(GSN_VERSION "V1.0.7")
 # Build number
 string(TIMESTAMP BUILD_NUM "%Y.%j" UTC)
 set(GSN_BUILD ${BUILD_NUM})
-
-# Test
