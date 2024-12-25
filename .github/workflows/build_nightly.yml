@@ -8,58 +8,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate-and-upload-certificates:
-    runs-on: windows-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up OpenSSL
-      run: |
-        choco install openssl
-        openssl version
-
-    - name: Create SSL certificate and PFX
-      run: |
-        # Set the directory for the certificate
-        $certDir = "certs"
-        New-Item -ItemType Directory -Force -Path $certDir
-
-        # Generate a private key
-        openssl genpkey -algorithm RSA -out "$certDir\private.key" -aes256
-
-        # Create a self-signed certificate
-        openssl req -new -key "$certDir\private.key" -out "$certDir\csr.csr" -subj "/C=US/ST=State/L=City/O=Organization/OU=OrgUnit/CN=example.com"
-
-        # Sign the certificate with the private key
-        openssl x509 -req -in "$certDir\csr.csr" -signkey "$certDir\private.key" -out "$certDir\certificate.crt" -days 365
-
-        # Export to PFX format (PKCS#12)
-        $pfxPassword = "${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}"  # Set a strong password for the PFX file
-        openssl pkcs12 -export -out "$certDir\certificate.pfx" -inkey "$certDir\private.key" -in "$certDir\certificate.crt" -passout pass:$pfxPassword
-
-        # Encode the PFX file in Base64 and output
-        $pfxFilePath = "$certDir\certificate.pfx"
-        $fileContentBytes = Get-Content $pfxFilePath -Encoding Byte
-        $base64EncodedPfx = [System.Convert]::ToBase64String($fileContentBytes)
-        Write-Host "Base64 Encoded PFX Content: $base64EncodedPfx"
-        
-        # Display the files created
-        Get-ChildItem -Path $certDir
-
-    - name: Upload Certificate as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: certificate-crt
-        path: certs/certificate.crt
-
-    - name: Upload PFX as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: certificate-pfx
-        path: certs/certificate.pfx
-
   check-recent-commit:
     name: Configure
     runs-on: ubuntu-latest
