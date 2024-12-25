@@ -46,13 +46,16 @@ jobs:
             mkdir python
             powershell -command "Copy-Item -Path ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps/python/* -Destination ${{ github.workspace }}/work/Projects/GalaxySlicerNeo/python -Recurse"
 
-      - name: Sign Slicer
-        uses: dlemstra/code-sign-action@v1
+      - name: Sign slicer
+        uses: skymatic/code-sign-action@v3.0.0
         with:
           certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
+          password: '${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}'
+          certificatesha1: '${{ secrets.WINDOWS_CERTIFICATE_HASH }}'
+          certificatename: '${{ secrets.WINDOWS_CERTIFICATE_NAME }}'
+          timestampUrl: 'http://timestamp.digicert.com'
+          folder: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
           recursive: true
-          files: |
-            ${{ github.workspace }}/work/Projects/GalaxySlicerNeo/galaxyslicer-neo.exe
 
       - name: Upload slicer (Windows)
         uses: actions/upload-artifact@v4
