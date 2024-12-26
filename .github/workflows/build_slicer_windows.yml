@@ -38,7 +38,18 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
             powershell -command "Remove-Item '${{ github.workspace }}/build' -Recurse -Force"
-        
+
+      - name: Sign slicer on Windows
+        uses: skymatic/code-sign-action@v3.0.0
+        with:
+          certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
+          password: '${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}'
+          certificatesha1: '${{ secrets.WINDOWS_CERTIFICATE_HASH }}'
+          certificatename: '${{ secrets.WINDOWS_CERTIFICATE_NAME }}'
+          timestampUrl: 'http://timestamp.digicert.com'
+          folder: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
+          recursive: true
+
       - name: Copy Python
         working-directory: ${{ github.workspace }}
         run: |
