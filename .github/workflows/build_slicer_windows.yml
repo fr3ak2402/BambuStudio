@@ -80,6 +80,9 @@ jobs:
 
       - name: Generate Inno Setup script
         run: |
+          $installerDir = "${{ github.workspace }}\installer"
+          mkdir $installerDir -Force
+
           echo "[Setup]" > ${{ github.workspace }}/installer/installer_script.iss
           echo "AppName=GalaxySlicerNeo" >> ${{ github.workspace }}/installer/installer_script.iss
           echo "AppVersion=1.0.7" >> ${{ github.workspace }}/installer/installer_script.iss
