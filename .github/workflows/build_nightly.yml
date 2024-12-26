@@ -57,7 +57,7 @@ jobs:
     name: Slicer (Windows)
     needs: build-deps-windows
     if: success()
-    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@sign-windows
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_windows.yml@master
     secrets: inherit
         
   # macOS nightly build
