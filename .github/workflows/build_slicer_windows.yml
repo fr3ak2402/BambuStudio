@@ -80,24 +80,24 @@ jobs:
 
       - name: Generate Inno Setup script
         run: |
-        echo "[Setup]" > ${{ github.workspace }}/installer/installer_script.iss
-        echo "AppName=GalaxySlicerNeo" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "AppVersion=1.0.7" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "DefaultDirName={pf}\GalaxySlicerNeo" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "OutputDir={app}\installer\output" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "OutputBaseFilename=GalaxySlicerNeo_Setup" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "Compression=lzma" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "SolidCompression=yes" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "PrivilegesRequired=admin" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "ArchitecturesInstallIn64BitMode=x64" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "[Setup]" > ${{ github.workspace }}/installer/installer_script.iss
+          echo "AppName=GalaxySlicerNeo" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "AppVersion=1.0.7" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "DefaultDirName={pf}\GalaxySlicerNeo" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "OutputDir={app}\installer\output" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "OutputBaseFilename=GalaxySlicerNeo_Setup" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "Compression=lzma" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "SolidCompression=yes" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "PrivilegesRequired=admin" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "ArchitecturesInstallIn64BitMode=x64" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "" >> ${{ github.workspace }}/installer/installer_script.iss
 
-        echo "[Files]" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "Source: \"${{ github.workspace }}\\work\\Projects\\GalaxySlicerNeo\\*\"; DestDir: \"{app}\"; Flags: recursesubdirs ignoreversion" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "[Files]" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "Source: \"${{ github.workspace }}\\work\\Projects\\GalaxySlicerNeo\\*\"; DestDir: \"{app}\"; Flags: recursesubdirs ignoreversion" >> ${{ github.workspace }}/installer/installer_script.iss
 
-        echo "[Icons]" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "Name: \"{desktop}\\GalaxySlicerNeo\"; Filename: \"{app}\\galaxyslicer-neo.exe\"; IconFilename: \"{app}\\galaxyslicer-neo.ico\"" >> ${{ github.workspace }}/installer/installer_script.iss
-        echo "Name: \"{group}\\GalaxySlicerNeo\"; Filename: \"{app}\\galaxyslicer-neo.exe\"; IconFilename: \"{app}\\galaxyslicer-neo.ico\"" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "[Icons]" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "Name: \"{desktop}\\GalaxySlicerNeo\"; Filename: \"{app}\\galaxyslicer-neo.exe\"; IconFilename: \"{app}\\galaxyslicer-neo.ico\"" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "Name: \"{group}\\GalaxySlicerNeo\"; Filename: \"{app}\\galaxyslicer-neo.exe\"; IconFilename: \"{app}\\galaxyslicer-neo.ico\"" >> ${{ github.workspace }}/installer/installer_script.iss
 
       - name: Build installer with Inno Setup
         run: |
