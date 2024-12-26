@@ -38,15 +38,8 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
             powershell -command "Remove-Item '${{ github.workspace }}/build' -Recurse -Force"
-        
-      - name: Copy Python
-        working-directory: ${{ github.workspace }}
-        run: |
-            cd ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
-            mkdir python
-            powershell -command "Copy-Item -Path ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps/python/* -Destination ${{ github.workspace }}/work/Projects/GalaxySlicerNeo/python -Recurse"
 
-      - name: Sign slicer
+      - name: Sign slicer on Windows
         uses: skymatic/code-sign-action@v3.0.0
         with:
           certificate: '${{ secrets.WINDOWS_CERTIFICATE }}'
@@ -56,6 +49,13 @@ jobs:
           timestampUrl: 'http://timestamp.digicert.com'
           folder: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
           recursive: true
+
+      - name: Copy Python
+        working-directory: ${{ github.workspace }}
+        run: |
+            cd ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
+            mkdir python
+            powershell -command "Copy-Item -Path ${{ github.workspace }}/work/Projects/GalaxySlicerNeo_deps/python/* -Destination ${{ github.workspace }}/work/Projects/GalaxySlicerNeo/python -Recurse"
 
       - name: Upload slicer (Windows)
         uses: actions/upload-artifact@v4
