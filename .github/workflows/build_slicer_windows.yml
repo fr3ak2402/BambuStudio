@@ -72,11 +72,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download slicer (windows)
-        uses: actions/download-artifact@v4
-        with:
-          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
-          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
+      #- name: Download slicer (windows)
+      #  uses: actions/download-artifact@v4
+      #  with:
+      #    name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+      #    path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
 
       - name: Generate Inno Setup script
         run: |
