@@ -89,7 +89,7 @@ jobs:
           AppName=GalaxySlicerNeo
           AppVersion=${{ vars.GSN_VERSION }}
           DefaultDirName={pf}\GalaxySlicerNeo
-          OutputDir={app}\installer\output
+          OutputDir=\output
           OutputBaseFilename=GalaxySlicerNeo_Setup
           Compression=lzma
           SolidCompression=yes
@@ -116,7 +116,7 @@ jobs:
       #  uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
       #  with:
       #    path: ${{ github.workspace }}/installer/galaxySlicerNeo.iss
-      
+
       - name: Build installer
         run: iscc "${{ github.workspace }}\installer\galaxySlicerNeo.iss"
 
