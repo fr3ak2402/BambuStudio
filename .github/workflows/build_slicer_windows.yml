@@ -97,7 +97,7 @@ jobs:
           ArchitecturesInstallIn64BitMode=x64
 
           [Files]
-          Source: "${{ github.workspace }}\work\Projects\GalaxySlicerNeo\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+          Source: "${{ github.workspace }}\work\Projects\GalaxySlicerNeo\*"; DestDir: "{app}"; Flags: recursesubdirs
 
           [Icons]
           Name: "{group}\GalaxySlicerNeo"; Filename: "{app}\galaxyslicer-neo.exe"
