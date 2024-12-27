@@ -105,7 +105,11 @@ jobs:
       - name: Build installer with Inno Setup
         run: |
           ISCC.exe ${{ github.workspace }}/installer/installer_script.iss
-          move /Y ${{ github.workspace }}/installer/output/GalaxySlicerNeo_Setup.exe ${{ github.workspace }}/work/Projects/Installer/GalaxySlicerNeo_Setup.exe
+
+          $sourcePath = "${{ github.workspace }}\installer\output\GalaxySlicerNeo_Setup.exe"
+          $destinationPath = "${{ github.workspace }}\installer\GalaxySlicerNeo_Setup.exe"
+
+          Move-Item -Path $sourcePath -Destination $destinationPath -Force
 
       - name: Upload installer (Windows)
         uses: actions/upload-artifact@v4
