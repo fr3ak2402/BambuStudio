@@ -96,7 +96,7 @@ jobs:
           echo "" >> ${{ github.workspace }}/installer/installer_script.iss
 
           echo "[Files]" >> ${{ github.workspace }}/installer/installer_script.iss
-          echo "Source: \"${{ github.workspace }}\work\Projects\GalaxySlicerNeo\*"; DestDir: \"{app}\"; Flags: recursesubdirs ignoreversion" >> ${{ github.workspace }}/installer/installer_script.iss
+          echo "Source: \"${{ github.workspace }}\work\Projects\GalaxySlicerNeo\*"; DestDir: \"{app}\" >> ${{ github.workspace }}/installer/installer_script.iss
 
       - name: Build installer with Inno Setup
         run: |
