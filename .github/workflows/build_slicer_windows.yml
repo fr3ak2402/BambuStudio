@@ -95,7 +95,7 @@ jobs:
           echo "ArchitecturesInstallIn64BitMode=x64" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
 
           echo "[Files]" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "Source: \"${{ github.workspace }}\work\Projects\GalaxySlicerNeo\*"; DestDir: \"{app}\"; Flags: ignoreversion recursesubdirs" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
+          echo "Source: \"D:\\a\\BambuStudio\\BambuStudio\\work\\Projects\\GalaxySlicerNeo\\*\"; DestDir: \"{app}\"; Flags: ignoreversion recursesubdirs" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
           
           echo "[Icons]" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
           echo "Name: \"{group}\\GalaxySlicerNeo\"; Filename: \"{app}\\galaxyslicer-neo.exe\"" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
