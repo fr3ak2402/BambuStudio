@@ -66,17 +66,17 @@ jobs:
   create_installer:
     name: Create installer
     runs-on: windows-latest
-    #needs: build_slicer
-    #if: success()
+    needs: build_slicer
+    if: success()
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      #- name: Download slicer (windows)
-      #  uses: actions/download-artifact@v4
-      #  with:
-      #    name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
-      #    path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
+      - name: Download slicer (windows)
+        uses: actions/download-artifact@v4
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+          path: ${{ github.workspace }}/work/Projects/GalaxySlicerNeo
 
       - name: Generate Inno Setup script
         run: |
@@ -97,7 +97,7 @@ jobs:
           ArchitecturesInstallIn64BitMode=x64
 
           [Files]
-          Source: "D:\a\BambuStudio\BambuStudio\work\Projects\GalaxySlicerNeo\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+          Source: "${{ github.workspace }}\work\Projects\GalaxySlicerNeo\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
           [Icons]
           Name: "{group}\GalaxySlicerNeo"; Filename: "{app}\galaxyslicer-neo.exe"
@@ -111,20 +111,20 @@ jobs:
           name: galaxySlicerNeo.iss
           path: ${{ github.workspace }}\installer\galaxySlicerNeo.iss
 
-      #- name: Build installer with Inno Setup
-      #  uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-      #  with:
-      #    path: ${{ github.workspace }}/installer/galaxySlicerNeo.iss
+      - name: Build installer with Inno Setup
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: ${{ github.workspace }}/installer/galaxySlicerNeo.iss
         
-      #- name: Move installer
-      #  run: |
-      #    $sourcePath = "${{ github.workspace }}\installer\output\GalaxySlicerNeo_Setup.exe"
-      #    $destinationPath = "${{ github.workspace }}\installer\GalaxySlicerNeo_Setup.exe"
+      - name: Move installer
+        run: |
+          $sourcePath = "${{ github.workspace }}\installer\output\GalaxySlicerNeo_Setup.exe"
+          $destinationPath = "${{ github.workspace }}\installer\GalaxySlicerNeo_Setup.exe"
 
-      #    Move-Item -Path $sourcePath -Destination $destinationPath -Force
+          Move-Item -Path $sourcePath -Destination $destinationPath -Force
 
-      #- name: Upload installer (Windows)
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
-      #    path: ${{ github.workspace }}/work/Projects/Installer/GalaxySlicerNeo_Setup.exe
+      - name: Upload installer (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
+          path: ${{ github.workspace }}/work/Projects/Installer/GalaxySlicerNeo_Setup.exe
