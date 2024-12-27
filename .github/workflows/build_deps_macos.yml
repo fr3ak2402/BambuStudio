@@ -7,7 +7,6 @@ jobs:
   build_deps:
     name: Build deps
     runs-on: macos-latest
-    needs: check-for-updates
     steps:
       - name: Checkout
         uses: actions/checkout@v4
