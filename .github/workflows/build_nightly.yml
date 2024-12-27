@@ -65,19 +65,14 @@ jobs:
     name: Deps (macOS)
     needs: check-recent-commit
     if: needs.check-recent-commit.outputs.is_recent == 'true'
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_deps_macos.yml@master
 
   build-slicer-macos:
     name: Slicer (macOS)
     runs-on: macos-latest
     needs: build-deps-macos
     if: success()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_macos.yml@master
 
   # Nightly release
   check-nightly-release:

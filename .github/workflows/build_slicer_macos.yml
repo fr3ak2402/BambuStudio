@@ -1,0 +1,13 @@
+name: Build macOS slicer
+
+on:
+  workflow_call:
+
+jobs:
+  build_deps:
+    name: Build slicer
+    runs-on: macos-latest
+    needs: check-for-updates
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
