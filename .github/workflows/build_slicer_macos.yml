@@ -4,10 +4,9 @@ on:
   workflow_call:
 
 jobs:
-  build_deps:
+  build_slicer:
     name: Build slicer
     runs-on: macos-latest
-    needs: check-for-updates
     steps:
       - name: Checkout
         uses: actions/checkout@v4
