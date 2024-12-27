@@ -69,7 +69,6 @@ jobs:
 
   build-slicer-macos:
     name: Slicer (macOS)
-    runs-on: macos-latest
     needs: build-deps-macos
     if: success()
     uses: fr3ak2402/BambuStudio/.github/workflows/build_slicer_macos.yml@master
