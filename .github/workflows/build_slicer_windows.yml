@@ -116,11 +116,12 @@ jobs:
       #  uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
       #  with:
       #    path: ${{ github.workspace }}/installer/galaxySlicerNeo.iss
-        
+      
+      - name: Build installer
+        run: iscc "${{ github.workspace }}\installer\galaxySlicerNeo.iss"
+
       - name: Move installer
         run: |
-          ISCC.exe" ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-
           $sourcePath = "${{ github.workspace }}\installer\output\GalaxySlicerNeo_Setup.exe"
           $destinationPath = "${{ github.workspace }}\installer\GalaxySlicerNeo_Setup.exe"
 
