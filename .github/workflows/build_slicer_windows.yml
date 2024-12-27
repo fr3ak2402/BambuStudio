@@ -83,22 +83,27 @@ jobs:
           $installerDir = "${{ github.workspace }}\installer"
           mkdir $installerDir -Force
 
-          echo "[Setup]" > ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "AppName=GalaxySlicerNeo" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "AppVersion=1.0.7" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "DefaultDirName={pf}\GalaxySlicerNeo" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "OutputDir={app}\installer\output" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "OutputBaseFilename=GalaxySlicerNeo_Setup" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "Compression=lzma" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "SolidCompression=yes" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "PrivilegesRequired=admin" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "ArchitecturesInstallIn64BitMode=x64" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
+          $issPath = "${{ github.workspace }}\installer\galaxySlicerNeo.iss"
+          $content = @"
+          [Setup]
+          AppName=GalaxySlicerNeo
+          AppVersion=${{ vars.GSN_VERSION }}
+          DefaultDirName={pf}\GalaxySlicerNeo
+          OutputDir={app}\installer\output
+          OutputBaseFilename=GalaxySlicerNeo_Setup
+          Compression=lzma
+          SolidCompression=yes
+          PrivilegesRequired=admin
+          ArchitecturesInstallIn64BitMode=x64
 
-          echo "[Files]" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "Source: \"D:\\a\\BambuStudio\\BambuStudio\\work\\Projects\\GalaxySlicerNeo\\*\"; DestDir: \"{app}\"; Flags: ignoreversion recursesubdirs" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          
-          echo "[Icons]" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
-          echo "Name: \"{group}\\GalaxySlicerNeo\"; Filename: \"{app}\\galaxyslicer-neo.exe\"" >> ${{ github.workspace }}\installer\galaxySlicerNeo.iss
+          [Files]
+          Source: "D:\a\BambuStudio\BambuStudio\work\Projects\GalaxySlicerNeo\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+
+          [Icons]
+          Name: "{group}\GalaxySlicerNeo"; Filename: "{app}\galaxyslicer-neo.exe"
+          "@
+
+          $content | Out-File -FilePath $issPath -Encoding utf8
 
       - name: Upload ISS (Windows)
         uses: actions/upload-artifact@v4
