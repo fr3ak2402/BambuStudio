@@ -123,7 +123,7 @@ jobs:
       - name: Move installer
         run: |
           $sourcePath = "${{ github.workspace }}\installer\output\GalaxySlicerNeo_Setup.exe"
-          $destinationPath = "${{ github.workspace }}\installer\GalaxySlicerNeo_Setup.exe"
+          $destinationPath = "${{ github.workspace }}/work/Projects/Installer/GalaxySlicerNeo_Setup.exe"
 
           Move-Item -Path $sourcePath -Destination $destinationPath -Force
 
