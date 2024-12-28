@@ -90,7 +90,7 @@ jobs:
           AppVersion=${{ vars.GSN_VERSION }}
           DefaultDirName={pf}\GalaxySlicerNeo
           OutputDir=output
-          OutputBaseFilename=GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
+          OutputBaseFilename=GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly
           Compression=lzma
           SolidCompression=yes
           PrivilegesRequired=admin
@@ -106,13 +106,13 @@ jobs:
 
           $content | Out-File -FilePath $issPath -Encoding utf8
 
-      #- name: Build installer with Inno Setup
-      #  uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
-      #  with:
-      #    path: ${{ github.workspace }}/installer/installer_setup.iss
+      - name: Build installer with Inno Setup
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
+        with:
+          path: ${{ github.workspace }}\work\Projects\Installer\installer_setup.iss
       
-      - name: Build installer
-        run: iscc "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
+      #- name: Build installer
+      #  run: iscc "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
 
       #- name: Move installer
       #  run: |
