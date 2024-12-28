@@ -102,19 +102,15 @@ jobs:
 
           [Icons]
           Name: "{group}\GalaxySlicerNeo"; Filename: "{app}\galaxyslicer-neo.exe"
+
+          [Run]
+          Filename: "{app}\galaxyslicer-neo.exe"; Description: "{cm:LaunchProgram,GalaxySlicerNeo}"; Flags: postinstall
           "@
 
           $content | Out-File -FilePath $issPath -Encoding utf8
       
       - name: Build installer
         run: iscc "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
-
-      #- name: Move installer
-      #  run: |
-      #    $sourcePath = "${{ github.workspace }}\work\Projects\Installer\output\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
-      #    $destinationPath = "${{ github.workspace }}\work\Projects\Installer\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
-
-      #    Move-Item -Path $sourcePath -Destination $destinationPath -Force
 
       - name: Upload installer (Windows)
         uses: actions/upload-artifact@v4
