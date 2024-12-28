@@ -135,18 +135,18 @@ jobs:
           name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
           path: download/Slicer/windows/GalaxySlicerNeo
 
-     - name: Check installer artifact (windows)
-        uses: LIT-Protocol/artifact-exists-action@v0
-        id: "windows-installer-state"
-        with:
-          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
+      - name: Check installer artifact (windows)
+          uses: LIT-Protocol/artifact-exists-action@v0
+          id: "windows-installer-state"
+          with:
+            name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
 
       - name: Download installer (windows)
-        uses: actions/download-artifact@v4
-        if: ${{ steps.windows-installer-state.outputs.exists == 'true' }}
-        with:
-          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
-          path: download/Slicer/windows
+          uses: actions/download-artifact@v4
+          if: ${{ steps.windows-installer-state.outputs.exists == 'true' }}
+          with:
+            name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
+            path: download/Slicer/windows
 
       - name: Prepare Release (windows)
         shell: pwsh
