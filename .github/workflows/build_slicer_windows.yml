@@ -105,14 +105,9 @@ jobs:
           "@
 
           $content | Out-File -FilePath $issPath -Encoding utf8
-
-      - name: Build installer with Inno Setup
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
-        with:
-          path: ${{ github.workspace }}\work\Projects\Installer\installer_setup.iss
       
-      #- name: Build installer
-      #  run: iscc "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
+      - name: Build installer
+        run: iscc "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
 
       #- name: Move installer
       #  run: |
