@@ -321,6 +321,7 @@ jobs:
           "@
 
           if ($windows_release_state -eq 'true') {
+            echo "Windows release exists"
             $content += "Package (Windows) sha256 sums:\n"
             $content += "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip: ${{ env.windows_slicer_sha256 }}\n"
           }
