@@ -312,17 +312,20 @@ jobs:
       - name: Generate nightly release notes
         id: nightly_release_notes
         run: |
+          $windows_release_state = ${{ steps.windows-release-state.outputs.exists }}
+          $windows_installer_state = ${{ steps.windows-installer-state.outputs.exists }}
+
           $content = @"
           ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
           -----------------------------------------
           "@
 
-          if (${{ steps.windows-release-state.outputs.exists }} -eq 'true') {
+          if ($windows_release_state -eq 'true') {
             $content += "Package (Windows) sha256 sums:\n"
             $content += "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip: ${{ env.windows_slicer_sha256 }}\n"
           }
 
-          if (${{ steps.windows-installer-state.outputs.exists }} -eq 'true') {
+          if ($windows_installer_state -eq 'true') {
             $content += "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe: ${{ env.windows_installer_sha256 }}\n"
           }
 
