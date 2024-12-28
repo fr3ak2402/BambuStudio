@@ -312,8 +312,8 @@ jobs:
       - name: Generate nightly release notes
         id: nightly_release_notes
         run: |
-          $windows_release_state = ${{ steps.windows-release-state.outputs.exists }}
-          $windows_installer_state = ${{ steps.windows-installer-state.outputs.exists }}
+          $windows_release_state = "${{ steps.windows-release-state.outputs.exists }}"
+          $windows_installer_state = "${{ steps.windows-installer-state.outputs.exists }}"
 
           $content = @"
           ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
