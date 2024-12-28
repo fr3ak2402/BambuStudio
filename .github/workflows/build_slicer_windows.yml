@@ -80,7 +80,7 @@ jobs:
 
       - name: Generate Inno Setup script
         run: |
-          $installerDir = "mkdir ${{ github.workspace }}/work/Projects/Installer"
+          $installerDir = "${{ github.workspace }}/work/Projects/Installer"
           mkdir $installerDir -Force
 
           $issPath = "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
@@ -105,12 +105,6 @@ jobs:
           "@
 
           $content | Out-File -FilePath $issPath -Encoding utf8
-
-      #- name: Upload ISS (Windows)
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: installer_setup.iss
-      #    path: ${{ github.workspace }}\installer\installer_setup.iss
 
       #- name: Build installer with Inno Setup
       #  uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
