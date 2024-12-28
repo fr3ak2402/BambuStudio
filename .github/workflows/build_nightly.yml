@@ -259,7 +259,21 @@ jobs:
           $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
           Compress-Archive -Path $source -DestinationPath $destination
           Remove-Item -Path $source -Recurse -Force
-      
+
+      - name: Calculate slicer SHA256 hash (windows)
+        id: windows-slicer-hash
+        run: |
+          $hash = Get-FileHash -Path download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip -Algorithm SHA256
+          Write-Output "Slicer hash: $($hash.Hash)"
+          echo "windows_slicer_sha256=$($hash.Hash)" >> $GITHUB_ENV
+
+      - name: Calculate installer SHA256 hash (windows)
+        id: windows-installer-hash
+        run: |
+          $hash = Get-FileHash -Path download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe -Algorithm SHA256
+          Write-Output "Installer hash: $($hash.Hash)"
+          echo "windows_installer_sha256=$($hash.Hash)" >> $GITHUB_ENV
+
       - name: Update nightly release
         uses: ncipollo/release-action@v1.14.0
         with:
