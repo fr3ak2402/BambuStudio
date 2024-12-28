@@ -124,20 +124,33 @@ jobs:
 
       - name: Check release artifact (windows)
         uses: LIT-Protocol/artifact-exists-action@v0
-        id: "windows-artifact-state"
+        id: "windows-release-state"
         with:
           name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
 
       - name: Download slicer (windows)
         uses: actions/download-artifact@v4
-        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        if: ${{ steps.windows-release-state.outputs.exists == 'true' }}
         with:
           name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
           path: download/Slicer/windows/GalaxySlicerNeo
 
+      - name: Check installer artifact (windows)
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: "windows-installer-state"
+        with:
+          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
+
+      - name: Download installer (windows)
+        uses: actions/download-artifact@v4
+        if: ${{ steps.windows-installer-state.outputs.exists == 'true' }}
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
+          path: download/Slicer/windows
+
       - name: Prepare Release (windows)
         shell: pwsh
-        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        if: ${{ steps.windows-release-state.outputs.exists == 'true' }}
         run: |
           $source = "download\Slicer\windows\GalaxySlicerNeo"
           $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
@@ -160,6 +173,7 @@ jobs:
             -----------------------------------------
           files: |
             download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
+            download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
 
   update-readme:
     name: Update README.md
@@ -219,20 +233,33 @@ jobs:
 
       - name: Check release artifact (windows)
         uses: LIT-Protocol/artifact-exists-action@v0
-        id: "windows-artifact-state"
+        id: "windows-release-state"
         with:
           name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
 
       - name: Download slicer (windows)
         uses: actions/download-artifact@v4
-        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        if: ${{ steps.windows-release-state.outputs.exists == 'true' }}
         with:
           name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
           path: download/Slicer/windows/content
 
+      - name: Check installer artifact (windows)
+        uses: LIT-Protocol/artifact-exists-action@v0
+        id: "windows-installer-state"
+        with:
+          name: "GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
+
+      - name: Download installer (windows)
+        uses: actions/download-artifact@v4
+        if: ${{ steps.windows-installer-state.outputs.exists == 'true' }}
+        with:
+          name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
+          path: download/Slicer/windows
+
       - name: Prepare Release (windows)
         shell: pwsh
-        if: ${{ steps.windows-artifact-state.outputs.exists == 'true' }}
+        if: ${{ steps.windows-release-state.outputs.exists == 'true' }}
         run: |
           $source = "download\Slicer\windows\content"
           $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
@@ -256,4 +283,4 @@ jobs:
           body: |
             ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
             -----------------------------------------
-          artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip, GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
