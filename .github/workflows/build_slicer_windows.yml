@@ -80,17 +80,17 @@ jobs:
 
       - name: Generate Inno Setup script
         run: |
-          $installerDir = "${{ github.workspace }}\installer"
+          $installerDir = "mkdir ${{ github.workspace }}/work/Projects/Installer"
           mkdir $installerDir -Force
 
-          $issPath = "${{ github.workspace }}\installer\installer_setup.iss"
+          $issPath = "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
           $content = @"
           [Setup]
           AppName=GalaxySlicerNeo
           AppVersion=${{ vars.GSN_VERSION }}
           DefaultDirName={pf}\GalaxySlicerNeo
           OutputDir=output
-          OutputBaseFilename=GalaxySlicerNeo_Setup
+          OutputBaseFilename=GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
           Compression=lzma
           SolidCompression=yes
           PrivilegesRequired=admin
@@ -118,19 +118,17 @@ jobs:
       #    path: ${{ github.workspace }}/installer/installer_setup.iss
       
       - name: Build installer
-        run: iscc "${{ github.workspace }}\installer\installer_setup.iss"
+        run: iscc "${{ github.workspace }}\work\Projects\Installer\installer_setup.iss"
 
-      - name: Move installer
-        run: |
-          mkdir ${{ github.workspace }}/work/Projects/Installer
+      #- name: Move installer
+      #  run: |
+      #    $sourcePath = "${{ github.workspace }}\work\Projects\Installer\output\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
+      #    $destinationPath = "${{ github.workspace }}\work\Projects\Installer\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
 
-          $sourcePath = "${{ github.workspace }}\installer\output\GalaxySlicerNeo_Setup.exe"
-          $destinationPath = "${{ github.workspace }}\work\Projects\Installer\GalaxySlicerNeo_Setup.exe"
-
-          Move-Item -Path $sourcePath -Destination $destinationPath -Force
+      #    Move-Item -Path $sourcePath -Destination $destinationPath -Force
 
       - name: Upload installer (Windows)
         uses: actions/upload-artifact@v4
         with:
           name: GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
-          path: ${{ github.workspace }}/work/Projects/Installer/GalaxySlicerNeo_Setup.exe
+          path: ${{ github.workspace }}/work/Projects/Installer/output/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
