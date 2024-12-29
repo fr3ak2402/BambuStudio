@@ -289,13 +289,17 @@ jobs:
             $content += @"
           ### sha256 sums for packages:
           "@
-            $content += @"<pre>"@
+            $content += @"
+            <pre>
+          "@
 
             Get-ChildItem -Path $windows_packages_path | ForEach-Object {
               $content += @"$($_.Name): $(Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash
           "@
             }
-            $content += @"</pre>"@
+            $content += @"
+            </pre>
+          "@
           }
 
           $mdPath = "${{ github.workspace }}\release.md"
