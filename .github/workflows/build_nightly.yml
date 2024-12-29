@@ -293,12 +293,22 @@ jobs:
             <pre>`n
           "@
 
-            Get-ChildItem -Path $windows_packages_path | ForEach-Object {
-              $hash = Get-FileHash -Path $_.FullName -Algorithm SHA256
-              $content += @"
-              $(hash.Hash) : $($_.Name)`n
+            $files = Get-ChildItem -Path $windows_packages_path
+            for ($i = 0; $i -lt $files.Count; $i++) {
+              $hash = Get-FileHash -Path $files[$i].FullName -Algorithm SHA256
+
+              if ($i -lt $files.Count - 1) {
+                $content += @"
+                $(hash.Hash) : $($_.Name)`n
           "@
+              }
+              else {
+                $content += @"
+                $(hash.Hash) : $($_.Name)
+          "@
+              }
             }
+              
             $content += @"
             </pre>
           "@
