@@ -151,6 +151,48 @@ jobs:
           Compress-Archive -Path $source -DestinationPath $destination
           Remove-Item -Path $source -Recurse -Force
 
+      - name: Generate nightly release notes
+        id: nightly_release_notes
+        run: |
+          $windows_packages_path = "download/Slicer/windows"
+
+          $content = @"
+          ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
+          -----------------------------------------`n
+          "@
+
+          if (Test-Path $windows_packages_path -PathType Container) {
+            $content += @"
+          ### sha256 sums for packages:`n
+          "@
+            $content += @"
+            <pre>`n
+          "@
+
+            $files = Get-ChildItem -Path $windows_packages_path
+            for ($i = 0; $i -lt $files.Count; $i++) {
+              $hash = Get-FileHash -Path $files[$i].FullName -Algorithm SHA256
+
+              if ($i -lt $files.Count - 1) {
+                $content += @"
+                $($hash.Hash) : $($files[$i].Name)`n
+          "@
+              }
+              else {
+                $content += @"
+                $($hash.Hash) : $($files[$i].Name)
+          "@
+              }
+            }
+
+            $content += @"
+            </pre>
+          "@
+          }
+
+          $txtPath = "${{ github.workspace }}\release.txt"
+          $content | Out-File -FilePath $txtPath -Encoding utf8
+
       - name: Create nightly release
         uses: softprops/action-gh-release@v2
         with:
@@ -162,9 +204,7 @@ jobs:
           make_latest: true
           prerelease: true
           draft: false
-          body: |
-            ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
-            -----------------------------------------
+          body_path: release.txt
           files: |
             download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip
             download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe
@@ -259,6 +299,48 @@ jobs:
           $destination = "download\Slicer\windows\GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
           Compress-Archive -Path $source -DestinationPath $destination
           Remove-Item -Path $source -Recurse -Force
+
+      - name: Generate nightly release notes
+        id: nightly_release_notes
+        run: |
+          $windows_packages_path = "download/Slicer/windows"
+
+          $content = @"
+          ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
+          -----------------------------------------`n
+          "@
+
+          if (Test-Path $windows_packages_path -PathType Container) {
+            $content += @"
+          ### sha256 sums for packages:`n
+          "@
+            $content += @"
+            <pre>`n
+          "@
+
+            $files = Get-ChildItem -Path $windows_packages_path
+            for ($i = 0; $i -lt $files.Count; $i++) {
+              $hash = Get-FileHash -Path $files[$i].FullName -Algorithm SHA256
+
+              if ($i -lt $files.Count - 1) {
+                $content += @"
+                $($hash.Hash) : $($files[$i].Name)`n
+          "@
+              }
+              else {
+                $content += @"
+                $($hash.Hash) : $($files[$i].Name)
+          "@
+              }
+            }
+
+            $content += @"
+            </pre>
+          "@
+          }
+
+          $mdPath = "${{ github.workspace }}\release.md"
+          $content | Out-File -FilePath $mdPath -Encoding utf8
       
       - name: Update nightly release
         uses: ncipollo/release-action@v1.14.0
@@ -274,7 +356,5 @@ jobs:
           prerelease: true
           draft: false
           replacesArtifacts: true
-          body: |
-            ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
-            -----------------------------------------
-          artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip"
+          bodyFile: "release.md"
+          artifacts: "download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}-nightly.zip, download/Slicer/windows/GalaxySlicerNeo_win_x64_v${{ vars.GSN_VERSION }}_setup-nightly.exe"
