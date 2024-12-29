@@ -327,12 +327,12 @@ jobs:
 
               if ($i -lt $files.Count - 1) {
                 $content += @"
-                $(§hash.Hash) : $($_.Name)`n
+                $($hash.Hash) : $($_.Name)`n
           "@
               }
               else {
                 $content += @"
-                $(§hash.Hash) : $($_.Name)
+                $($hash.Hash) : $($_.Name)
           "@
               }
             }
