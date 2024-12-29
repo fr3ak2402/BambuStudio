@@ -296,7 +296,7 @@ jobs:
             Get-ChildItem -Path $windows_packages_path | ForEach-Object {
               $hash = Get-FileHash -Path $_.FullName -Algorithm SHA256
               $content += @"
-              $hash.Hash : $($_.Name)`n
+              $(hash.Hash) : $($_.Name)`n
           "@
             }
             $content += @"
