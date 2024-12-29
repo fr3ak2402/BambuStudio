@@ -283,12 +283,13 @@ jobs:
           $content = @"
           ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
           -----------------------------------------
-
-
           "@
 
           if (Test-Path $windows_packages_path -PathType Container) {
-            $content += @"### sha256 sums for packages:
+            $content += @"
+
+            ### sha256 sums for packages:
+            
             "@
             $content += @"<pre>"@
 
