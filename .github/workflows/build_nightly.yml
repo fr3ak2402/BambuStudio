@@ -175,12 +175,12 @@ jobs:
 
               if ($i -lt $files.Count - 1) {
                 $content += @"
-                $((Get-FileHash -Path $files[$i].FullName -Algorithm SHA256).Hash) : $($files[$i].Name)`n
+                $($hash.Hash) : $($files[$i].Name)`n
           "@
               }
               else {
                 $content += @"
-                $((Get-FileHash -Path $files[$i].FullName -Algorithm SHA256).Hash) : $($files[$i].Name)
+                $($hash.Hash) : $($files[$i].Name)
           "@
               }
             }
