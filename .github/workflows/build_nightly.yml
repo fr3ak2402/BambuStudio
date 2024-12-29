@@ -287,15 +287,13 @@ jobs:
 
           if (Test-Path $windows_packages_path -PathType Container) {
             $content += @"
-
-            ### sha256 sums for packages:
-            
-            "@
+          ### sha256 sums for packages:
+          "@
             $content += @"<pre>"@
 
             Get-ChildItem -Path $windows_packages_path | ForEach-Object {
               $content += @"$($_.Name): $(Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash
-              "@
+          "@
             }
             $content += @"</pre>"@
           }
