@@ -282,20 +282,21 @@ jobs:
 
           $content = @"
           ![GalaxySlicerNeo_nightly](https://github.com/user-attachments/assets/94257eea-6dfa-4da0-81da-76bdfc3a6766)
-          -----------------------------------------
+          -----------------------------------------`n
           "@
 
           if (Test-Path $windows_packages_path -PathType Container) {
             $content += @"
-          ### sha256 sums for packages:
+          ### sha256 sums for packages:`n
           "@
             $content += @"
-            <pre>
+            <pre>`n
           "@
 
             Get-ChildItem -Path $windows_packages_path | ForEach-Object {
+              $hash = Get-FileHash -Path $_.FullName -Algorithm SHA256
               $content += @"
-              $($_.Name): $(Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash
+              $hash.Hash : $($_.Name)`n
           "@
             }
             $content += @"
