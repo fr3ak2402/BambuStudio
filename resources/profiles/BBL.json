@@ -674,6 +674,10 @@
             "sub_path": "filament/fdm_filament_bvoh.json"
         },
         {
+            "name": "fdm_filament_tullomer",
+            "sub_path": "filament/fdm_filament_tullomer.json"
+        },
+        {
             "name": "Bambu PLA Matte @base",
             "sub_path": "filament/Bambu PLA Matte @base.json"
         },
@@ -1020,6 +1024,10 @@
         {
             "name": "Generic BVOH @base",
             "sub_path": "filament/Generic BVOH @base.json"
+        },
+        {
+            "name": "Z-Polymers Tullomer @base",
+            "sub_path": "filament/Z-Polymers Tullomer @base.json"
         },
         {
             "name": "Bambu PLA Matte @BBL X1C",
@@ -2848,6 +2856,14 @@
         {
             "name": "PolyLite ASA @BBL X1E 0.2 nozzle",
             "sub_path": "filament/PolyLite ASA @BBL X1E 0.2 nozzle.json"
+        },
+        {
+            "name": "Z-Polymers Tullomer @BBL X1C",
+            "sub_path": "filament/Z-Polymers Tullomer @BBL X1C.json"
+        },
+        {
+            "name": "Z-Polymers Tullomer @BBL X1E",
+            "sub_path": "filament/Z-Polymers Tullomer @BBL X1E.json"
         }
     ],
     "machine_list": [

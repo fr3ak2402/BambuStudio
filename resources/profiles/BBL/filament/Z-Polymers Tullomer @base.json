@@ -1,0 +1,30 @@
+{
+    "type": "filament",
+    "name": "Z-Polymers Tullomer @base",
+    "inherits": "fdm_filament_tullomer",
+    "from": "system",
+    "filament_id": "ZFT00",
+    "instantiation": "false",
+    "filament_cost": [
+        "100"
+    ],
+    "filament_flow_ratio": [
+        "0.96"
+    ],
+    "default_filament_colour": [
+        ""
+    ],
+    "filament_max_volumetric_speed": [
+        "40"
+    ],
+    "filament_vendor": [
+        "Z-Polymers"
+    ],
+    "compatible_printers": [],
+    "filament_start_gcode": [
+        "; Filament gcode\n{if activate_air_filtration[current_extruder] && support_air_filtration}\nM106 P3 S{during_print_exhaust_fan_speed_num[current_extruder]} \n{endif}"
+    ],
+    "filament_end_gcode": [
+        "; filament end gcode \nM106 P3 S0\n"
+    ]
+}
