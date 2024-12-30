@@ -1,0 +1,30 @@
+{
+    "type": "filament",
+    "name": "Z-Polymers Tullomer @BBL X1E",
+    "inherits": "Z-Polymers Tullomer @base",
+    "from": "system",
+    "setting_id": "ZFST01",
+    "instantiation": "true",
+    "chamber_temperatures": [
+        "60"
+    ],
+    "fan_max_speed": [
+        "20"
+    ],
+    "filament_density": [
+        "1.4"
+    ],
+    "filament_settings_id": [
+        "Z-Polymers Tullomer BBL X1E"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "320"
+    ],
+    "nozzle_temperature_range_high": [
+        "320"
+    ],
+    "compatible_printers": [
+        "Bambu Lab X1E 0.4 nozzle",
+        "Bambu Lab X1E 0.6 nozzle"
+    ]
+}
