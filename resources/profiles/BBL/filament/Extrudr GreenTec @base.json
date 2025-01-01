@@ -1,6 +1,6 @@
 {
     "type": "filament",
-    "name": "Extrudr GreenTec @base",
+    "name": "Extrudr GreenTEC @base",
     "inherits": "fdm_filament_greentec",
     "from": "system",
     "setting_id": "EFSG00",

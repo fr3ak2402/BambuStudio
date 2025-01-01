@@ -1,7 +1,7 @@
 {
     "type": "filament",
-    "name": "Extrudr GreenTec @BBL P1P",
-    "inherits": "Extrudr GreenTec @base",
+    "name": "Extrudr GreenTEC @BBL P1P",
+    "inherits": "Extrudr GreenTEC @base",
     "from": "system",
     "setting_id": "EFSG05",
     "instantiation": "true",
