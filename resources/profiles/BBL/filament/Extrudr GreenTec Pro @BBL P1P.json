@@ -1,0 +1,21 @@
+{
+    "type": "filament",
+    "name": "Extrudr GreenTec Pro @BBL P1P",
+    "inherits": "Extrudr GreenTec Pro @base",
+    "from": "system",
+    "setting_id": "EFSG12",
+    "instantiation": "true",
+    "additional_cooling_fan_speed": [
+        "70"
+    ],
+    "eng_plate_temp": [
+        "35"
+    ],
+    "eng_plate_temp_initial_layer": [
+        "35"
+    ],
+    "compatible_printers": [
+        "Bambu Lab P1P 0.4 nozzle",
+        "Bambu Lab P1P 0.6 nozzle"
+    ]
+}
