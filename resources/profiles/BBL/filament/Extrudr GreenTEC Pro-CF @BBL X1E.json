@@ -1,0 +1,12 @@
+{
+    "type": "filament",
+    "name": "Extrudr GreenTEC Pro-CF @BBL X1E",
+    "inherits": "Extrudr GreenTEC Pro-CF @base",
+    "from": "system",
+    "setting_id": "EFSG19",
+    "instantiation": "true",
+    "compatible_printers": [
+        "Bambu Lab X1E 0.4 nozzle",
+        "Bambu Lab X1E 0.6 nozzle"
+    ]
+}
