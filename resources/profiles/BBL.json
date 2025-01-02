@@ -1039,19 +1039,19 @@
         },
         {
             "name": "Extrudr BioFusion @base",
-            "sub_path": "filament/Extrudr BioFusion @base"
+            "sub_path": "filament/Extrudr BioFusion @base.json"
         },
         {
             "name": "Extrudr GreenTEC @base",
-            "sub_path": "filament/Extrudr GreenTEC @base"
+            "sub_path": "filament/Extrudr GreenTEC @base.json"
         },
         {
             "name": "Extrudr GreenTEC Pro @base",
-            "sub_path": "filament/Extrudr GreenTEC Pro @base"
+            "sub_path": "filament/Extrudr GreenTEC Pro @base.json"
         },
         {
             "name": "Extrudr GreenTEC Pro-CF @base",
-            "sub_path": "filament/Extrudr GreenTEC Pro-CF @base"
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @base.json"
         },
         {
             "name": "Bambu PLA Matte @BBL X1C",
