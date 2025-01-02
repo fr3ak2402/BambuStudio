@@ -3,7 +3,7 @@
     "name": "Extrudr GreenTEC Pro @BBL X1E",
     "inherits": "Extrudr GreenTEC Pro @base",
     "from": "system",
-    "setting_id": "EFSG08",
+    "filament_id": "EFSG08",
     "instantiation": "true",
     "additional_cooling_fan_speed": [
         "80"

@@ -3,7 +3,7 @@
     "name": "Extrudr GreenTEC Pro-CF @base",
     "inherits": "fdm_filament_greentec",
     "from": "system",
-    "setting_id": "EFSG16",
+    "filament_id": "EFSG16",
     "instantiation": "false",
     "activate_air_filtration": [
         "0"

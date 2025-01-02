@@ -3,7 +3,7 @@
     "name": "Extrudr GreenTEC Pro @BBL P1S",
     "inherits": "Extrudr GreenTEC Pro @base",
     "from": "system",
-    "setting_id": "EFSG11",
+    "filament_id": "EFSG11",
     "instantiation": "true",
     "additional_cooling_fan_speed": [
         "80"
