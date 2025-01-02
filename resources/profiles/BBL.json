@@ -678,6 +678,14 @@
             "sub_path": "filament/fdm_filament_tullomer.json"
         },
         {
+            "name": "fdm_filament_biofusion",
+            "sub_path": "filament/fdm_filament_biofusion.json"
+        },
+        {
+            "name": "fdm_filament_greentec",
+            "sub_path": "filament/fdm_filament_greentec.json"
+        },
+        {
             "name": "Bambu PLA Matte @base",
             "sub_path": "filament/Bambu PLA Matte @base.json"
         },
@@ -1028,6 +1036,22 @@
         {
             "name": "Z-Polymers Tullomer @base",
             "sub_path": "filament/Z-Polymers Tullomer @base.json"
+        },
+        {
+            "name": "Extrudr BioFusion @base",
+            "sub_path": "filament/Extrudr BioFusion @base.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @base",
+            "sub_path": "filament/Extrudr GreenTEC @base.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @base",
+            "sub_path": "filament/Extrudr GreenTEC Pro @base.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @base",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @base.json"
         },
         {
             "name": "Bambu PLA Matte @BBL X1C",
@@ -2864,6 +2888,118 @@
         {
             "name": "Z-Polymers Tullomer @BBL X1E",
             "sub_path": "filament/Z-Polymers Tullomer @BBL X1E.json"
+        },
+        {
+            "name": "Extrudr BioFusion @BBL A1",
+            "sub_path": "filament/Extrudr BioFusion @BBL A1.json"
+        },
+        {
+            "name": "Extrudr BioFusion @BBL A1M",
+            "sub_path": "filament/Extrudr BioFusion @BBL A1M.json"
+        },
+        {
+            "name": "Extrudr BioFusion @BBL P1P",
+            "sub_path": "filament/Extrudr BioFusion @BBL P1P.json"
+        },
+        {
+            "name": "Extrudr BioFusion @BBL P1S",
+            "sub_path": "filament/Extrudr BioFusion @BBL P1S.json"
+        },
+        {
+            "name": "Extrudr BioFusion @BBL X1",
+            "sub_path": "filament/Extrudr BioFusion @BBL X1.json"
+        },
+        {
+            "name": "Extrudr BioFusion @BBL X1C",
+            "sub_path": "filament/Extrudr BioFusion @BBL X1C.json"
+        },
+        {
+            "name": "Extrudr BioFusion @BBL X1E",
+            "sub_path": "filament/Extrudr BioFusion @BBL X1E.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @BBL A1",
+            "sub_path": "filament/Extrudr GreenTEC @BBL A1.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @BBL A1M",
+            "sub_path": "filament/Extrudr GreenTEC @BBL A1M.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @BBL P1P",
+            "sub_path": "filament/Extrudr GreenTEC @BBL P1P.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @BBL P1S",
+            "sub_path": "filament/Extrudr GreenTEC @BBL P1S.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @BBL X1",
+            "sub_path": "filament/Extrudr GreenTEC @BBL X1.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @BBL X1C",
+            "sub_path": "filament/Extrudr GreenTEC @BBL X1C.json"
+        },
+        {
+            "name": "Extrudr GreenTEC @BBL X1E",
+            "sub_path": "filament/Extrudr GreenTEC @BBL X1E.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @BBL A1",
+            "sub_path": "filament/Extrudr GreenTEC Pro @BBL A1.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @BBL A1M",
+            "sub_path": "filament/Extrudr GreenTEC Pro @BBL A1M.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @BBL P1P",
+            "sub_path": "filament/Extrudr GreenTEC Pro @BBL P1P.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @BBL P1S",
+            "sub_path": "filament/Extrudr GreenTEC Pro @BBL P1S.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @BBL X1",
+            "sub_path": "filament/Extrudr GreenTEC Pro @BBL X1.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @BBL X1C",
+            "sub_path": "filament/Extrudr GreenTEC Pro @BBL X1C.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro @BBL X1E",
+            "sub_path": "filament/Extrudr GreenTEC Pro @BBL X1E.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @BBL A1",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @BBL A1.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @BBL A1M",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @BBL A1M.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @BBL P1P",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @BBL P1P.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @BBL P1S",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @BBL P1S.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @BBL X1",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @BBL X1.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @BBL X1C",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @BBL X1C.json"
+        },
+        {
+            "name": "Extrudr GreenTEC Pro-CF @BBL X1E",
+            "sub_path": "filament/Extrudr GreenTEC Pro-CF @BBL X1E.json"
         }
     ],
     "machine_list": [
