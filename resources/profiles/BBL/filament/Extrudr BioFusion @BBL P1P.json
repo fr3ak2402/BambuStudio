@@ -3,7 +3,7 @@
     "name": "Extrudr BioFusion @BBL P1P",
     "inherits": "Extrudr BioFusion @base",
     "from": "system",
-    "setting_id": "EFSB05",
+    "filament_id": "EFSB05",
     "instantiation": "true",
     "additional_cooling_fan_speed": [
         "30"

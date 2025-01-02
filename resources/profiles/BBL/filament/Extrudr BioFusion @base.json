@@ -3,7 +3,7 @@
     "name": "Extrudr BioFusion @base",
     "inherits": "fdm_filament_biofusion",
     "from": "system",
-    "setting_id": "EFSB00",
+    "filament_id": "EFB00",
     "instantiation": "false",
     "activate_air_filtration": [
         "0"
