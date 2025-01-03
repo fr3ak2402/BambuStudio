@@ -3,12 +3,12 @@ function OnInit()
     // TranslatePage();
     RequestManagerProfiles();
 
-    const vendors = [
-        { vendor: 'AnkerMake', version: '01.01.00.00', checked: true },
-        { vendor: 'Snapmaker', version: '01.01.00.00', checked: false },
-        { vendor: 'Creality', version: '01.01.00.00', checked: true }
-    ];
-    addVendors(vendors);
+    //const vendors = [
+    //    { vendor: 'AnkerMake', version: '01.01.00.00', checked: true },
+    //    { vendor: 'Snapmaker', version: '01.01.00.00', checked: false },
+    //    { vendor: 'Creality', version: '01.01.00.00', checked: true }
+    //];
+    //addVendors(vendors);
 }
 
 function RequestManagerProfiles()
@@ -20,32 +20,51 @@ function RequestManagerProfiles()
 	SendWXMessage( JSON.stringify(tSend) );
 }
 
-function HandleManagerProfiles( pVal )
-{
-	let strCmd=pVal['command'];
-	//alert(strCmd);
-	
-	if(strCmd=='response_profilemanager_profiles')
-	{
-		HandleVendorList(pVal['response']);
-	}
+function HandleManagerProfiles(pVal) {
+    let strCmd = pVal['command'];
+    // Check if the command is the expected one
+    if (strCmd == 'response_profilemanager_profiles') {
+        HandleVendorList(pVal['response']);
+    }
 }
 
-function HandleVendorList( pVal )
-{
-    if( !pVal.hasOwnProperty("vendor") )
+function HandleVendorList(pVal) {
+    // Check if pVal is an array (expected data type for vendor list)
+    if (!Array.isArray(pVal)) {
+        console.error("Expected an array of vendor data, but got:", pVal);
         return;
-
-    let pVendor=pVal['vendor'];
-    
-    let nTotal=pVendor.length;
-    let VendorHtml={};
-    for(let n=0;n<nTotal;n++)
-    {
-        VendorHtml[n]=pVendor[n];
     }
+
+    // Initialize an array to store the HTML strings for the vendor entries
+    let VendorHtml = [];
     
-    //console.log(VendorHtml);
+    // Iterate through each vendor data item in the array
+    pVal.forEach((vendorData, index) => {
+        // Check if the necessary fields (vendor, version, checked) exist in the vendor object
+        if (vendorData.hasOwnProperty("vendor") && vendorData.hasOwnProperty("version") && vendorData.hasOwnProperty("checked")) {
+            // Generate HTML for the current vendor entry
+            let vendorEntry = `
+                <div class="VendorEntry">
+                    <label for="vendor${index}">${vendorData.vendor}</label>
+                    <span class="VersionField">${vendorData.version}</span>
+                    <input type="checkbox" id="vendor${index}" ${vendorData.checked ? 'checked' : ''} />
+                </div>
+            `;
+            // Add the generated HTML to the VendorHtml array
+            VendorHtml.push(vendorEntry);
+        } else {
+            // Log an error if any necessary field is missing from the vendor data
+            console.error("Invalid vendor data at index " + index, vendorData);
+        }
+    });
+
+    // If VendorHtml has any entries, insert the generated HTML into the VendorBlock container
+    if (VendorHtml.length > 0) {
+        document.getElementById('VendorBlock').innerHTML = VendorHtml.join('');
+    } else {
+        // Log a message if no valid vendor data was found
+        console.log("No valid vendor data to display.");
+    }
 }
 
 function addVendors(vendors) {
