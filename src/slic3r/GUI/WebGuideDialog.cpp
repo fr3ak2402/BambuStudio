@@ -559,6 +559,7 @@ json GuideFrame::downloadVendorsJson(const std::string &url)
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK) {
@@ -570,8 +571,12 @@ json GuideFrame::downloadVendorsJson(const std::string &url)
 
     curl_global_cleanup();
 
+    BOOST_LOG_TRIVIAL(error) << "GuideFrame::downloadVendorsJson: readBuffer=" << readBuffer;
+
     // Parse the downloaded JSON data
     json jsonData = nlohmann::json::parse(readBuffer);
+
+    BOOST_LOG_TRIVIAL(error) << "GuideFrame::downloadVendorsJson: jsonData=" << jsonData.dump(-1, ' ', false, json::error_handler_t::ignore);
     return jsonData;
 }
 
