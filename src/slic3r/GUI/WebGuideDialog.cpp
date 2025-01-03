@@ -394,6 +394,28 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
             BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_userguide_profile:" << strJS.c_str();
             wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
         }
+
+        //GalaxySlicerNeo: add function for request (Profile manager profiles)
+        else if (strCmd == "request_profilemanager_profiles") {
+
+            json vendors = json::array();
+            vendors.push_back({{"vendor", "AnkerMake"}, {"version", "01.01.00.00"}, {"checked", true}});
+            vendors.push_back({{"vendor", "Snapmaker"}, {"version", "01.01.00.00"}, {"checked", false}});
+            vendors.push_back({{"vendor", "Creality"}, {"version", "01.01.00.00"}, {"checked", true}});
+
+
+            json m_Res = json::object();
+            m_Res["command"] = "response_profilemanager_profiles";
+            m_Res["sequence_id"] = "90001";
+            m_Res["response"]        = vendors;
+
+            //wxString strJS = wxString::Format("HandleManagerProfiles(%s)", m_Res.dump(-1, ' ', false, json::error_handler_t::ignore));
+            wxString strJS = wxString::Format("HandleManagerProfiles(%s)", m_Res.dump(-1, ' ', true));
+
+            BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_profilemanager_profiles:" << strJS.c_str();
+            wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
+        }
+
         else if (strCmd == "request_custom_filaments") {
             wxString strJS = update_custom_filaments();
             wxGetApp().CallAfter([this, strJS] { RunScript(strJS); });

@@ -285,3 +285,8 @@ $(document).ready(function()
         $('[VendorName]').show(); // Show all Vendor elements
     });
 });
+
+function GotoManagerPage()
+{
+	window.open('../50/index.html','_self');
+}
