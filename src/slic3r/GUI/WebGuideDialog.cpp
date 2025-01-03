@@ -414,7 +414,9 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
                 vendorJson["version"] = vendor["version"];
                 vendorJson["checked"] = false;
 
-                boost::filesystem::path vendorFile = profilesDir / (vendor["vendor"] + ".json");
+                std::string vendorName = vendor["vendor"];
+
+                boost::filesystem::path vendorFile = profilesDir / (vendorName + ".json");
                 if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
                     vendorJson["checked"] = true;
                 }

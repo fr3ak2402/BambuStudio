@@ -72,7 +72,7 @@ public:
     void OnScriptMessage(wxWebViewEvent &evt);
 
     void OnScriptResponseMessage(wxCommandEvent &evt);
-    size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
+    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
     json downloadVendorsJson(const std::string &url);
     void RunScript(const wxString &javascript);
 
