@@ -562,7 +562,7 @@ json GuideFrame::downloadVendorsJson(const std::string &url)
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK) {
-            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            BOOST_LOG_TRIVIAL(error) << "GuideFrame::downloadVendorsJson: curl_easy_perform() failed: " << curl_easy_strerror(res);
         }
 
         curl_easy_cleanup(curl);
@@ -571,7 +571,7 @@ json GuideFrame::downloadVendorsJson(const std::string &url)
     curl_global_cleanup();
 
     // Parse the downloaded JSON data
-    nlohmann::json jsonData = nlohmann::json::parse(readBuffer);
+    json jsonData = nlohmann::json::parse(readBuffer);
     return jsonData;
 }
 
