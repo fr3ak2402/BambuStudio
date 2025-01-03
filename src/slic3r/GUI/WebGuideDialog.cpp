@@ -397,19 +397,32 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
 
         //GalaxySlicerNeo: add function for request (Profile manager profiles)
         else if (strCmd == "request_profilemanager_profiles") {
+            
+            std::vector<std::string> vendorNames = {"AnkerMake", "Snapmaker", "Creality"};
 
             json vendors = json::array();
-            vendors.push_back({{"vendor", "AnkerMake"}, {"version", "01.01.00.00"}, {"checked", true}});
-            vendors.push_back({{"vendor", "Snapmaker"}, {"version", "01.01.00.00"}, {"checked", false}});
-            vendors.push_back({{"vendor", "Creality"}, {"version", "01.01.00.00"}, {"checked", true}});
 
+            boost::filesystem::path profilesDir = boost::filesystem::path(resources_dir()) / "profiles";
+
+            for (const auto& vendor : vendorNames) {
+                json vendorJson = json::object();
+                vendorJson["vendor"] = vendor;
+                vendorJson["version"] = "01.01.00.00";
+                vendorJson["checked"] = false;
+
+                boost::filesystem::path vendorFile = profilesDir / (vendor + ".json");
+                if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
+                    vendorJson["checked"] = true;
+                }
+                
+                vendors.push_back(vendorJson);
+            }
 
             json m_Res = json::object();
             m_Res["command"] = "response_profilemanager_profiles";
             m_Res["sequence_id"] = "90001";
-            m_Res["response"]        = vendors;
+            m_Res["response"] = vendors;
 
-            //wxString strJS = wxString::Format("HandleManagerProfiles(%s)", m_Res.dump(-1, ' ', false, json::error_handler_t::ignore));
             wxString strJS = wxString::Format("HandleManagerProfiles(%s)", m_Res.dump(-1, ' ', true));
 
             BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_profilemanager_profiles:" << strJS.c_str();
