@@ -398,19 +398,23 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
         //GalaxySlicerNeo: add function for request (Profile manager profiles)
         else if (strCmd == "request_profilemanager_profiles") {
             
+            std::string profile_url = "https://github.com/fr3ak2402/GalaxySlicerNeo-Profile-Library/releases/latest/download/vendors.json";
+
+            json vendorsJson = downloadVendorsJson(profile_url);
+
             std::vector<std::string> vendorNames = {"AnkerMake", "Snapmaker", "Creality"};
 
             json vendors = json::array();
 
             boost::filesystem::path profilesDir = boost::filesystem::path(resources_dir()) / "profiles";
 
-            for (const auto& vendor : vendorNames) {
+            for (const auto& vendor : vendorsJson) {
                 json vendorJson = json::object();
-                vendorJson["vendor"] = vendor;
-                vendorJson["version"] = "01.01.00.00";
+                vendorJson["vendor"] = vendor["vendor"];
+                vendorJson["version"] = vendor["version"];
                 vendorJson["checked"] = false;
 
-                boost::filesystem::path vendorFile = profilesDir / (vendor + ".json");
+                boost::filesystem::path vendorFile = profilesDir / (vendor["vendor"] + ".json");
                 if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
                     vendorJson["checked"] = true;
                 }
@@ -533,6 +537,40 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
     }
 
     wxString strAll = m_ProfileJson.dump(-1,' ',false, json::error_handler_t::ignore);
+}
+
+size_t GuideFrame::WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+json GuideFrame::downloadVendorsJson(const std::string &url)
+{
+    CURL* curl;
+    CURLcode res;
+    std::string readBuffer;
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl = curl_easy_init();
+
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK) {
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        }
+
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+
+    // Parse the downloaded JSON data
+    nlohmann::json jsonData = nlohmann::json::parse(readBuffer);
+    return jsonData;
 }
 
 void GuideFrame::RunScript(const wxString &javascript)

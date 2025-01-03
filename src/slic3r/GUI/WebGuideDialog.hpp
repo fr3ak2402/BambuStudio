@@ -32,6 +32,11 @@
 
 #include <nlohmann/json.hpp>
 
+#include <iostream>
+#include <string>
+#include <vector>
+#include <curl/curl.h>
+
 namespace Slic3r { namespace GUI {
 
 class GuideFrame : public DPIDialog
@@ -67,6 +72,8 @@ public:
     void OnScriptMessage(wxWebViewEvent &evt);
 
     void OnScriptResponseMessage(wxCommandEvent &evt);
+    size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+    json downloadVendorsJson(const std::string &url)
     void RunScript(const wxString &javascript);
 
     //Logic
