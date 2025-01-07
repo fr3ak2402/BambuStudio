@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="max-age=7200" />
+<title>Profile Manager</title>
+<link rel="stylesheet" type="text/css" href="../css/common.css" />
+<link rel="stylesheet" type="text/css" href="1.css" />
+<link rel="stylesheet" type="text/css" href="../css/dark.css" />
+<script type="text/javascript" src="../js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+<script type="text/javascript" src="../../data/text.js"></script>
+<script type="text/javascript" src="../js/globalapi.js"></script>
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript" src="1.js"></script>
+</head>
+<body onLoad="OnInit()">
+  <div class="ContentFrame">
+    <div id="Title">
+      <div class="trans" tid="t900">Profile Manager</div>
+    </div>
+
+    <div id="Content" class="ZScrol">
+      <div id="VendorBlock">
+
+      </div>
+    </div>
+
+    <div id="AcceptArea">
+      <div class="GrayBtn trans" id="PreBtn" tid="t904" onclick="window.open('../../guide/24/index.html','_self')">Exit</div>
+      <div class="NormalBtn trans" id="UpdateBtn" tid="t905" onclick="UpdateProfiles()">Update</div>
+      <div class="NormalBtn trans" id="RemoveBtn" tid="t906" onclick="UninstallProfiles()">Remove</div>
+      <div class="NormalBtn trans" id="InstallBtn" tid="t907" onclick="InstallProfiles()">Add</div>
+    </div>
+
+    <div id="LoadingMask"></div>
+		<div id="LoadingBody">
+			<div id="LoadingContent">
+      <div id="LoadingCircle"></div> 
+			<div id="LoadingText" class="trans" tid="t909">Loading installed profiles.</div>
+		</div>	
+</body>
+</html>

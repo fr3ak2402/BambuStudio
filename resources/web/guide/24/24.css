@@ -155,3 +155,10 @@
 	top: -30px;
 	right: -5mm;
 }
+
+#SearchWrapper
+{
+	display: flex; 
+	align-items: center; 
+	gap: 4px;
+}

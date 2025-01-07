@@ -115,7 +115,22 @@ var LangText={
 		"t121": "Search",
 		"t122": "Search online models",
 		"t123": "Plate",
-		"t124": ""
+		"t124": "",
+		"t900":"Profile Manager",
+		"t901":"Add profiles",
+		"t902":"Remove profiles",
+		"t903":"Update profiles",
+		"t904":"Exit",
+		"t905":"Update",
+		"t906":"Remove",
+		"t907":"Add",
+		"t908":"Apply",
+		"t909":"Loading installed profiles.",
+		"t910":"Loading profiles from the online library.",
+		"t911":"Installing profiles from the online library.",
+		"t912":"Removing the installed profiles.",
+		"t913":"Checking profiles for updatess.",
+		"t914":"Updating the installed profiles."
 	}
 };
 

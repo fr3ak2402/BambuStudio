@@ -36,6 +36,9 @@ namespace Slic3r { namespace GUI {
 
 json m_ProfileJson;
 
+//GalaxySlicerNeo: Profile manager change indicator
+bool m_ProfileManagerChanged = false;
+
 static wxString update_custom_filaments()
 {
     json m_Res                                                                     = json::object();
@@ -383,6 +386,14 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
             }
         }
         else if (strCmd == "request_userguide_profile") {
+
+            //GalaxySlicerNeo: if the profile manager has changed, we need to reload the profile
+            if (m_ProfileManagerChanged) {
+                m_ProfileManagerChanged = false;
+                //m_ProfileJson.clear();
+                LoadProfile();
+            }
+
             json m_Res = json::object();
             m_Res["command"] = "response_userguide_profile";
             m_Res["sequence_id"] = "10001";
@@ -394,6 +405,361 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
             BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_userguide_profile:" << strJS.c_str();
             wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
         }
+
+        //GalaxySlicerNeo: add function for request (Profile manager profiles)
+        else if (strCmd == "request_profilemanager_profiles") {
+            
+            json vendors = json::array();
+
+            try {
+                const std::string url = "https://github.com/fr3ak2402/GalaxySlicerNeo-Profile-Library/releases/latest/download/vendors.json";
+
+                std::string jsonContent = downloadFileContent(url);
+                //BOOST_LOG_TRIVIAL(error) << "GuideFrame::OnScriptMessage;request_profilemanager_profiles:" << jsonContent;
+
+                json profileJson = json::parse(jsonContent);
+
+                for(auto& vendor : profileJson) {
+
+                    boost::filesystem::path vendorFile = boost::filesystem::path(resources_dir()) / "profiles" / (vendor["vendor"].get<std::string>() + ".json");
+
+                    if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
+                        continue;
+                    }
+
+                    json vendorJson = json::object();
+                    vendorJson["vendor"] = vendor["vendor"].get<std::string>();
+                    vendorJson["version"] = vendor["version"].get<std::string>();
+                    vendors.push_back(vendorJson);
+                }
+            }
+            catch (const std::exception& ex) {
+                BOOST_LOG_TRIVIAL(error) << "GuideFrame::OnScriptMessage;request_profilemanager_profiles:" << ex.what();
+            }
+
+            json m_Res = json::object();
+            m_Res["command"] = "response_profilemanager_profiles";
+            m_Res["sequence_id"] = "90001";
+            m_Res["response"] = vendors;
+
+            wxString strJS = wxString::Format("HandleManagerProfiles(%s)", m_Res.dump(-1, ' ', true));
+
+            BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_profilemanager_profiles:" << strJS.c_str();
+            wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
+        }
+
+        //GalaxySlicerNeo: add function for request (Profile manager install profiles)
+        else if (strCmd == "install_profilemanager_profiles") {
+            
+            bool state = false;
+
+            try {
+                json requestData = j["request"];
+
+                //BOOST_LOG_TRIVIAL(error) << "Received install_profilemanager_profiles request:" << requestData.dump(4);
+
+                for (const auto& vendor : requestData) {
+                    std::string vendorName = vendor["vendor"];
+                    bool isChecked = vendor["checked"];
+
+                    if (isChecked) {
+
+                        boost::filesystem::path vendorFile = boost::filesystem::path(resources_dir()) / "profiles" / (vendorName + ".json");
+
+                        if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
+                            continue;
+                        }
+
+                        std::string profile_url = "https://github.com/fr3ak2402/GalaxySlicerNeo-Profile-Library/releases/latest/download/" + vendorName + ".zip";
+                        BOOST_LOG_TRIVIAL(error) << "Install profile: " << profile_url;
+
+                        boost::filesystem::path zipPath = boost::filesystem::path(resources_dir()) / "profiles" / (vendorName + ".zip");
+
+
+                        bool success = downloadFile(profile_url, zipPath.string());
+
+                        if (success) {
+                            //unzip the file to the profiles folder
+                            bool unzipSuccess_ressource = unzipFile(zipPath.string(), (boost::filesystem::path(resources_dir()) / "profiles").string());
+                            
+                            //unzip the file to the local data folder
+                            bool unzipSuccess_localdata = unzipFile(zipPath.string(), (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).string());
+
+                            if (unzipSuccess_ressource && unzipSuccess_localdata) {
+                                BOOST_LOG_TRIVIAL(error) << "Unpacking successfully completed. File: " << zipPath.string();
+                                boost::filesystem::remove(zipPath);
+                            }
+                        }    
+                    }
+                }
+
+                state = true;
+            } catch (const std::exception& ex) {
+                BOOST_LOG_TRIVIAL(error) << "Error processing the 'install_profilemanager_profiles' data:  " << ex.what();
+            }
+
+            if (state == true) {
+                //if the profile manager has changed, we need to reload the profile
+                //this indicates that the profile manager has been updated
+                m_ProfileManagerChanged = true;
+            }
+
+            json m_Res = json::object();
+            m_Res["command"] = "response_install_profilemanager_profiles";
+            m_Res["sequence_id"] = "90002";
+            m_Res["status"] = state;
+
+            wxString strJS = wxString::Format("HandleProfileInstallation(%s)", m_Res.dump(-1, ' ', true));
+
+            BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;install_profilemanager_profiles:" << strJS.c_str();
+            wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
+        }
+
+        //GalaxySlicerNeo: add function for request (Profile manager installed profiles)
+        else if (strCmd == "request_installed_profilemanager_profiles") {
+
+            json vendors = json::array();
+
+            try {
+                for (const auto& entry : boost::filesystem::directory_iterator(boost::filesystem::path(resources_dir()) / "profiles")) {
+                    
+                    std::string filename = entry.path().filename().string();
+                    std::string extension = entry.path().extension().string();
+
+                    if (extension == ".json") {
+                        
+                        if (filename == "BBL.json" || filename == "blacklist.json") {
+                            continue;
+                        }
+
+                        std::ifstream ifs(entry.path().string());
+
+                        json profileJson = json::parse(ifs);
+
+                        json vendorJson = json::object();
+                        vendorJson["vendor"] = entry.path().stem().string();
+                        vendorJson["version"] = profileJson["version"].get<std::string>();
+
+                        vendors.push_back(vendorJson);
+                    }
+                }
+            }
+            catch (const std::exception& ex) {
+                BOOST_LOG_TRIVIAL(error) << "GuideFrame::OnScriptMessage;request_installed_profilemanager_profiles:" << ex.what();
+            }
+
+            //BOOST_LOG_TRIVIAL(error) << "Installed profiles: " << vendors.dump(4);
+
+            json m_Res = json::object();
+            m_Res["command"] = "response_installed_profilemanager_profiles";
+            m_Res["sequence_id"] = "90003";
+            m_Res["response"] = vendors;
+
+            wxString strJS = wxString::Format("HandleInstalledProfiles(%s)", m_Res.dump(-1, ' ', true));
+
+            BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_installed_profilemanager_profiles:" << strJS.c_str();
+            wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
+        }
+
+        //GalaxySlicerNeo: add function for request (Profile manager remove installed profiles)
+        else if(strCmd == "remove_profilemanager_profiles") {
+
+            bool state = false;
+
+            try {
+                json requestData = j["request"];
+
+                for (const auto& vendor : requestData) {
+                    std::string vendorName = vendor["vendor"];
+                    bool isChecked = vendor["checked"];
+
+                    if (isChecked) {
+                        
+                        //remove in resources
+                        boost::filesystem::path vendorFile = boost::filesystem::path(resources_dir()) / "profiles" / (vendorName + ".json");
+
+                        if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
+                            boost::filesystem::remove(vendorFile);
+                        }
+
+                        boost::filesystem::path vendorFolder = boost::filesystem::path(resources_dir()) / "profiles" / (vendorName);
+
+                        if (boost::filesystem::exists(vendorFolder) && boost::filesystem::is_directory(vendorFolder)) {
+                            boost::filesystem::remove_all(vendorFolder);
+                        }
+
+                        //remove in local data
+                        boost::filesystem::path vendorFile_ld = boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR / (vendorName + ".json");
+
+                        if (boost::filesystem::exists(vendorFile_ld) && boost::filesystem::is_regular_file(vendorFile_ld)) {
+                            boost::filesystem::remove(vendorFile_ld);
+                        }
+
+                        boost::filesystem::path vendorFolder_ld = boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR / (vendorName);
+
+                        if (boost::filesystem::exists(vendorFolder_ld) && boost::filesystem::is_directory(vendorFolder_ld)) {
+                            boost::filesystem::remove_all(vendorFolder_ld);
+                        }
+                    }
+                }
+
+                state = true;
+            } catch (const std::exception& ex) {
+                BOOST_LOG_TRIVIAL(error) << "Error processing the 'remove_profilemanager_profiles' data:  " << ex.what();
+            }
+
+            if (state == true) {
+                //if the profile manager has changed, we need to reload the profile
+                //this indicates that the profile manager has been updated
+                m_ProfileManagerChanged = true;
+            }
+
+            json m_Res = json::object();
+            m_Res["command"] = "response_remove_profilemanager_profiles";
+            m_Res["sequence_id"] = "90004";
+            m_Res["status"] = state;
+
+            wxString strJS = wxString::Format("HandleProfileRemoval(%s)", m_Res.dump(-1, ' ', true));
+
+            BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;remove_profilemanager_profiles:" << strJS.c_str();
+            wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
+        }
+
+        //GalaxySlicerNeo: add function for request (Profile manager check profile updates)
+        else if(strCmd == "request_updates_profilemanager_profiles") {
+
+            json vendors = json::array();
+
+            try {
+                const std::string url = "https://github.com/fr3ak2402/GalaxySlicerNeo-Profile-Library/releases/latest/download/vendors.json";
+
+                std::string jsonContent = downloadFileContent(url);
+                //BOOST_LOG_TRIVIAL(error) << "Online:" << jsonContent;
+
+                json profileJson = json::parse(jsonContent);
+
+                for(auto& vendor : profileJson) {
+
+                    boost::filesystem::path vendorFile = boost::filesystem::path(resources_dir()) / "profiles" / (vendor["vendor"].get<std::string>() + ".json");
+
+                    if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
+
+                        //BOOST_LOG_TRIVIAL(error) << "Local:" << vendorFile.string();
+                        
+                        std::ifstream ifs(vendorFile.string());
+                        json profilelocalJson = json::parse(ifs);
+
+                        if (isNewerVersion(vendor["version"].get<std::string>(), profilelocalJson["version"].get<std::string>())) {
+
+                            json vendorJson = json::object();
+                            vendorJson["vendor"] = vendor["vendor"].get<std::string>();
+                            vendorJson["version"] = profilelocalJson["version"].get<std::string>() + " -> " + vendor["version"].get<std::string>();
+
+                            vendors.push_back(vendorJson);
+                        }
+                    }
+                }
+            }
+            catch (const std::exception& ex) {
+                BOOST_LOG_TRIVIAL(error) << "GuideFrame::OnScriptMessage;request_updates_profilemanager_profiles:" << ex.what();
+            }
+
+            //BOOST_LOG_TRIVIAL(error) << "Update profiles: " << vendors.dump(4);
+
+            json m_Res = json::object();
+            m_Res["command"] = "response_updates_profilemanager_profiles";
+            m_Res["sequence_id"] = "90005";
+            m_Res["response"] = vendors;
+
+            wxString strJS = wxString::Format("HandleProfileUpdates(%s)", m_Res.dump(-1, ' ', true));
+
+            BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;request_updates_profilemanager_profiles:" << strJS.c_str();
+            wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
+        }
+
+        //GalaxySlicerNeo: add function for request (Profile manager update installed profiles)
+        else if (strCmd == "update_profilemanager_profiles") {
+            
+            bool state = false;
+
+            try {
+                json requestData = j["request"];
+
+                for (const auto& vendor : requestData) {
+                    std::string vendorName = vendor["vendor"];
+                    bool isChecked = vendor["checked"];
+
+                    if (isChecked) {
+
+                        //remove in resources
+                        boost::filesystem::path vendorFile = boost::filesystem::path(resources_dir()) / "profiles" / (vendorName + ".json");
+
+                        if (boost::filesystem::exists(vendorFile) && boost::filesystem::is_regular_file(vendorFile)) {
+                            boost::filesystem::remove(vendorFile);
+                        }
+
+                        boost::filesystem::path vendorFolder = boost::filesystem::path(resources_dir()) / "profiles" / (vendorName);
+
+                        if (boost::filesystem::exists(vendorFolder) && boost::filesystem::is_directory(vendorFolder)) {
+                            boost::filesystem::remove_all(vendorFolder);
+                        }
+
+                        //remove in local data
+                        boost::filesystem::path vendorFile_ld = boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR / (vendorName + ".json");
+
+                        if (boost::filesystem::exists(vendorFile_ld) && boost::filesystem::is_regular_file(vendorFile_ld)) {
+                            boost::filesystem::remove(vendorFile_ld);
+                        }
+
+                        boost::filesystem::path vendorFolder_ld = boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR / (vendorName);
+
+                        if (boost::filesystem::exists(vendorFolder_ld) && boost::filesystem::is_directory(vendorFolder_ld)) {
+                            boost::filesystem::remove_all(vendorFolder_ld);
+                        }
+
+                        std::string profile_url = "https://github.com/fr3ak2402/GalaxySlicerNeo-Profile-Library/releases/latest/download/" + vendorName + ".zip";
+
+                        boost::filesystem::path zipPath = boost::filesystem::path(resources_dir()) / "profiles" / (vendorName + ".zip");
+
+                        bool success = downloadFile(profile_url, zipPath.string());
+
+                        if (success) {
+                            //unzip the file to the profiles folder
+                            bool unzipSuccess_ressource = unzipFile(zipPath.string(), (boost::filesystem::path(resources_dir()) / "profiles").string());
+                            
+                            //unzip the file to the local data folder
+                            bool unzipSuccess_localdata = unzipFile(zipPath.string(), (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).string());
+
+                            if (unzipSuccess_ressource && unzipSuccess_localdata) {
+                                BOOST_LOG_TRIVIAL(error) << "Unpacking successfully completed. File: " << zipPath.string();
+                                boost::filesystem::remove(zipPath);
+                            }
+                        }  
+                    }
+                }
+
+                state = true;
+            } catch (const std::exception& ex) {
+                BOOST_LOG_TRIVIAL(error) << "Error processing the 'update_profilemanager_profiles' data:  " << ex.what();
+            }
+
+            if (state == true) {
+                //if the profile manager has changed, we need to reload the profile
+                //this indicates that the profile manager has been updated
+                m_ProfileManagerChanged = true;
+            }
+
+            json m_Res = json::object();
+            m_Res["command"] = "response_update_profilemanager_profiles";
+            m_Res["sequence_id"] = "90006";
+            m_Res["status"] = state;
+
+            wxString strJS = wxString::Format("HandleProfileUpdate(%s)", m_Res.dump(-1, ' ', true));
+
+            BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;update_profilemanager_profiles:" << strJS.c_str();
+            wxGetApp().CallAfter([this,strJS] { RunScript(strJS); });
+        }
+
         else if (strCmd == "request_custom_filaments") {
             wxString strJS = update_custom_filaments();
             wxGetApp().CallAfter([this, strJS] { RunScript(strJS); });
@@ -498,6 +864,178 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
     }
 
     wxString strAll = m_ProfileJson.dump(-1,' ',false, json::error_handler_t::ignore);
+}
+
+size_t GuideFrame::write_to_string_callback(void* ptr, size_t size, size_t nmemb, void* userdata) {
+    std::string* str = static_cast<std::string*>(userdata);
+    str->append(static_cast<char*>(ptr), size * nmemb);
+    return size * nmemb;
+}
+
+std::string GuideFrame::downloadFileContent(const std::string& url)
+{
+    std::string fileContent;
+
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        throw std::runtime_error("Error: Could not initialize libcurl.");
+    }
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &fileContent);
+
+    CURLcode res = curl_easy_perform(curl);
+    if (res != CURLE_OK) {
+        curl_easy_cleanup(curl);
+        throw std::runtime_error(std::string("Download failed: ") + curl_easy_strerror(res));
+    }
+
+    curl_easy_cleanup(curl);
+
+    return fileContent;
+}
+
+size_t GuideFrame::write_to_file_callback(void* ptr, size_t size, size_t nmemb, void* userdata) {
+    std::ofstream* outStream = static_cast<std::ofstream*>(userdata);
+    size_t totalSize = size * nmemb;
+    outStream->write(static_cast<char*>(ptr), totalSize);
+    return totalSize;
+}
+
+bool GuideFrame::downloadFile(const std::string& url, const std::string& outPath)
+{
+    CURL* curlHandle = curl_easy_init();
+    if (!curlHandle) {
+        BOOST_LOG_TRIVIAL(error) << "GuideFrame::downloadFile: Fehler: Error: Could not initialize libcurl.";
+        return false;
+    }
+
+    std::ofstream outFile(outPath, std::ios::binary);
+    if (!outFile.is_open()) {
+        BOOST_LOG_TRIVIAL(error) << "GuideFrame::downloadFile: Error: Could not open file " << outPath << " for writing.";
+        curl_easy_cleanup(curlHandle);
+        return false;
+    }
+
+    curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write_to_file_callback);
+    curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &outFile);
+    curl_easy_setopt(curlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curlHandle, CURLOPT_SSL_VERIFYHOST, 0L);
+    curl_easy_setopt(curlHandle, CURLOPT_FOLLOWLOCATION, 1L);
+
+    CURLcode res = curl_easy_perform(curlHandle);
+
+    if (res != CURLE_OK) {
+        BOOST_LOG_TRIVIAL(error) << "GuideFrame::downloadFile: Download failed: " << curl_easy_strerror(res);
+        outFile.close();
+        curl_easy_cleanup(curlHandle);
+        return false;
+    }
+
+    outFile.close();
+    curl_easy_cleanup(curlHandle);
+
+    return true;
+}
+
+bool GuideFrame::createDirectory(const std::string& path)
+{
+    boost::filesystem::path p(path);
+
+    if (boost::filesystem::exists(p)) {
+        return true;
+    }
+    return boost::filesystem::create_directories(p);
+}
+
+bool GuideFrame::unzipFile(const std::string& zipPath, const std::string& extractDir) {
+    mz_zip_archive zip_archive;
+    memset(&zip_archive, 0, sizeof(zip_archive));
+
+    if (!mz_zip_reader_init_file(&zip_archive, zipPath.c_str(), 0)) {
+        BOOST_LOG_TRIVIAL(error) << "GuideFrame::unzipFile: Error: Could not open ZIP " << zipPath << ".";
+        return false;
+    }
+
+    mz_uint numFiles = mz_zip_reader_get_num_files(&zip_archive);
+
+    for (mz_uint i = 0; i < numFiles; i++)
+    {
+        mz_zip_archive_file_stat file_stat;
+        if (!mz_zip_reader_file_stat(&zip_archive, i, &file_stat)) {
+            BOOST_LOG_TRIVIAL(error) << "GuideFrame::unzipFile: Error: Could not read ZIP file entry (index " << i << ").";
+            mz_zip_reader_end(&zip_archive);
+            return false;
+        }
+
+        std::string entryName = file_stat.m_filename;
+        std::string outPath = extractDir + "/" + entryName;
+
+        bool isDir = false;
+        if (file_stat.m_is_directory) {
+            isDir = true;
+        }
+
+        if (isDir) {
+            if (!createDirectory(outPath)) {
+                BOOST_LOG_TRIVIAL(error) << "GuideFrame::unzipFile: Error: Could not create directory " << outPath << ".";
+            }
+            continue;
+        } 
+        else {
+            size_t lastSlashPos = outPath.find_last_of("/\\");
+            if (lastSlashPos != std::string::npos) {
+                std::string folderPath = outPath.substr(0, lastSlashPos);
+                createDirectory(folderPath);
+            }
+
+            if (!mz_zip_reader_extract_to_file(&zip_archive, i, outPath.c_str(), 0)) {
+                BOOST_LOG_TRIVIAL(error) << "GuideFrame::unzipFile: Error: Could not unzip file " << entryName << ".";
+                mz_zip_reader_end(&zip_archive);
+                return false;
+            }
+            BOOST_LOG_TRIVIAL(info) << "GuideFrame::unzipFile: Unzipped: " << entryName << " --> " << outPath;
+        }
+    }
+
+    mz_zip_reader_end(&zip_archive);
+    return true;
+}
+
+std::vector<int> GuideFrame::splitVersion(const std::string& version) {
+    std::vector<int> parts;
+    std::stringstream ss(version);
+    std::string part;
+
+    while (std::getline(ss, part, '.')) {
+        parts.push_back(std::stoi(part)); // string to int
+    }
+
+    return parts;
+}
+
+bool GuideFrame::isNewerVersion(const std::string& version1, const std::string& version2) {
+    std::vector<int> v1 = splitVersion(version1);
+    std::vector<int> v2 = splitVersion(version2);
+
+    // compare the versions part by part
+    for (size_t i = 0; i < std::max(v1.size(), v2.size()); ++i) {
+        int part1 = i < v1.size() ? v1[i] : 0; // if the version has less parts, use 0
+        int part2 = i < v2.size() ? v2[i] : 0;
+
+        if (part1 > part2) {
+            return true; // Version1 is newer
+        } else if (part1 < part2) {
+            return false; // Version2 is newer
+        }
+    }
+
+    return false; //both versions are equal
 }
 
 void GuideFrame::RunScript(const wxString &javascript)
@@ -1296,7 +1834,7 @@ int GuideFrame::LoadProfileFamily(std::string strVendor, std::string strFilePath
 
             // wxString strCoverPath = wxString::Format("%s\\%s\\%s_cover.png", strFolder, strVendor, std::string(s1.mb_str()));
             std::string             cover_file = s1 + "_cover.png";
-            boost::filesystem::path cover_path = boost::filesystem::absolute(vendor_dir / cover_file).make_preferred();
+            boost::filesystem::path cover_path = boost::filesystem::absolute(vendor_dir / cover_file).make_preferred();            
             OneModel["cover"]                  = cover_path.string();
 
             OneModel["nozzle_selected"] = "";

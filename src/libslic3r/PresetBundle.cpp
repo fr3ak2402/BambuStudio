@@ -455,8 +455,16 @@ std::string PresetBundle::get_texture_for_printer_model(std::string model_name)
     if (!texture_name.empty())
     {
         out = Slic3r::data_dir() + "/vendor/" + vendor_name + "/" + texture_name;
-        if (!boost::filesystem::exists(boost::filesystem::path(out)))
+        if (!boost::filesystem::exists(boost::filesystem::path(out))) {
             out = Slic3r::resources_dir() + "/profiles/" + vendor_name + "/" + texture_name;
+
+            //GalaxySlicerNeo: Profiles that originate from the Profile manager have a different structure than profiles from BBL
+            if (!boost::filesystem::exists(boost::filesystem::path(out)))
+            {
+                //Set the path for the buildplate texture
+                out = Slic3r::resources_dir() + "/profiles/" + vendor_name + "/assets/buildplate/" + texture_name;
+            }
+        }
     }
 
     return out;
@@ -483,8 +491,16 @@ std::string PresetBundle::get_stl_model_for_printer_model(std::string model_name
     if (!stl_name.empty())
     {
         out = Slic3r::data_dir() + "/vendor/" + vendor_name + "/" + stl_name;
-        if (!boost::filesystem::exists(boost::filesystem::path(out)))
+        if (!boost::filesystem::exists(boost::filesystem::path(out))) {
             out = Slic3r::resources_dir() + "/profiles/" + vendor_name + "/" + stl_name;
+
+            //GalaxySlicerNeo: Profiles that originate from the Profile manager have a different structure than profiles from BBL
+            if (!boost::filesystem::exists(boost::filesystem::path(out)))
+            {
+                //Set the path for the buildplate model
+                out = Slic3r::resources_dir() + "/profiles/" + vendor_name + "/assets/buildplate/" + stl_name;
+            }
+        }
     }
 
     return out;
@@ -510,8 +526,16 @@ std::string PresetBundle::get_hotend_model_for_printer_model(std::string model_n
     if (!hotend_stl.empty())
     {
         out = Slic3r::data_dir() + "/vendor/" + vendor_name + "/" + hotend_stl;
-        if (!boost::filesystem::exists(boost::filesystem::path(out)))
+        if (!boost::filesystem::exists(boost::filesystem::path(out))) {
             out = Slic3r::resources_dir() + "/profiles/" + vendor_name + "/" + hotend_stl;
+
+            //GalaxySlicerNeo: Profiles that originate from the Profile manager have a different structure than profiles from BBL
+            if (!boost::filesystem::exists(boost::filesystem::path(out)))
+            {
+                //Set the path for the hotend model
+                out = Slic3r::resources_dir() + "/profiles/" + vendor_name + "/assets/hotend/" + hotend_stl;
+            }
+        }
     }
 
     return out;

@@ -105,10 +105,21 @@ function HandleModelList( pVal )
 			HtmlNozzel+='<div class="pNozzel TextS2"><input type="checkbox" model="'+OneModel['model']+'" nozzel="'+nNozzel+'" vendor="'+strVendor+'" /><span>'+nNozzel+'</span><span class="trans" tid="t13">mm nozzle</span></div>';
 		}
 		
-		let CoverImage="../../image/printer/"+OneModel['model']+"_cover.png";
-		let	CoverImage2="../../../profiles/"+strVendor+"/"+OneModel['model']+"_cover.png";
-		let CoverImage3=pVal['configpath']+"/system/"+strVendor+"/"+OneModel['model']+"_cover.png";
+		//GalaxySlicerNeo: the cover image path is different from the profile manager profiles
+		var CoverImage="";
+		var CoverImage2="";
+		var CoverImage3="";
 		
+		if (strVendor == "BBL") {
+			CoverImage="../../image/printer/"+OneModel['model']+"_cover.png";
+			CoverImage2="../../../profiles/"+strVendor+"/"+OneModel['model']+"_cover.png";
+			CoverImage3=pVal['configpath']+"/system/"+strVendor+"/"+OneModel['model']+"_cover.png";
+		}
+		else {
+			CoverImage2="../../../profiles/"+strVendor+"/assets/cover/"+OneModel['model']+"_cover.png";
+			CoverImage3=pVal['configpath']+"/system/"+strVendor+"/assets/cover/"+OneModel['model']+"_cover.png";
+		}
+
 		//alert( 'FinalCover: '+FinalCover );
 		ModelHtml[strVendor]+='<div class="PrinterBlock">'+
         '	<div class="PImg"><img src="'+CoverImage3+'" onerror="ShowPrinterThumb(this,\''+CoverImage2+'\')" /></div>'+
@@ -302,3 +313,8 @@ $(document).ready(function()
         $('[VendorName]').show(); // Show all Vendor elements
     });
 });
+
+function GotoManagerPage()
+{
+	window.open('../../profile_manager/1/index.html','_self');
+}

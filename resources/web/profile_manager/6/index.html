@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="max-age=7200" />
+<title>Add profiles</title>
+<link rel="stylesheet" type="text/css" href="../css/common.css" />
+<link rel="stylesheet" type="text/css" href="6.css" />
+<link rel="stylesheet" type="text/css" href="../css/dark.css" />
+<script type="text/javascript" src="../js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="../js/json2.js"></script>
+<script type="text/javascript" src="../../data/text.js"></script>
+<script type="text/javascript" src="../js/globalapi.js"></script>
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript" src="6.js"></script>
+</head>
+<body onLoad="OnInit()">
+  <div class="ContentFrame">
+    <div id="Title">
+      <div class="trans" tid="t901">Add profiles</div>
+    </div>
+
+    <div id="Content" class="ZScrol">
+      <div id="VendorBlock">
+
+      </div>
+    </div>
+
+    <div id="AcceptArea">
+      <div class="GrayBtn trans" id="PreBtn" tid="t8" onclick="window.open('../5/index.html','_self')">Back</div>
+      <div class="NormalBtn trans" id="AcceptBtn" tid="t908" onclick="ApplyProfiles()">Apply</div>
+    </div>
+
+    <div id="LoadingMask"></div>
+		<div id="LoadingBody">
+			<div id="LoadingContent">
+      <div id="LoadingCircle"></div> 
+			<div id="LoadingText" class="trans" tid="t910">Loading profiles from the online library.</div>
+      <div id="InstallingText" class="trans" tid="t911">Installing profiles from the online library.</div>
+		</div>	
+  </div>
+</body>
+</html>
