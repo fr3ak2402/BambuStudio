@@ -32,10 +32,16 @@
 
 #include <nlohmann/json.hpp>
 
+//GalaxySlicerNeo: Profile manager libs
 #include <iostream>
 #include <string>
 #include <vector>
 #include <curl/curl.h>
+#include <miniz.h>
+#include <fstream>
+#include <cstdio>
+#include <sys/types.h>
+#include <sstream>
 
 namespace Slic3r { namespace GUI {
 
@@ -72,8 +78,19 @@ public:
     void OnScriptMessage(wxWebViewEvent &evt);
 
     void OnScriptResponseMessage(wxCommandEvent &evt);
-    static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
-    json downloadVendorsJson(const std::string &url);
+
+    //GalaxySlicerNeo: Profile manager methods
+    static size_t write_to_string_callback(void* ptr, size_t size, size_t nmemb, void* userdata);
+    std::string downloadFileContent(const std::string& url);
+
+    static size_t write_to_file_callback(void* ptr, size_t size, size_t nmemb, void* userdata);
+    bool downloadFile(const std::string& url, const std::string& outPath);
+    bool createDirectory(const std::string& path);
+    bool unzipFile(const std::string& zipPath, const std::string& extractDir);
+
+    std::vector<int> splitVersion(const std::string& version);
+    bool isNewerVersion(const std::string& version1, const std::string& version2);
+
     void RunScript(const wxString &javascript);
 
     //Logic

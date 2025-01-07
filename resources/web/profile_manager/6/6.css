@@ -1,0 +1,99 @@
+#Content
+{
+	overflow-y:auto;
+	max-height: 417px;
+}
+
+#VendorBlock {
+    display: flex;
+    flex-direction: column;  /* Arrange items vertically */
+  }
+  
+  .VendorEntry {
+    display: flex;
+    justify-content: space-between;  /* Distribute label on the left, checkbox and version on the right */
+    align-items: center;  /* Vertically align elements */
+    margin-bottom: 10px;  /* Add space between entries */
+    padding: 10px;  /* Padding inside the border */
+    border: 1px solid #693A71;  /* Light gray border around each entry */
+    border-radius: 5px;  /* Rounded corners for the border */
+    background-color: #f9f9f9;  /* Light background color for each entry */
+  }
+  
+  .VendorEntry label {
+    margin-right: auto; /* Push label to the left */
+    font-weight: bold;  /* Make the version text stand out */
+  }
+  
+  .VendorEntry .VersionField {
+    margin-right: 10px; /* Add space between checkbox and version */
+  }
+  
+  .VendorEntry input[type="checkbox"] {
+    margin-right: 10px;  /* Add space between checkbox and version */
+    accent-color: #693A71;  /* Change the color of the checkbox */
+  }
+  
+  .VendorEntry input[type="checkbox"]:hover {
+    cursor: pointer;  /* Change the cursor to a hand when hovering over the checkbox */
+  }
+  
+#LoadingMask
+{
+	background-color: #000;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	opacity: 0.05;
+	display: none;
+}
+
+#LoadingBody
+{
+	display: none;
+	width: 400px;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 4px;
+	background-color: inherit;	
+	position: absolute;
+	left: 50%;
+	top: 200px;
+	margin-left: -200px;
+}
+
+#LoadingContent
+{
+  display: flex; /* Setzt die Elemente nebeneinander */
+  align-items: center; /* Vertikale Ausrichtung in der Mitte */
+	padding: 4mm 10mm;	
+}
+
+/* CSS für den Lade-Kreis */
+#LoadingCircle {
+  width: 20px; /* Kleinere Größe für den Kreis */
+  height: 20px; /* Kleinere Höhe */
+  border: 3px solid #aeaeae; /* Heller Hintergrund des Kreises */
+  border-top: 3px solid #693A71; /* Blaue Farbe für den animierten Teil */
+  border-radius: 50%;
+  animation: spin 1s linear infinite; /* Animation für die Drehung */
+  margin-right: 10px; /* Abstand zwischen Text und Kreis */
+}
+
+/* Dreh-Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#LoadingText
+{
+  display: none;
+}
+
+#InstallingText
+{
+  display: none;
+}

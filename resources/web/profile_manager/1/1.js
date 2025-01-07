@@ -1,28 +1,32 @@
 function OnInit()
 {
-    // TranslatePage();
-    
-    RequestManagerProfiles();
-}
-
-function RequestManagerProfiles()
-{
-	var tSend={};
-	tSend['sequence_id']=Math.round(new Date() / 1000);
-	tSend['command']="request_profilemanager_profiles";
+	TranslatePage();
 	
-	SendWXMessage( JSON.stringify(tSend) );
+	RequestInstalledProfiles()
 }
 
-function HandleManagerProfiles(pVal) {
+function RequestInstalledProfiles()
+{
+    $("#LoadingMask").show();
+    $("#LoadingBody").show();
+    $("#LoadingText").show();
+    
+    var tSend={};
+    tSend['sequence_id']=Math.round(new Date() / 1000);
+    tSend['command']="request_installed_profilemanager_profiles";
+    
+    SendWXMessage( JSON.stringify(tSend) );
+}
+
+function HandleInstalledProfiles(pVal) {
     let strCmd = pVal['command'];
     // Check if the command is the expected one
-    if (strCmd == 'response_profilemanager_profiles') {
-        HandleVendorList(pVal['response']);
+    if (strCmd == 'response_installed_profilemanager_profiles') {
+        HandleProfileList(pVal['response']);
     }
 }
 
-function HandleVendorList(pVal) {
+function HandleProfileList(pVal) {
     // Check if pVal is an array (expected data type for vendor list)
     if (!Array.isArray(pVal)) {
         console.error("Expected an array of vendor data, but got:", pVal);
@@ -35,13 +39,12 @@ function HandleVendorList(pVal) {
     // Iterate through each vendor data item in the array
     pVal.forEach((vendorData, index) => {
         // Check if the necessary fields (vendor, version, checked) exist in the vendor object
-        if (vendorData.hasOwnProperty("vendor") && vendorData.hasOwnProperty("version") && vendorData.hasOwnProperty("checked")) {
+        if (vendorData.hasOwnProperty("vendor") && vendorData.hasOwnProperty("version")) {
             // Generate HTML for the current vendor entry
             let vendorEntry = `
                 <div class="VendorEntry">
                     <label for="vendor${index}">${vendorData.vendor}</label>
                     <span class="VersionField">${vendorData.version}</span>
-                    <input type="checkbox" id="vendor${index}" ${vendorData.checked ? 'checked' : ''} />
                 </div>
             `;
             // Add the generated HTML to the VendorHtml array
@@ -58,5 +61,37 @@ function HandleVendorList(pVal) {
     } else {
         // Log a message if no valid vendor data was found
         console.log("No valid vendor data to display.");
+
+        // Insert a placeholder message into the VendorBlock container
+        document.getElementById('VendorBlock').innerHTML = `
+            <div class="VendorEntry">
+                <span class="NoVendorsMessage">No installed profiles found.</span>
+            </div>
+        `;
+
+        // Hide the "Remove" button
+		$("#UpdateBtn").hide();
+
+        // Hide the "Update" button
+		$("#RemoveBtn").hide();
     }
+
+    $("#LoadingMask").hide();
+    $("#LoadingBody").hide();
+    $("#LoadingText").hide();
+}
+
+function UninstallProfiles()
+{
+    window.open('../3/index.html','_self');
+}
+
+function UpdateProfiles()
+{
+    window.open('../4/index.html','_self');
+}
+
+function InstallProfiles()
+{
+    window.open('../2/index.html','_self');
 }

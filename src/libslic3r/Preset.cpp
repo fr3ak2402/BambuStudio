@@ -3588,8 +3588,16 @@ namespace PresetUtils {
         const VendorProfile::PrinterModel* pm = PresetUtils::system_printer_model(preset);
         if (pm != nullptr && !pm->bed_model.empty()) {
             out = Slic3r::data_dir() + "/vendor/" + preset.vendor->id + "/" + pm->bed_model;
-            if (!boost::filesystem::exists(boost::filesystem::path(out)))
+            if (!boost::filesystem::exists(boost::filesystem::path(out))) {
                 out = Slic3r::resources_dir() + "/profiles/" + preset.vendor->id + "/" + pm->bed_model;
+
+                //GalaxySlicerNeo: Profiles that originate from the Profile manager have a different structure than profiles from BBL
+                if (!boost::filesystem::exists(boost::filesystem::path(out)))
+                {
+                    //Set the path for the buildplate model
+                    out = Slic3r::resources_dir() + "/profiles/" + preset.vendor->id + "/assets/buildplate/" + pm->bed_model;
+                }
+            }
         }
         return out;
     }
@@ -3600,8 +3608,16 @@ namespace PresetUtils {
         const VendorProfile::PrinterModel* pm = PresetUtils::system_printer_model(preset);
         if (pm != nullptr && !pm->bed_texture.empty()) {
             out = Slic3r::data_dir() + "/vendor/" + preset.vendor->id + "/" + pm->bed_texture;
-            if (!boost::filesystem::exists(boost::filesystem::path(out)))
+            if (!boost::filesystem::exists(boost::filesystem::path(out))) {
                 out = Slic3r::resources_dir() + "/profiles/" + preset.vendor->id + "/" + pm->bed_texture;
+
+                //GalaxySlicerNeo: Profiles that originate from the Profile manager have a different structure than profiles from BBL
+                if (!boost::filesystem::exists(boost::filesystem::path(out)))
+                {
+                    //Set the path for the buildplate texture
+                    out = Slic3r::resources_dir() + "/profiles/" + preset.vendor->id + "/assets/buildplate/" + pm->bed_texture;
+                }
+            }
         }
         return out;
     }
@@ -3612,8 +3628,16 @@ namespace PresetUtils {
         const VendorProfile::PrinterModel* pm = PresetUtils::system_printer_model(preset);
         if (pm != nullptr && !pm->hotend_model.empty()) {
             out = Slic3r::data_dir() + "/vendor/" + preset.vendor->id + "/" + pm->hotend_model;
-            if (!boost::filesystem::exists(boost::filesystem::path(out)))
+            if (!boost::filesystem::exists(boost::filesystem::path(out))) {
                 out = Slic3r::resources_dir() + "/profiles/" + preset.vendor->id + "/" + pm->hotend_model;
+
+                //GalaxySlicerNeo: Profiles that originate from the Profile manager have a different structure than profiles from BBL
+                if (!boost::filesystem::exists(boost::filesystem::path(out)))
+                {
+                    //Set the path for the hotend model
+                    out = Slic3r::resources_dir() + "/profiles/" + preset.vendor->id + "/assets/hotend/" + pm->hotend_model;
+                }
+            }
         }
         return out;
     }
