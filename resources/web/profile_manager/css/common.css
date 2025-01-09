@@ -255,4 +255,33 @@ input:focus{
 	background-color:#9966A6;
 }
 
+.VendorEntry {
+    display: flex;
+    justify-content: space-between;  /* Distribute label on the left, checkbox and version on the right */
+    align-items: center;  /* Vertically align elements */
+    margin-bottom: 10px;  /* Add space between entries */
+    padding: 10px;  /* Padding inside the border */
+    border: 1px solid #693A71;  /* Light gray border around each entry */
+    border-radius: 5px;  /* Rounded corners for the border */
+    background-color: #f9f9f9;  /* Light background color for each entry */
+}
+  
+.VendorEntry label {
+    margin-right: auto; /* Push label to the left */
+    font-weight: bold;  /* Make the version text stand out */
+}
+  
+.VendorEntry .VersionField {
+    margin-right: 10px; /* Add space between checkbox and version */
+}
+  
+.VendorEntry input[type="checkbox"] {
+    margin-right: 10px;  /* Add space between checkbox and version */
+    accent-color: #693A71;  /* Change the color of the checkbox */
+}
+  
+.VendorEntry input[type="checkbox"]:hover {
+    cursor: pointer;  /* Change the cursor to a hand when hovering over the checkbox */
+}
+
 /*----------------Light Mode-------------------*/
