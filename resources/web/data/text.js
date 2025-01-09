@@ -117,7 +117,7 @@ var LangText={
 		"t123": "Plate",
 		"t124": "",
 		"t125": "Maker’s Supply",
-		"t126": "Loading……"
+		"t126": "Loading……",
 		"t900":"Profile Manager",
 		"t901":"Add profiles",
 		"t902":"Remove profiles",
