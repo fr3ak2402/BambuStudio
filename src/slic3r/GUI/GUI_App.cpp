@@ -4553,9 +4553,9 @@ void GUI_App::on_http_error(wxCommandEvent &evt)
 
     // Version limit
     if (code == HttpErrorVersionLimited) {
-        if (!m_show_http_errpr_msgdlg) {
+        if (!m_show_error_msgdlg) {
             MessageDialog msg_dlg(nullptr, _L("The GalaxySlicerNeo version is too old to enable cloud service. Please download the latest version from Bambu Lab website."), "", wxAPPLY | wxOK);
-            m_show_http_errpr_msgdlg = true;
+            m_show_error_msgdlg = true;
             auto modal_result = msg_dlg.ShowModal();
             m_show_error_msgdlg = false;
             return;

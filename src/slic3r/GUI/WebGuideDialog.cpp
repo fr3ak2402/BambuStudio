@@ -396,7 +396,7 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
             if (m_ProfileManagerChanged) {
                 m_ProfileManagerChanged = false;
                 //m_ProfileJson.clear();
-                LoadProfile();
+                LoadProfileData();
             }
 
             json m_Res = json::object();
