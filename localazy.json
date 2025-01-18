@@ -6,6 +6,11 @@
 		"files": [
 			{
 				"type": "po",
+				"pattern": "bbl/i18n/en/GalaxySlicerNeo_de.po",
+				"lang": "de"
+			},
+			{
+				"type": "po",
 				"pattern": "bbl/i18n/en/GalaxySlicerNeo_en.po",
 				"lang": "en"
 			}
