@@ -5,8 +5,11 @@
 }
 
 #VendorBlock {
-  display: flex;
-  flex-direction: column;  /* Arrange items vertically */
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	justify-content: flex-start;
+	width: 100%;
 }
   
 #LoadingMask
@@ -37,23 +40,21 @@
 
 #LoadingContent
 {
-  display: flex; /* Setzt die Elemente nebeneinander */
-  align-items: center; /* Vertikale Ausrichtung in der Mitte */
+  display: flex;
+  align-items: center;
 	padding: 4mm 10mm;	
 }
 
-/* CSS für den Lade-Kreis */
 #LoadingCircle {
-  width: 20px; /* Kleinere Größe für den Kreis */
-  height: 20px; /* Kleinere Höhe */
-  border: 3px solid #aeaeae; /* Heller Hintergrund des Kreises */
-  border-top: 3px solid #693A71; /* Blaue Farbe für den animierten Teil */
+  width: 20px; 
+  height: 20px; 
+  border: 3px solid #aeaeae; 
+  border-top: 3px solid #693A71;
   border-radius: 50%;
-  animation: spin 1s linear infinite; /* Animation für die Drehung */
-  margin-right: 10px; /* Abstand zwischen Text und Kreis */
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
 }
 
-/* Dreh-Animation */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

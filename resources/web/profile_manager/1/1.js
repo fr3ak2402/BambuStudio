@@ -43,6 +43,7 @@ function HandleProfileList(pVal) {
             // Generate HTML for the current vendor entry
             let vendorEntry = `
                 <div class="VendorEntry">
+                    <img class="VendorImage" src="https://github.com/fr3ak2402/GalaxySlicerNeo-Profile-Library/blob/main/Profiles/${vendorData.vendor}/${vendorData.vendor}_logo.png?raw=true" />
                     <label for="vendor${index}">${vendorData.vendor}</label>
                     <span class="VersionField">${vendorData.version}</span>
                 </div>
