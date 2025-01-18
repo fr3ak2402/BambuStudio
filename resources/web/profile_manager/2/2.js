@@ -69,7 +69,7 @@ function HandleVendorList(pVal) {
 
         // Insert a placeholder message into the VendorBlock container
         document.getElementById('VendorBlock').innerHTML = `
-            <div class="VendorEntry">
+            <div class="NoVendorEntry">
                 <span class="NoVendorsMessage">No profiles found in the online library.</span>
             </div>
         `;

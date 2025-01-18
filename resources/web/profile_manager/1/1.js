@@ -65,7 +65,7 @@ function HandleProfileList(pVal) {
 
         // Insert a placeholder message into the VendorBlock container
         document.getElementById('VendorBlock').innerHTML = `
-            <div class="VendorEntry">
+            <div class="NoVendorEntry">
                 <span class="NoVendorsMessage">No installed profiles found.</span>
             </div>
         `;
