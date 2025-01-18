@@ -114,3 +114,7 @@ input[type=search]::placeholder {
 .VendorEntry {
 	background-color: #383E42;  /* Light background color for each entry */
 }
+
+.NoVendorEntry {
+	background-color: #383E42;  /* Light background color for each entry */
+}
